@@ -1,0 +1,12 @@
+*.swp
+*.tar.gz
+MANIFEST
+*META*
+Makefile
+Makefile.old
+gzMakefile.old
+*blib/
+inc
+*.project
+*.log
+*.DS_Store
