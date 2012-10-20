@@ -5,9 +5,6 @@ use Mojo::Base 'Mojolicious';
 use File::Basename 'dirname';
 use File::Spec::Functions 'catdir';
 
-#use Mojolicious::Plugin::Bcrypt;
-#use Mojolicious::Plugin::Authentication;
-#use Mojolicious::Plugin::Authorization;
 
 use Vindaloo::Schema;
 
@@ -59,9 +56,17 @@ sub startup {
 
   # Router
   my $r = $self->routes;
-  $r->get('/login')->to('login#index');
+  $r->route('/login')->to('login#index');
   $r->post('/login')->to('login#validate');
+
+  # Basic authentication for all routes.
+
   my $authenticated_route = $r->bridge('/')->to('users#authenticate');
+  $authenticated_route->get('')->to('users#index');
+
+
+  $r->get('/signup')->name('signup')->to('users#signup');
+  $r->post('/signup')->to('users#signup_validated');
 
 
 }
@@ -120,3 +125,34 @@ sub user_roles {
 
 
 1;
+
+=head1 NAME
+
+Vindaloo - A place to order curries
+
+=head1 SYNOPSIS
+
+  use Vindaloo;
+
+
+
+=head1 DESCRIPTION
+
+Nothing special
+
+
+
+=head1 INTERFACE
+
+
+=head2 load_user
+
+Authentication method.
+
+
+=head1 DEPENDENCIES
+
+
+=head1 SEE ALSO
+
+

@@ -16,6 +16,7 @@ sub setup_form {
 sub index {
     my $self = shift;
     $self->setup_form;
+    $self->app->log->debug("Redirected to login.");
 
 }
 
