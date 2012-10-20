@@ -1,0 +1,3 @@
+% layout 'default';
+% title 'Sign up';
+<%== $form->render %>

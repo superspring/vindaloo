@@ -1,30 +1,35 @@
 <!DOCTYPE html>
 <html>
 
-
-    %= stylesheet url_for('/css/bootswatch/cerulean/bootstrap.min.css');
-
-    %= javascript url_for('/css/bootswatch/js/application.js');
-    %= javascript url_for('/css/bootswatch/js/bootstrap.min.js');
-    %= javascript url_for('/css/bootswatch/js/bootswatch.js');
-    %= javascript url_for('/css/bootswatch/js/bsa.js');
-    %= javascript url_for('/js/bootstrap-alert.js');
-    %= javascript url_for('/js/bootstrap-button.js');
-    %= javascript url_for('/js/bootstrap-carousel.js');
-    %= javascript url_for('/js/bootstrap-collapse.js');
-    %= javascript url_for('/js/bootstrap-dropdown.js');
-    %= javascript url_for('/js/bootstrap-modal.js');
-    %= javascript url_for('/js/bootstrap-popover.js');
-    %= javascript url_for('/js/bootstrap-scrollspy.js');
-    %= javascript url_for('/js/bootstrap-tab.js');
-    %= javascript url_for('/js/bootstrap-tooltip.js');
-    %= javascript url_for('/js/bootstrap-transition.js');
-    %= javascript url_for('/js/bootstrap-typeahead.js');
-    %= javascript url_for('/js/jquery-ui.min.js');
-    %= javascript url_for('/js/jquery.iframe-transport.js');
-    %= javascript url_for('/js/jquery.ui.datepicker.js');
-    %= javascript url_for('/js/vendor/jquery.ui.widget.js');
-
-  <head><title><%= title %></title></head>
-  <body><%= content %></body>
+    <head>
+        %= stylesheet url_for('/css/bootswatch/cerulean/bootstrap.min.css');
+        %= javascript url_for('/css/bootswatch/js/application.js');
+        %= javascript url_for('/css/bootswatch/js/bootstrap.min.js');
+        %= javascript url_for('/css/bootswatch/js/bootswatch.js');
+        %= javascript url_for('/css/bootswatch/js/bsa.js');
+        %= javascript url_for('/js/bootstrap-alert.js');
+        %= javascript url_for('/js/bootstrap-button.js');
+        %= javascript url_for('/js/bootstrap-carousel.js');
+        %= javascript url_for('/js/bootstrap-collapse.js');
+        %= javascript url_for('/js/bootstrap-dropdown.js');
+        %= javascript url_for('/js/bootstrap-modal.js');
+        %= javascript url_for('/js/bootstrap-popover.js');
+        %= javascript url_for('/js/bootstrap-scrollspy.js');
+        %= javascript url_for('/js/bootstrap-tab.js');
+        %= javascript url_for('/js/bootstrap-tooltip.js');
+        %= javascript url_for('/js/bootstrap-transition.js');
+        %= javascript url_for('/js/bootstrap-typeahead.js');
+        %= javascript url_for('/js/jquery-ui.min.js');
+        %= javascript url_for('/js/jquery.iframe-transport.js');
+        %= javascript url_for('/js/jquery.ui.datepicker.js');
+        %= javascript url_for('/js/vendor/jquery.ui.widget.js');
+        <title><%= title %></title>
+    </head>
+    <body>
+        <div class="row">
+            <div class="span12">
+                <%= content %>
+            </div>
+        </div>
+    </body>
 </html>
