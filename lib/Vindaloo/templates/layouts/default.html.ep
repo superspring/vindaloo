@@ -26,10 +26,8 @@
         <title><%= title %></title>
     </head>
     <body>
-        <div class="row">
-            <div class="span12">
-                <%= content %>
-            </div>
-        </div>
+                <div class="container">
+                    <%= content %>
+                </div>
     </body>
 </html>
