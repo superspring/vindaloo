@@ -1,0 +1,32 @@
+% layout 'default';
+% title 'Available Curries';
+
+<div class="row">
+    <div class="span12">
+<div class="row">
+    % while (my $ingredient = $ingredients->next) {
+    <div class="span6">
+        <table class="table table-condensed table-striped">
+    % foreach my $curry_type ($curry_types->all) {
+        % my $dishes = $menus->search({base_ingredient =>
+        % $ingredient->id,curry_type => $curry_type->id,active => 1});
+        % next unless $dishes->count;
+    <tr>
+        <td><%= ucfirst $ingredient->name %></td>
+        <td><%= ucfirst $curry_type->name %></td>
+        <td>
+            % foreach my $dish ($dishes->all) {
+            <a href="">
+                <span class="btn <%=
+                    $spiceyness_btns->{$dish->spiceyness->name}
+                    %>"><%= $dish->spiceyness->name %></span></a>
+            % }
+        </td>
+    </tr>
+    % }
+        </table>
+    </div>
+    % }
+</div>
+    </div>
+</div>
