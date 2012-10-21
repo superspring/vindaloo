@@ -56,18 +56,19 @@ sub startup {
 
   # Router
   my $r = $self->routes;
-  $r->route('/login')->to('login#index');
-  $r->post('/login')->to('login#validate');
 
   # Basic authentication for all routes.
 
   my $authenticated_route = $r->bridge('/')->to('users#authenticate');
-  $authenticated_route->get('')->to('users#index');
-
-
+  $authenticated_route->get('')->to('curry#index');
+  $r->get('/login')->to('login#index');
+  $r->post('/login')->to('login#validate');
   $r->get('/signup')->name('signup')->to('users#signup');
   $r->post('/signup')->to('users#signup_validated');
 
+
+  $authenticated_route->route('/curries')->to('curry#index');
+  $authenticated_route->route('/logout')->to('logout#index');
 
 }
 
@@ -108,7 +109,7 @@ sub is_role {
     }
     $app->app->log->debug(
         "Checking if " . $user->email . " has role " . $role );
-    my $count = $user->roles( { 'role.quaildog_role' => $role } )->count;
+    my $count = $user->roles( { 'role.name' => $role } )->count;
     return $count;
 
 }

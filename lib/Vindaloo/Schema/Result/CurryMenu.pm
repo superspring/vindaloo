@@ -16,17 +16,14 @@ __PACKAGE__->add_columns(
       reverse_name/
 );
 
-__PACKAGE__->belongs_to(base_ingredient => BaseIngredient => {'foreign.id' =>
-'self.base_ingredient'});
+__PACKAGE__->belongs_to( base_ingredient => BaseIngredient =>
+      { 'foreign.id' => 'self.base_ingredient' } );
 
-__PACKAGE__->belongs_to(curry_type => CurryType => {'foreign.id' =>
-'self.curry_type'});
+__PACKAGE__->belongs_to(
+    curry_type => CurryType => { 'foreign.id' => 'self.curry_type' } );
 
-__PACKAGE__->belongs_to(spiceyness => Spiceyness => {'foreign.id' =>
-'self.spiceyness'});
-
-
-
+__PACKAGE__->belongs_to(
+    spiceyness => Spiceyness => { 'foreign.id' => 'self.spiceyness' } );
 
 1;
 
