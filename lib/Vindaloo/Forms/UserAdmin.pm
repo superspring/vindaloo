@@ -39,7 +39,7 @@ has_field email => ( type => 'Text', label => 'Email', required => 1 );
 has_field roles => (
     type         => 'Multiple',
     widget       => 'CheckboxGroup',
-    label_column => 'quaildog_role'
+    label_column => 'name'
 );
 has_field submit => ( type => 'Submit', noupdate => 1 );
 has_field 'reset' => ( type => 'Reset' );

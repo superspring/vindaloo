@@ -1,5 +1,32 @@
 % layout 'default';
 % title 'HotTeenVindaloos';
 
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Surname</th>
+            <th>Email</th>
+            <th>Receive Emails</th>
+            <th>Active</th>
+            <th>Admin</th>
+        </tr>
+    </thead>
+    <tbody>
+        % while (my $user = $users->next){
+            <tr>
+                <td><%= $user->first_name %></td>
+                <td><%= $user->surname %></td>
+                <td><%= $user->email %></td>
+                <td><%= $user->receive_email %></td>
+                <td><%= $user->active %></td>
+                <td>edit | delete</td>
+            </tr>
+        % }
+    </tbody>
+</table>
 
-<h3>Hi There</h3>
+
+
+
+

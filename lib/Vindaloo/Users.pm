@@ -15,6 +15,41 @@ sub authenticate {
 
 sub index {
     my $self = shift;
+    my $users = $self->db->resultset('User');
+    $self->stash(users => $users);
+}
+
+sub admin {
+    my $self = shift;
+    my $id = $self->param('id');
+    my $user = $self->db->resultset('User')->find($id);
+    $self->stash(user => $user);
+}
+
+sub edit {
+    my $self = shift;
+    my $user = $self->stash->{user};
+    my $form = Vindaloo::Forms::UserAdmin->new();
+    $form->process(
+        item => $user,
+        schema => $self->db,
+        action => $self->url_for(edituser => id =>
+            $user->id)->to_abs->scheme('https'),
+        inactive => [qw/password confirm_password/]
+
+    );
+    $self->stash(form => $form);
+}
+
+sub post_edit {
+    my $self = shift;
+    $self->edit;
+    my $form  = $self->stash->{form};
+    my $request = $self->request->param->to_hash;
+    $form->process(params => $request);
+    if ($form->validated) {
+        $self->redirect_to($self->url_for('userlist')->to_abs->scheme('https'));
+    }
 }
 
 sub signup {

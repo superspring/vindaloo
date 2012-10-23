@@ -15,6 +15,7 @@ __PACKAGE__->add_columns(
       balance
       receive_email
       create_date
+      active
       /
 );
 
