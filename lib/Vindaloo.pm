@@ -65,6 +65,7 @@ sub startup {
   $r->post('/login')->to('login#validate');
   $r->get('/signup')->name('signup')->to('users#signup');
   $r->post('/signup')->to('users#signup_validated');
+
   my $user_admin = $authenticated_route->bridge('/user/admin/:id')->to('users#admin');
   $authenticated_route->route('/users')->name('userlist')->to('users#index');
   $user_admin->get('/edit')->name('edituser')->to('users#edit');
