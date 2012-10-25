@@ -14,61 +14,100 @@ sub authenticate {
 }
 
 sub index {
-    my $self = shift;
+    my $self  = shift;
     my $users = $self->db->resultset('User');
-    $self->stash(users => $users);
+    $self->stash( users => $users );
 }
 
 sub admin {
     my $self = shift;
-    my $id = $self->param('id');
+    my $id   = $self->param('id');
     my $user = $self->db->resultset('User')->find($id);
-    $self->stash(user => $user);
+    $self->stash(
+        user        => $user,
+        form_action => $self->url_for( edituser => id => $user->id )
+          ->to_abs->scheme('https'),
+        validate_redirect =>
+          $self->url_for('userlist')->to_abs->scheme('https'),
+        active_fields => [qw/first_name surname roles/]
+    );
+}
+
+sub profile {
+    my $self = shift;
+    my $id   = $self->param('id');
+    my $user = $self->db->resultset('User')->find($id);
+
+    # override the action set in admin
+    $self->stash(
+        user        => $user,
+        form_action => $self->url_for( editprofile => id => $user->id )
+          ->to_abs->scheme('https'),
+        validate_redirect =>
+          $self->url_for('/curries')->to_abs->scheme('https'),
+        active_fields => [qw/first_name surname email/]
+    );
+
+}
+
+sub password {
+    my $self = shift;
+    my $id   = $self->param('id');
+    my $user = $self->db->resultset('User')->find($id);
+
+    # override the action set in admin
+    $self->stash(
+        user        => $user,
+        form_action => $self->url_for( changepassword => id => $user->id )
+          ->to_abs->scheme('https'),
+        validate_redirect =>
+          $self->url_for('/curries')->to_abs->scheme('https'),
+        active_fields => [qw/password confirm_password/]
+    );
 }
 
 sub edit {
     my $self = shift;
     my $user = $self->stash->{user};
-    my $form = Vindaloo::Forms::UserAdmin->new();
-    $form->process(
-        item => $user,
-        schema => $self->db,
-        action => $self->url_for(edituser => id =>
-            $user->id)->to_abs->scheme('https'),
-        inactive => [qw/password confirm_password/]
-
+    my $form = Vindaloo::Forms::UserAdmin->new(
+        mojo_bcrypt_validate => sub {$self->mojo_bcrypt_validate(@_)},
+        mojo_bcrypt          => sub {$self->mojo_bcrypt(@_) }
     );
-    $self->stash(form => $form);
+    $form->process(
+        item     => $user,
+        schema   => $self->db,
+        action   => $self->stash->{form_action},
+        active => $self->stash->{active_fields}
+    );
+    $self->stash( form => $form );
 }
 
 sub post_edit {
     my $self = shift;
     $self->edit;
-    my $form  = $self->stash->{form};
-    my $request = $self->request->param->to_hash;
-    $form->process(params => $request);
-    if ($form->validated) {
-        $self->redirect_to($self->url_for('userlist')->to_abs->scheme('https'));
+    my $form    = $self->stash->{form};
+    my $request = $self->req->params->to_hash;
+    $form->process(
+        params   => $request,
+        item     => $self->stash->{user},
+        active => $self->stash->{active_fields}
+    );
+    if ( $form->validated ) {
+        $self->redirect_to( $self->stash->{validate_redirect} );
     }
+    $self->render('users/edit');
 }
 
 sub signup {
     my $self = shift;
     my $form = Vindaloo::Forms::UserAdmin->new(
-        mojo_bcrypt_validate => sub {
-            my ( $bcrypted, $to_confirm ) = @_;
-            return $self->bcrypt_validate( $to_confirm, $bcrypted );
-        },
-        mojo_bcrypt => sub {
-            my $value    = shift;
-            my $bcrypted = $self->bcrypt($value);
-            return $bcrypted;
-        }
+        mojo_bcrypt_validate => sub {$self->mojo_bcrypt_validate(@_)},
+        mojo_bcrypt          => sub {$self->mojo_bcrypt(@_) }
     );
     $form->process(
-        schema => $self->db,
-        action => $self->url_for('signup')->to_abs->scheme('https'),
-        inactive => [qw/roles/],
+        schema   => $self->db,
+        action   => $self->url_for('signup')->to_abs->scheme('https'),
+        active => [qw/first_name surname password confirm_password email/],
     );
     $self->stash(
         form        => $form,
@@ -81,23 +120,28 @@ sub signup_validated {
     $self->signup;
     my $form = $self->stash->{form};
     try {
-        $form->process(
-            params => $self->req->params->to_hash
-        );
-        if ($form->validated) {
-            $self->redirect_to(
-                $self->url_for('/')->to_abs->scheme('https')
-            );
+        $form->process( params => $self->req->params->to_hash );
+        if ( $form->validated ) {
+            $self->redirect_to( $self->url_for('/')->to_abs->scheme('https') );
         }
-
     }
-    catch (DBIx::Class::Exception $e where {$_ ~~ qr/email_key/}) {
+    catch( DBIx::Class::Exception $e where { $_ ~~ qr/email_key/ } ) {
         $form->field('email')->add_error("This email already exists!");
-    }
+      }
 
-    $self->render('users/signup');
+      $self->render('users/signup');
 }
 
+sub mojo_bcrypt_validate {
+    my ( $self,$bcrypted, $to_confirm ) = @_;
+    return $self->bcrypt_validate( $to_confirm, $bcrypted );
+}
+
+sub mojo_bcrypt {
+    my ($self, $value) = @_;
+    my $bcrypted = $self->bcrypt($value);
+    return $bcrypted;
+}
 
 1;
 

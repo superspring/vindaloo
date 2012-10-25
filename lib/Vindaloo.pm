@@ -5,7 +5,6 @@ use Mojo::Base 'Mojolicious';
 use File::Basename 'dirname';
 use File::Spec::Functions 'catdir';
 
-
 use Vindaloo::Schema;
 
 has schema => sub {
@@ -20,7 +19,7 @@ has schema => sub {
 };
 
 sub startup {
-  my $self = shift;
+    my $self = shift;
 
     $self->home->parse( catdir( dirname(__FILE__), 'Vindaloo' ) );
     $self->static->paths->[0]   = $self->home->rel_dir('public');
@@ -51,29 +50,38 @@ sub startup {
         }
     );
 
-  # Documentation browser under "/perldoc"
-  $self->plugin('PODRenderer');
+    # Documentation browser under "/perldoc"
+    $self->plugin('PODRenderer');
 
-  # Router
-  my $r = $self->routes;
+    # Router
+    my $r = $self->routes;
 
-  # Basic authentication for all routes.
+    # Basic authentication for all routes.
 
-  my $authenticated_route = $r->bridge('/')->to('users#authenticate');
-  $authenticated_route->get('')->to('curry#index');
-  $r->get('/login')->to('login#index');
-  $r->post('/login')->to('login#validate');
-  $r->get('/signup')->name('signup')->to('users#signup');
-  $r->post('/signup')->to('users#signup_validated');
+    my $authenticated_route = $r->bridge('/')->to('users#authenticate');
+    $authenticated_route->get('')->to('curry#index');
+    $r->get('/login')->to('login#index');
+    $r->post('/login')->to('login#validate');
+    $r->get('/signup')->name('signup')->to('users#signup');
+    $r->post('/signup')->to('users#signup_validated');
 
-  my $user_admin = $authenticated_route->bridge('/user/admin/:id')->to('users#admin');
-  $authenticated_route->route('/users')->name('userlist')->to('users#index');
-  $user_admin->get('/edit')->name('edituser')->to('users#edit');
-  $user_admin->post('/edit')->to('users#post_edit');
+    my $user_admin =
+      $authenticated_route->bridge('/user/admin/:id')->to('users#admin');
+    $authenticated_route->route('/users')->name('userlist')->to('users#index');
+    $user_admin->get('/edit')->name('edituser')->to('users#edit');
+    $user_admin->post('/edit')->to('users#post_edit');
 
+    my $profile_admin =
+      $authenticated_route->bridge('/user/profile/:id')->to('users#profile');
+    $profile_admin->get('/edit')->name('editprofile')->to('users#edit');
+    $profile_admin->post('/edit')->to('users#post_edit');
+    my $password_admin =
+    $authenticated_route->bridge('/user/password/:id')->to('users#password');
+    $password_admin->get('/edit')->name('changepassword')->to('users#edit');
+    $password_admin->post('/edit')->to('users#post_edit');
 
-  $authenticated_route->route('/curries')->to('curry#index');
-  $authenticated_route->route('/logout')->to('logout#index');
+    $authenticated_route->route('/curries')->to('curry#index');
+    $authenticated_route->route('/logout')->to('logout#index');
 
 }
 
@@ -128,7 +136,6 @@ sub user_roles {
     return $app->current_user->roles->first->quaildog_role;
 
 }
-
 
 1;
 

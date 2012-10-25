@@ -20,7 +20,7 @@
                 <td><%= $user->email %></td>
                 <td><%= $user->receive_email %></td>
                 <td><%= $user->active %></td>
-                <td><a href="<%
+                <td><a href="<%=
                         url_for(edituser => id =>
                         $user->id)->to_abs->scheme('https')
                         %>">edit</a> | delete</td>
