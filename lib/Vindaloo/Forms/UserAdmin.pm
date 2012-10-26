@@ -21,31 +21,25 @@ has_field first_name => (
     label       => 'First name',
     placeholder => 'First Name',
     required    => 1,
-    inactive => 1
 );
-has_field surname => ( type => 'Text', label => 'Last name', required => 1,
-inactive => 1 );
+has_field surname => ( type => 'Text', label => 'Last name', required => 1,);
 has_field password => (
     type                 => 'Password',
     label                => 'Password',
     required             => 1,
     deflate_value_method => \&password_deflator,
-    inactive => 1
 );
 has_field confirm_password => (
     type     => 'Password',
     label    => 'Confirm Password',
     required => 1,
     noupdate => 1,
-    inactive => 1
 );
-has_field email => ( type => 'Text', label => 'Email', required => 1,inactive
-=> 1);
+has_field email => ( type => 'Text', label => 'Email', required => 1,);
 has_field roles => (
     type         => 'Multiple',
     widget       => 'CheckboxGroup',
     label_column => 'name',
-    inactive => 1
 
 );
 has_field submit => ( type => 'Submit', noupdate => 1 );

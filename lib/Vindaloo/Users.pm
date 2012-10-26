@@ -29,7 +29,7 @@ sub admin {
           ->to_abs->scheme('https'),
         validate_redirect =>
           $self->url_for('userlist')->to_abs->scheme('https'),
-        active_fields => [qw/first_name surname roles/]
+        inactive_fields => [qw/password confirm_password/]
     );
 }
 
@@ -45,7 +45,7 @@ sub profile {
           ->to_abs->scheme('https'),
         validate_redirect =>
           $self->url_for('/curries')->to_abs->scheme('https'),
-        active_fields => [qw/first_name surname email/]
+        inactive_fields => [qw/roles password confirm_password/]
     );
 
 }
@@ -62,7 +62,7 @@ sub password {
           ->to_abs->scheme('https'),
         validate_redirect =>
           $self->url_for('/curries')->to_abs->scheme('https'),
-        active_fields => [qw/password confirm_password/]
+        inactive_fields => [qw/first_name surname roles email/]
     );
 }
 
@@ -77,7 +77,7 @@ sub edit {
         item     => $user,
         schema   => $self->db,
         action   => $self->stash->{form_action},
-        active => $self->stash->{active_fields}
+        inactive => $self->stash->{inactive_fields}
     );
     $self->stash( form => $form );
 }
@@ -90,7 +90,7 @@ sub post_edit {
     $form->process(
         params   => $request,
         item     => $self->stash->{user},
-        active => $self->stash->{active_fields}
+        inactive => $self->stash->{inactive_fields}
     );
     if ( $form->validated ) {
         $self->redirect_to( $self->stash->{validate_redirect} );
@@ -101,13 +101,19 @@ sub post_edit {
 sub signup {
     my $self = shift;
     my $form = Vindaloo::Forms::UserAdmin->new(
-        mojo_bcrypt_validate => sub {$self->mojo_bcrypt_validate(@_)},
-        mojo_bcrypt          => sub {$self->mojo_bcrypt(@_) }
+        mojo_bcrypt_validate => sub {
+            my ( $bcrypted, $to_confirm ) = @_;
+            return $self->bcrypt_validate( $to_confirm, $bcrypted );
+        },
+        mojo_bcrypt => sub {
+            my $value = shift;
+            $self->mojo_bcrypt($value);
+        }
     );
     $form->process(
-        schema   => $self->db,
-        action   => $self->url_for('signup')->to_abs->scheme('https'),
-        active => [qw/first_name surname password confirm_password email/],
+        schema => $self->db,
+        action => $self->url_for('signup')->to_abs->scheme('https'),
+        inactive => [qw/roles/],
     );
     $self->stash(
         form        => $form,
@@ -122,6 +128,7 @@ sub signup_validated {
     try {
         $form->process( params => $self->req->params->to_hash );
         if ( $form->validated ) {
+            $self->app->log->debug("Validated");
             $self->redirect_to( $self->url_for('/')->to_abs->scheme('https') );
         }
     }
