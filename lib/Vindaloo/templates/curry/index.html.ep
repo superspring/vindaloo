@@ -2,31 +2,50 @@
 % title 'Available Curries';
 
 <div class="row">
-    <div class="span12">
-<div class="row">
-    % while (my $ingredient = $ingredients->next) {
-    <div class="span6">
-        <table class="table table-condensed table-striped">
-    % foreach my $curry_type ($curry_types->all) {
-        % my $dishes = $menus->search({base_ingredient =>
-        % $ingredient->id,curry_type => $curry_type->id,active => 1});
-        % next unless $dishes->count;
-    <tr>
-        <td><%= ucfirst $ingredient->name %></td>
-        <td><%= ucfirst $curry_type->name %></td>
-        <td>
-            % foreach my $dish ($dishes->all) {
-            <a href="">
-                <span class="btn <%=
-                    $spiceyness_btns->{$dish->spiceyness->name}
-                    %>"><%= $dish->spiceyness->name %></span></a>
+    <div class="span10">
+        <div class="row">
+            % while (my $category = $categories->next) {
+            <div class="span4 well">
+                <div class="">
+                    <%= ucfirst(lc $category->name )%>
+                    <table class="table table-condensed table-striped">
+                        <tbody>
+                            % my $base_ingredients = $category->base_ingredients;
+                            % while (my $ingredient = $base_ingredients->next) {
+                                % foreach my $curry_type ($curry_types->all) {
+                                %   my $menu = $ingredient->curry_menus(
+                                %     {active => 1, curry_type => $curry_type->id})
+                                %       ->first;
+                                %   next unless $menu;
+                    <tr>
+                        <td><%= ucfirst $ingredient->name %> <%= ucfirst
+                            $curry_type->name %></td>
+                        <td>
+                        % foreach my $heat ($menu->spiceynesses) {
+                            % my $dish = $menus->search({spiceyness =>
+                            %   $heat->id})->first;
+                            % next unless $dish;
+                            <a href="<%=
+                                url_for(orderdish => dish => $dish->id)
+                                ->to_abs->scheme('https')
+                            %>">
+                                <span class="btn btn-mini <%=
+                                    $spiceyness_btns->{$heat->name}
+                                    %>"><%= $heat->name %></span></a>
+                        % }
+                        </td>
+                                % }
+                    </tr>
+                            % }
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
             % }
-        </td>
-    </tr>
-    % }
-        </table>
+        </div>
     </div>
-    % }
-</div>
+    <div class="span2">
+        <h5>Shopping Cart</h5>
     </div>
 </div>

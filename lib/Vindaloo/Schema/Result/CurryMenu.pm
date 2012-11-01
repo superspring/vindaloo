@@ -13,8 +13,10 @@ __PACKAGE__->add_columns(
       spiceyness
       price
       active
-      reverse_name/
+      reverse_name
+      /
 );
+__PACKAGE__->set_primary_key('id');
 
 __PACKAGE__->belongs_to( base_ingredient => BaseIngredient =>
       { 'foreign.id' => 'self.base_ingredient' } );
@@ -22,8 +24,15 @@ __PACKAGE__->belongs_to( base_ingredient => BaseIngredient =>
 __PACKAGE__->belongs_to(
     curry_type => CurryType => { 'foreign.id' => 'self.curry_type' } );
 
-__PACKAGE__->belongs_to(
-    spiceyness => Spiceyness => { 'foreign.id' => 'self.spiceyness' } );
+
+__PACKAGE__->has_many( orders => Order => { 'foreign.dish' => 'self.id' } );
+
+__PACKAGE__->has_many(dish_spiceynesses =>
+'Vindaloo::Schema::Result::DishSpiceyness' => {'foreign.dish' => 'self.id'});
+
+__PACKAGE__->many_to_many(spiceynesses => dish_spiceynesses => 'spiceyness');
+
+
 
 1;
 

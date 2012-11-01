@@ -23,6 +23,13 @@ __PACKAGE__->set_primary_key('id');
 
 __PACKAGE__->has_many(
     user_roles => UserRole => { 'foreign.curry_user' => 'self.id' } );
+
+__PACKAGE__->has_many(
+    orders => Order => { 'foreign.curry_user' => 'self.id' } );
+
+__PACKAGE__->has_many(
+    side_orders => SideOrder => { 'foreign.curry_user' => 'self.id' } );
+
 __PACKAGE__->many_to_many( roles => user_roles => 'role' );
 
 1;

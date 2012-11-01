@@ -1,0 +1,3 @@
+% layout 'default';
+% title 'Edit '. (ucfirst $type);
+<%== $form->render %>

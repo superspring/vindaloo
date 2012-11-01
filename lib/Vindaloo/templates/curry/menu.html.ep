@@ -1,0 +1,76 @@
+% layout 'default';
+% title 'Menu admin';
+
+<div class="span12">
+    <div class="row">
+        <div class="span8">
+            <div class="row">
+                <div class="span2 offset6">
+                    <a href="<%=
+                        url_for(
+                        createmenuitem => type => 'menu'
+                        )->to_abs->scheme('https')
+                        %>">
+                        <span class="btn btn-info">Add
+                        <b class="icon-plus icon-white"></b></span>
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span8">
+                    % if ($categories->count) {
+                            <table class="table table-striped ">
+                                <thead>
+                                    <th>Name</th>
+                                    <th>Hottness</th>
+                                    <th>Price</th>
+                                    <th>Active</th>
+                                    <th>Admin</th>
+                                </thead>
+                                <tbody>
+        % while (my $category = $categories->next) {
+            % my $base_ingredients = $category->base_ingredients;
+            % if ($base_ingredients->count) {
+                % while (my $ingredient = $base_ingredients->next) {
+                    % my $curry_menus = $ingredient->curry_menus;
+                    % if ( $curry_menus->count ) {
+                        % while (my $item = $curry_menus->next) {
+                        <tr>
+                            <td>
+                                <%= $ingredient->name %>
+                                <%= $item->curry_type->name %>
+                            </td>
+                            <td><%= $item->spiceyness->name %> </td>
+                            <td><%= $item->price  %></td>
+                            <td><%= $item->active %></td>
+                            <td><a href="<%= url_for(
+                                    editmenuitem => type => menu => id =>
+                                    $item->id
+                                    )->to_abs->scheme('https')
+                                    %>">edit</a> | <a href="">deactivate</a></td>
+                        </tr>
+                        % }
+                    % }
+                % }
+            % }
+        % }
+                                </tbody>
+                            </table>
+                    %    }
+                </div>
+            </div>
+        </div>
+        <div class="span4">
+        <div class="row">
+        %= include 'curry/base_ingredients';
+        </div>
+        <div class="row">
+        %= include 'curry/curry_types';
+        </div>
+        <div class="row">
+        %= include 'curry/side_dishes';
+        </div>
+
+        </div>
+    </div>
+</div>

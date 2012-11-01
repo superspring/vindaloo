@@ -1,0 +1,50 @@
+% layout 'default';
+% title 'Event list';
+
+<div class="span12">
+    <div class="row">
+        <div class="span2 offset10">
+            <a href="<%=
+           url_for('createevent')->to_abs->scheme('https')
+            %>"><span class="btn btn-info">Add</span></a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            % if ($events->count) {
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Event Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        % while (my $event = $events->next) {
+                            <tr>
+                                <td><%= $event->event_date %></td>
+                                <td>
+                                    % if ($event->orders_open) {
+                                        <a href="<%=
+                                        url_for(closeevent => id =>
+                                        $event->id)->to_abs->scheme('https')
+                                        %>">
+                                        <span class="btn btn-danger">Close<b class="icon-white
+                                        icon-flag"></b></span></a>
+                                    %    }
+                                    % else {
+                                        <span class="btn btn-inverse">closed
+                                        <b class="icon-white icon-lock"></b></span>
+
+                                    %   }
+                                </td>
+                            </tr>
+                        % }
+                    </tbody>
+                </table>
+            % }
+            % else {
+            % }
+        </div>
+    </div>
+</div>
