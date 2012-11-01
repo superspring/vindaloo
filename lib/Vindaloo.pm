@@ -66,22 +66,52 @@ sub startup {
     $r->post('/signup')->to('users#signup_validated');
 
     my $user_admin =
-      $authenticated_route->bridge('/user/admin/:id')->to('users#admin');
-    $authenticated_route->route('/users')->name('userlist')->to('users#index');
+      $authenticated_route->bridge('/user/admin/:id')
+      ->over( is => 'admin' )->to('users#admin');
+    $authenticated_route->route('/users')->over( is => 'admin' )
+      ->name('userlist')->to('users#index');
     $user_admin->get('/edit')->name('edituser')->to('users#edit');
     $user_admin->post('/edit')->to('users#post_edit');
+
+    $authenticated_route->route('/curry/menu')->over( is => 'admin' )
+      ->to('curry#menu');
+    $authenticated_route->route('/curry/base-ingredients')
+      ->over( is => 'admin' )->to('curry#base_ingredients');
+    $authenticated_route->route('/curry/curry-types')->over( is => 'admin' )
+      ->to('curry#curry_types');
+    $authenticated_route->route('/curry/side-dishes')->over( is => 'admin' )
+      ->to('curry#side_dishes');
+    my $curry_admin =
+      $authenticated_route->bridge('/curry/type/:type')
+      ->over( is => 'admin' )->to('curry#type');
+    $curry_admin->route('/create')->name('createmenuitem')->to('curry#create');
+    my $edit_curry = $curry_admin->bridge('/admin/:id')->to('curry#admin');
+    $edit_curry->route('/edit')->name('editmenuitem')->to('curry#edit');
 
     my $profile_admin =
       $authenticated_route->bridge('/user/profile/:id')->to('users#profile');
     $profile_admin->get('/edit')->name('editprofile')->to('users#edit');
     $profile_admin->post('/edit')->to('users#post_edit');
     my $password_admin =
-    $authenticated_route->bridge('/user/password/:id')->to('users#password');
+      $authenticated_route->bridge('/user/password/:id')->to('users#password');
     $password_admin->get('/edit')->name('changepassword')->to('users#edit');
     $password_admin->post('/edit')->to('users#post_edit');
 
     $authenticated_route->route('/curries')->to('curry#index');
     $authenticated_route->route('/logout')->to('logout#index');
+
+    $authenticated_route->route('/events')->over( is => 'admin' )
+      ->to('events#index');
+    $authenticated_route->route('/event/create')->name('createevent')
+      ->over( is => 'admin' )->to('events#create');
+    my $event_admin =
+      $authenticated_route->bridge('/event/admin/:id')->over( is => 'admin' )
+      ->to('events#admin');
+    $event_admin->route('/close')->name('closeevent')->to('events#close');
+
+    $authenticated_route->route('/order-dish/:dish')->over(is =>
+        'user')->name('orderdish')->to('orders#order_dish');
+    $r->route('/orders/closed')->name('ordersclosed')->to('orders#closed');
 
 }
 
@@ -118,7 +148,6 @@ sub is_role {
         $app->redirect_to(
             $app->url_for( '/login', )->to_abs->scheme('https') );
         return 0;
-
     }
     $app->app->log->debug(
         "Checking if " . $user->email . " has role " . $role );
@@ -133,7 +162,7 @@ sub user_privs {
 
 sub user_roles {
     my ( $app, $extradata ) = @_;
-    return $app->current_user->roles->first->quaildog_role;
+    return $app->current_user->roles->first->name;
 
 }
 
