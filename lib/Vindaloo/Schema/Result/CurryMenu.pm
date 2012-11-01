@@ -10,7 +10,6 @@ __PACKAGE__->add_columns(
       id
       base_ingredient
       curry_type
-      spiceyness
       price
       active
       reverse_name
