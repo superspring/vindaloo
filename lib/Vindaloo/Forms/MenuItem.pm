@@ -18,8 +18,12 @@ has_field curry_type => (
 curry --',
     label_column => 'name'
 );
-has_field spiceyness =>
-  ( type => 'Select',  label_column => 'name' );
+has_field spiceynesses => (
+    type         => 'Multiple',
+    widget       => 'CheckboxGroup',
+    label_column => 'name',
+    label        => 'Spiceyness'
+);
 has_field price => ( type => 'Text' );
 has_field active => ( type => 'Checkbox', label_column => 'active' );
 
@@ -44,7 +48,7 @@ sub build_update_subfields {
 }
 
 sub build_render_list {
-    return [qw/base_ingredient curry_type spiceyness price active buttonset/];
+    return [qw/base_ingredient curry_type spiceynesses price active buttonset/];
 }
 
 no HTML::FormHandler::Moose;

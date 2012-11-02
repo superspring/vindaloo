@@ -5,11 +5,15 @@ extends 'Vindaloo::Forms::MenuBase';
 
 has '+item_class' => ( default => 'Vindaloo::Schema::Result::BaseIngredient' );
 
-has_field category => (type => 'Select', label_column => 'name', empty_select
-=> '-- Pick a category --');
+has_field category => (
+    type         => 'Select',
+    label_column => 'name',
+    empty_select => '-- Pick a category --'
+);
+
 
 sub build_render_list {
-    return [qw/name category active buttonset/];
+    return [qw/name category link active buttonset/];
 }
 
 no HTML::FormHandler::Moose;

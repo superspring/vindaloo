@@ -3,6 +3,8 @@ package Vindaloo::Forms::MenuBase;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Model::DBIC';
 
+use Smart::Comments;
+
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 
 has_field name => ( type => 'Text', label => 'Name' );
@@ -11,6 +13,29 @@ has_field active => (
     label        => 'Active',
     label_column => 'active'
 );
+
+has_field 'link' => (
+    type                 => 'Text',
+    disabled => 1,
+    deflate_default_method =>\&convert_name_to_link,
+    inflate_default_method =>\&convert_name_to_link,
+);
+
+sub convert_name_to_link {
+        my ( $self, $field ) = @_;
+
+        my $value = lc $self->form->field('name')->value;
+        if ( $value =~ /[\s]/ ) {
+
+            $value = lc $value;
+            ### name field : $value
+            $value =~ s/\s+/-/g;
+            ### converted to : $value
+            return $value;
+
+        }
+        return $value;
+}
 
 has_field submit  => ( type => 'Submit' );
 has_field 'reset' => ( type => 'Reset' );
@@ -32,7 +57,7 @@ sub build_update_subfields {
 }
 
 sub build_render_list {
-    return [qw/name active buttonset/];
+    return [qw/name link active buttonset/];
 }
 
 no HTML::FormHandler::Moose;

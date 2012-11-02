@@ -109,7 +109,7 @@ sub startup {
       ->to('events#admin');
     $event_admin->route('/close')->name('closeevent')->to('events#close');
 
-    $authenticated_route->route('/order-dish/:dish')->over(is =>
+    $authenticated_route->route('/order-dish/:ingredient/:curry/:spice')->over(is =>
         'user')->name('orderdish')->to('orders#order_dish');
     $r->route('/orders/closed')->name('ordersclosed')->to('orders#closed');
 

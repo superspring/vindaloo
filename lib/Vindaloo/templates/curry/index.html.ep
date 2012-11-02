@@ -22,11 +22,12 @@
                             $curry_type->name %></td>
                         <td>
                         % foreach my $heat ($menu->spiceynesses) {
-                            % my $dish = $menus->search({spiceyness =>
-                            %   $heat->id})->first;
-                            % next unless $dish;
                             <a href="<%=
-                                url_for(orderdish => dish => $dish->id)
+                                url_for('orderdish' ,
+                                ingredient =>  $ingredient->link ,
+                                curry =>  $curry_type->link  ,
+                                spice => $heat->name
+                                )
                                 ->to_abs->scheme('https')
                             %>">
                                 <span class="btn btn-mini <%=
@@ -34,6 +35,7 @@
                                     %>"><%= $heat->name %></span></a>
                         % }
                         </td>
+                        <td><%= $menu->price %></td>
                                 % }
                     </tr>
                             % }

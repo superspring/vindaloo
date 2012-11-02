@@ -11,8 +11,8 @@ use Vindaloo::Forms::MenuItem;
 
 sub index {
     my $self               = shift;
-    my $model = $self->db;
-    my $categories =  $model->resultset('IngredientCategory');
+    my $model              = $self->db;
+    my $categories         = $model->resultset('IngredientCategory');
     my $ingredients        = $self->db->resultset('BaseIngredient');
     my $curry_types        = $self->db->resultset('CurryType');
     my $spiceyness         = $self->db->resultset('Spiceyness');
@@ -23,7 +23,7 @@ sub index {
         hot    => 'btn-danger'
     };
     $self->stash(
-        categories => $categories,
+        categories      => $categories,
         ingredients     => $ingredients,
         curry_types     => $curry_types,
         spiceyness      => $spiceyness,
@@ -34,14 +34,28 @@ sub index {
 }
 
 sub menu {
-    my $self  = shift;
+    my $self = shift;
     $self->base_ingredients;
     $self->curry_types;
     $self->side_dishes;
-    my $menus = $self->db->resultset('CurryMenu')->search(undef,{order_by =>
-            {'-asc'=> [qw/base_ingredient curry_type spiceyness/]}});
+    my $spiceyness_btn_map = {
+        mild   => 'btn-success',
+        medium => 'btn-warning',
+        hot    => 'btn-danger'
+    };
+    my $menus = $self->db->resultset('CurryMenu')->search(
+        undef,
+        {
+            order_by =>
+              { '-asc' => [qw/base_ingredient curry_type spiceyness/] }
+        }
+    );
     my $categories = $self->db->resultset('IngredientCategory');
-    $self->stash( menus => $menus ,categories => $categories);
+    $self->stash(
+        menus         => $menus,
+        categories    => $categories,
+        spicey_button => $spiceyness_btn_map
+    );
 }
 
 sub base_ingredients {
@@ -82,8 +96,7 @@ sub type {
         }
 
     }
-            $redirect_to =
-              $self->url_for('/curry/menu')->to_abs->scheme('https');
+    $redirect_to = $self->url_for('/curry/menu')->to_abs->scheme('https');
     $self->stash( form => $form, type => $type, redirect_to => $redirect_to );
 }
 

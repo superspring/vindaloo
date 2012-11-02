@@ -35,12 +35,20 @@
                     % my $curry_menus = $ingredient->curry_menus;
                     % if ( $curry_menus->count ) {
                         % while (my $item = $curry_menus->next) {
+                        % my @spicey = $item->spiceynesses->all;
+
                         <tr>
                             <td>
                                 <%= $ingredient->name %>
                                 <%= $item->curry_type->name %>
                             </td>
-                            <td><%= $item->spiceyness->name %> </td>
+                            <td>
+                                % foreach my $spice (@spicey) {
+                                <span class="btn btn-mini <%=
+                                    $spicey_button->{$spice->name}
+                                    %> "><%= $spice->name  %></span>
+                                % }
+                            </td>
                             <td><%= $item->price  %></td>
                             <td><%= $item->active %></td>
                             <td><a href="<%= url_for(
