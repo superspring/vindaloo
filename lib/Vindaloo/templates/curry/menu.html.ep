@@ -49,7 +49,7 @@
                                     %> "><%= $spice->name  %></span>
                                 % }
                             </td>
-                            <td><%= $item->price  %></td>
+                            <td>$<%= $item->price  %></td>
                             <td><%= $item->active %></td>
                             <td><a href="<%= url_for(
                                     editmenuitem => type => menu => id =>

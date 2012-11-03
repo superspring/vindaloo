@@ -6,8 +6,7 @@
         <div class="row">
             % while (my $category = $categories->next) {
             <div class="span6 well">
-                <div class="">
-                    <%= ucfirst(lc $category->name )%>
+                    <h4><%= ucfirst(lc $category->name )%></h4>
                     <table class="table table-condensed table-striped">
                         <tbody>
                             % my $base_ingredients = $category->base_ingredients;
@@ -52,9 +51,21 @@
                         </tbody>
 
                     </table>
-                </div>
             </div>
             % }
+            <div class="span6 well">
+                <h4>Side Dishes</h4>
+                <table class="table table-striped">
+                    <tbody>
+                        % while (my $side_dish = $side_dishes->next) {
+                        <tr>
+                            <td><a href=""><%= $side_dish->name %></a></td>
+                            <td>$<%= $side_dish->price %></td>
+                        </tr>
+                        % }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <div class="span4 well">
@@ -90,15 +101,15 @@
                                         cancelorder => id => $order->id
                                         )->to_abs->scheme('https')
                                         %>">
-                                        <button class="btn btn-mini btn-danger">
+                                        <span class="btn btn-mini btn-danger">
                                             <b class="icon-white icon-trash"></b>
-                                        </button>
+                                        </span>
                                     </a>
                                     % }
                                     % else {
-                                        <button class="btn disabled btn-mini btn-danger">
+                                        <span class="btn disabled btn-mini btn-danger">
                                             <b class="icon-white icon-trash"></b>
-                                        </button>
+                                        </span>
                                     %}
                                 </td>
                             </td>

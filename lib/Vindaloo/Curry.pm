@@ -14,12 +14,11 @@ sub index {
     my $model       = $self->db;
     my $categories  = $model->resultset('IngredientCategory');
     my $curry_types = $model->resultset('CurryType');
+    my $side_dishes = $model->resultset('SideDish')->search({active => 1});
 
     my $event_resultset = $model->resultset('OrderEvent');
-      my $latest_event_id =
-      $event_resultset->get_column('id')->max;
-    my $event =
-      $event_resultset->find($latest_event_id);
+    my $latest_event_id = $event_resultset->get_column('id')->max;
+    my $event           = $event_resultset->find($latest_event_id);
 
     my $spiceyness_btn_map = {
         mild   => 'btn-success',
@@ -35,7 +34,7 @@ sub index {
           $user->orders( { order_event => $event->id }, { 'join' => 'dish' } )
           if $event;
         my $event_sum = $user_orders->get_column('dish.price')->sum;
-        $event_sum = sprintf "%.2f",$event_sum;
+        $event_sum        = sprintf "%.2f", $event_sum;
         $previous_balance = $current_balance - $event_sum;
         $previous_balance = sprintf "%.2f", $previous_balance;
 
@@ -48,7 +47,8 @@ sub index {
         spiceyness_btns  => $spiceyness_btn_map,
         event            => $event,
         user_orders      => $user_orders,
-        previous_balance => $previous_balance
+        previous_balance => $previous_balance,
+        side_dishes      => $side_dishes,
     );
 
 }
