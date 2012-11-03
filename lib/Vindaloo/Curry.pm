@@ -35,10 +35,10 @@ sub index {
         $user_side_orders = $user->side_orders( { order_event => $event->id },
             { 'join' => 'side_dish' } );
 
-        my $event_sum = $user_orders->get_column('dish.price')->sum;
+        my $event_sum = $user_orders->get_column('dish.price')->sum // 0;
         my $side_dish_event_sum =
-          $user_side_orders->get_column('side_dish.price')->sum;
-        $event_sum += $side_dish_event_sum;
+          $user_side_orders->get_column('side_dish.price')->sum // 0;
+        $event_sum += $side_dish_event_sum ;
 
         $event_sum        = sprintf "%.2f", $event_sum;
         $previous_balance = $current_balance - $event_sum;
