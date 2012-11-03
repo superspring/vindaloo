@@ -1,0 +1,65 @@
+
+        <div class="row">
+            % while (my $category = $categories->next) {
+            <div class="span6 well">
+                    <h4><%= ucfirst(lc $category->name )%></h4>
+                    <table class="table table-condensed table-striped">
+                        <tbody>
+                            % my $base_ingredients = $category->base_ingredients;
+                            % while (my $ingredient = $base_ingredients->next) {
+                                % foreach my $curry_type ($curry_types->all) {
+                                %   my $menu = $ingredient->curry_menus(
+                                %     {active => 1, curry_type => $curry_type->id})
+                                %       ->first;
+                                %   next unless $menu;
+                            <tr>
+                                <td><%= ucfirst $ingredient->name %> <%= ucfirst
+                                    $curry_type->name %></td>
+                                <td>
+                                % foreach my $heat ($menu->spiceynesses) {
+                                % if ($event->orders_open){
+                                    <a href="<%=
+                                    url_for(
+                                        'orderdish',
+                                        ingredient => $ingredient->link,
+                                        curry      => $curry_type->link,
+                                        spice      => $heat->name
+                                    )->to_abs->scheme('https')
+                                                    %>">
+                                        <span class="btn btn-mini <%=
+                                            $spiceyness_btns->{$heat->name}
+                                            %>"><%= $heat->name %></span>
+                                    </a>
+                                % }
+                                % else {
+                                        <span class="btn disabled btn-mini <%=
+                                            $spiceyness_btns->{$heat->name}
+                                            %>"><%= $heat->name %></span>
+                                %}
+                                % }
+                                </td>
+                                <td>$<%= $menu->price %></td>
+                              % }
+                            </tr>
+                            % }
+                        </tbody>
+                    </table>
+            </div>
+            % }
+            <div class="span6 well">
+                <h4>Side Dishes</h4>
+                <table class="table table-striped">
+                    <tbody>
+                        % while (my $side_dish = $side_dishes->next) {
+                        <tr>
+                            <td><a href="<%=
+                            url_for(ordersidedish => dish =>
+                            $side_dish->link)->to_abs->scheme('https')
+                            %>"><%= $side_dish->name %></a></td>
+                            <td>$<%= $side_dish->price %></td>
+                        </tr>
+                        % }
+                    </tbody>
+                </table>
+            </div>
+        </div>

@@ -1,0 +1,79 @@
+
+    <div class="span4 well">
+        <h5>Your Account</h5>
+        <table class="table table-striped">
+            % if ($user_orders) {
+            <thead>
+                <tr>
+                    <th colspan=2>previous balance:</th>
+                    <th>$<%= $previous_balance %></th>
+                </tr>
+
+            </thead>
+            %}
+            <tbody>
+                % if ($user_orders) {
+                    % while (my $order = $user_orders->next){
+                        % my $dish = $order->dish;
+                        % my $spicey_name = $order->spiceyness->name;
+                        % my $spicey_btn = $spiceyness_btns->{$spicey_name};
+                        <tr>
+                            <td>
+                                    <%= $dish->base_ingredient->name %>
+                                    <%= $dish->curry_type->name %>
+                                        <%= $spicey_name %>
+                            </td>
+                                <td>
+                                    % if ($event->orders_open){
+                                    <a href="<%=
+                                        url_for(
+                                        cancelorder => id => $order->id
+                                        )->to_abs->scheme('https')
+                                        %>">
+                                        <span class="btn btn-mini btn-danger">
+                                            <b class="icon-white icon-trash"></b>
+                                        </span>
+                                    </a>
+                                    % }
+                                    % else {
+                                        <span class="btn disabled btn-mini btn-danger">
+                                            <b class="icon-white icon-trash"></b>
+                                        </span>
+                                    %}
+                                </td>
+                            <td>$<%= $dish->price %></td>
+                        </tr>
+                    % }
+                    % while (my $side_order = $user_side_orders->next){
+                        % my $side_dish = $side_order->side_dish;
+                        <tr>
+                            <td><%= $side_dish->name %></td>
+                            <td>
+                                % if ($event->orders_open){
+                                <a href="<%=
+                                    url_for(
+                                    cancelsidedish => id => $side_order->id
+                                    )->to_abs->scheme('https')
+                                    %>">
+                                    <span class="btn btn-mini btn-danger">
+                                        <b class="icon-white icon-trash"></b>
+                                    </span>
+                                </a>
+                                % }
+                                % else {
+                                    <span class="btn disabled btn-mini btn-danger">
+                                        <b class="icon-white icon-trash"></b>
+                                    </span>
+                                %}
+                            </td>
+                            <td>$<%= $side_dish->price %></td>
+                        </tr>
+
+                    % }
+                % }
+                <tr>
+                    <th colspan=2>Total:</th> <th>$<%= current_user->balance %></th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
