@@ -1,0 +1,60 @@
+% layout 'default';
+% title 'Orders for '.$event->event_date;
+
+<div class="row">
+    <div class="span6 offset3">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Dish</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            % my (  $total, $num_of_curries,$num_of_sides );
+            % while (my $order = $orders->next) {
+                % my $dish = $order->dish;
+                % my $ingredient = $dish->base_ingredient;
+                % my $curry = $dish->curry_type;
+                % my $ingredient_name =    $ingredient->name ;
+                % my $curry_name =    $curry->name ;
+                % my $spiceyness = $order->spiceyness;
+                % my $spiceyness_name = ucfirst(  lc(  $spiceyness->name ) );
+                % my $count = $order_rs->search(
+                % {dish => $dish->id, spiceyness => $spiceyness->id})
+                % ->count;
+                % $num_of_curries += $count;
+                % my $price = $count * $dish->price;
+                % $total += $price;
+                <tr>
+                    <td>
+                        <%= $ingredient_name %>
+                        <%= $curry_name %>
+                        <%= $spiceyness_name %>
+                    </td>
+                    <td><%= $count %></td>
+                    <td>$<%= sprintf "%.2f", $price %></td>
+                </tr>
+            % }
+            % while (my $side_order = $side_orders->next) {
+                % my $side_dish = $side_order->side_dish;
+                % my $side_name = $side_dish->name;
+                % my $count = $side_order_rs->search({side_dish =>
+                    % $side_dish->id})->count;
+                % $num_of_sides += $count;
+                % my $price = $count * $side_dish->price;
+                %  $total += $price;
+                <tr>
+                    <td><%= $side_name %></td>
+                    <td><%= $count %></td>
+                    <td>$<%= sprintf "%.2f", $price %></td>
+                </tr>
+            % }
+            <tr>
+                <th >Total</th>
+                <th><%= $num_of_curries %> Curries, <%= $num_of_sides %> sides</th>
+                <th>$<%= sprintf "%.2f", $total %></th>
+            </tr>
+        </table>
+    </div>
+</div>

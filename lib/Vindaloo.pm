@@ -109,6 +109,8 @@ sub startup {
       ->to('events#admin');
     $event_admin->route('/close')->name('closeevent')->to('events#close');
 
+    $event_admin->route('/orders')->name('eventorders')->to('orders#orders');
+
     my $user_order =
       $authenticated_route->bridge('/order')->over( is => 'user' )
       ->to('orders#verify_event');
@@ -128,6 +130,7 @@ sub startup {
 
     $side_dish_admin->route('/cancel')->name('cancelsidedish')
       ->to('orders#cancel_side_dish');
+
 
     $r->route('/orders/closed')->name('ordersclosed')->to('orders#closed');
 

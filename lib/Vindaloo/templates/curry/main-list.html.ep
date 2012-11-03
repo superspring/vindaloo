@@ -1,7 +1,7 @@
 
         <div class="row">
             % while (my $category = $categories->next) {
-            <div class="span6 well">
+            <div class="span6 well " id="<%= lc $category->name %>">
                     <h4><%= ucfirst(lc $category->name )%></h4>
                     <table class="table table-condensed table-striped">
                         <tbody>
@@ -46,8 +46,8 @@
                     </table>
             </div>
             % }
-            <div class="span6 well">
-                <h4>Side Dishes</h4>
+            <div class="span6 well" id="extras">
+                <h4>Extras</h4>
                 <table class="table table-striped">
                     <tbody>
                         % while (my $side_dish = $side_dishes->next) {

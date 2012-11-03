@@ -17,6 +17,7 @@
                         <tr>
                             <th>Event Date</th>
                             <th>Status</th>
+                            <th>Orders</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -37,6 +38,12 @@
                                         <b class="icon-white icon-lock"></b></span>
 
                                     %   }
+                                </td>
+                                <td>
+                                    <a href="<%=
+                                        url_for(eventorders => id  =>
+                                        $event->id)->to_abs->scheme('https')
+                                        %>">go to</a>
                                 </td>
                             </tr>
                         % }

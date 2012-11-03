@@ -1,6 +1,17 @@
 % layout 'default';
 % title 'Available Curries';
 
+<ul class="nav nav-tabs" >
+    % foreach my $category ($categories->all){
+        <li>
+            <a href="#<%= lc $category->name %>" ><%= 
+            $category->name 
+            %></a>
+        </li>
+    %  }
+    <li><a href="#extras">Extras</a></li>
+</ul>
+
 <div class="row">
     <div class="span7">
         %= include 'curry/main-list';

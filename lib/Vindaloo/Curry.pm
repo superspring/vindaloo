@@ -26,7 +26,7 @@ sub index {
         hot    => 'btn-danger'
     };
     my $user            = $self->current_user;
-    my $current_balance = $user->balance;
+    my $current_balance = $user->balance // 0;
     my ( $previous_balance, $user_orders, $user_side_orders );
 
     if ($event) {

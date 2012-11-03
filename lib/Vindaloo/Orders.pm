@@ -123,6 +123,10 @@ sub side_dish {
             order_event => $event->id,
         }
     );
+    my $balance = $current_user->balance;
+    $balance += $side_dish->price;
+    $current_user->balance($balance);
+    $current_user->update;
     $self->redirect_to( $self->url_for('/curries')->to_abs->scheme('https') );
     return;
 }
@@ -157,6 +161,32 @@ sub cancel_side_dish {
     $side_order->delete;
     $self->redirect_to( $self->url_for('/curries')->to_abs->scheme('https') );
     return;
+}
+
+sub orders {
+    my $self     = shift;
+    my $event    = $self->stash->{event};
+    my $model    = $self->db;
+    my $order_rs = $model->resultset('Order')->search({order_event => $event->id});
+    my $orders   = $order_rs->search(
+        { order_event => $event->id },
+        {
+            columns => [qw/dish spiceyness/],
+            group_by => [qw/dish spiceyness/],
+        }
+    );
+    my $side_order_rs = $model->resultset('SideOrder')->search({order_event =>
+        $event->id});
+
+    my $side_orders = $side_order_rs->search( { order_event => $event->id },
+        {columns => [qw/side_dish/], group_by => [qw/side_dish/] } );
+    $self->stash(
+        orders        => $orders,
+        order_rs      => $order_rs,
+        side_orders   => $side_orders,
+        side_order_rs => $side_order_rs
+    );
+
 }
 
 sub closed {
