@@ -81,8 +81,8 @@ sub user_order_admin {
               . $current_user->first_name . " "
               . $current_user->surname
               . " just tried to access an order "
-              ."that does not exist or does not"
-              ." belong to him/her." );
+              . "that does not exist or does not"
+              . " belong to him/her." );
         $self->render_not_found;
         return;
     }
@@ -102,6 +102,59 @@ sub cancel_order {
     $current_user->balance($balance);
     $current_user->update;
     $order->delete();
+    $self->redirect_to( $self->url_for('/curries')->to_abs->scheme('https') );
+    return;
+}
+
+sub side_dish {
+    my $self      = shift;
+    my $link      = $self->param('dish');
+    my $side_dish = $self->db->resultset('SideDish')->find( { link => $link } );
+    if ( not $side_dish ) {
+        $self->app->log->error( 'Side dish ' . $link . ' not found.' );
+        $self->render_not_found;
+        return 0;
+    }
+    my $event        = $self->stash->{event};
+    my $current_user = $self->current_user;
+    $current_user->add_to_side_orders(
+        {
+            side_dish   => $side_dish->id,
+            order_event => $event->id,
+        }
+    );
+    $self->redirect_to( $self->url_for('/curries')->to_abs->scheme('https') );
+    return;
+}
+
+sub user_side_dish_admin {
+    my $self         = shift;
+    my $id           = $self->param('id');
+    my $current_user = $self->current_user;
+    my $side_order   = $current_user->side_orders->find($id);
+    if ( not $side_order ) {
+        $self->app->log->error( "User "
+              . $current_user->first_name . " "
+              . $current_user->surname
+              . " tried to do something with an order that "
+              . " does not exist or belong to him/her " );
+        $self->render_not_found;
+        return;
+    }
+    $self->stash( side_order => $side_order );
+
+}
+
+sub cancel_side_dish {
+    my $self            = shift;
+    my $side_order      = $self->stash->{side_order};
+    my $current_user    = $self->current_user;
+    my $balance         = $current_user->balance;
+    my $side_dish       = $side_order->side_dish;
+    my $side_dish_price = $side_dish->price;
+    $balance - +$side_dish_price;
+    $current_user->balance($balance);
+    $side_order->delete;
     $self->redirect_to( $self->url_for('/curries')->to_abs->scheme('https') );
     return;
 }

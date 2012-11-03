@@ -119,6 +119,16 @@ sub startup {
       $user_order->bridge('/admin/:id')->to('orders#user_order_admin');
     $user_order_admin->route('/cancel')->name('cancelorder')
       ->to('orders#cancel_order');
+
+      $user_order->route('/side-dish/:dish')->name('ordersidedish')
+      ->to('orders#side_dish');
+
+     my $side_dish_admin = $user_order->bridge('/side-dish/admin/:id')
+     ->to('orders#user_side_dish_admin');
+
+    $side_dish_admin->route('/cancel')->name('cancelsidedish')
+      ->to('orders#cancel_side_dish');
+
     $r->route('/orders/closed')->name('ordersclosed')->to('orders#closed');
 
 }

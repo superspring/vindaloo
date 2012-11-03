@@ -14,7 +14,7 @@ sub index {
     my $model       = $self->db;
     my $categories  = $model->resultset('IngredientCategory');
     my $curry_types = $model->resultset('CurryType');
-    my $side_dishes = $model->resultset('SideDish')->search({active => 1});
+    my $side_dishes = $model->resultset('SideDish')->search( { active => 1 } );
 
     my $event_resultset = $model->resultset('OrderEvent');
     my $latest_event_id = $event_resultset->get_column('id')->max;
@@ -27,26 +27,33 @@ sub index {
     };
     my $user            = $self->current_user;
     my $current_balance = $user->balance;
-    my ( $previous_balance, $user_orders );
+    my ( $previous_balance, $user_orders, $user_side_orders );
 
     if ($event) {
         $user_orders =
-          $user->orders( { order_event => $event->id }, { 'join' => 'dish' } )
-          if $event;
+          $user->orders( { order_event => $event->id }, { 'join' => 'dish' } );
+        $user_side_orders = $user->side_orders( { order_event => $event->id },
+            { 'join' => 'side_dish' } );
+
         my $event_sum = $user_orders->get_column('dish.price')->sum;
+        my $side_dish_event_sum =
+          $user_side_orders->get_column('side_dish.price')->sum;
+        $event_sum += $side_dish_event_sum;
+
         $event_sum        = sprintf "%.2f", $event_sum;
         $previous_balance = $current_balance - $event_sum;
         $previous_balance = sprintf "%.2f", $previous_balance;
 
         $self->app->log->debug( 'Event sum ' . $event_sum );
-
     }
+
     $self->stash(
         categories       => $categories,
         curry_types      => $curry_types,
         spiceyness_btns  => $spiceyness_btn_map,
         event            => $event,
         user_orders      => $user_orders,
+        user_side_orders => $user_side_orders,
         previous_balance => $previous_balance,
         side_dishes      => $side_dishes,
     );

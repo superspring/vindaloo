@@ -23,7 +23,6 @@ has_field 'link' => (
 
 sub convert_name_to_link {
         my ( $self, $field ) = @_;
-
         my $value = lc $self->form->field('name')->value;
         if ( $value =~ /[\s]/ ) {
 
@@ -32,7 +31,6 @@ sub convert_name_to_link {
             $value =~ s/\s+/-/g;
             ### converted to : $value
             return $value;
-
         }
         return $value;
 }
