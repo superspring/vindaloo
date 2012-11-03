@@ -2,10 +2,10 @@
 % title 'Available Curries';
 
 <div class="row">
-    <div class="span10">
+    <div class="span7">
         <div class="row">
             % while (my $category = $categories->next) {
-            <div class="span4 well">
+            <div class="span6 well">
                 <div class="">
                     <%= ucfirst(lc $category->name )%>
                     <table class="table table-condensed table-striped">
@@ -17,27 +17,37 @@
                                 %     {active => 1, curry_type => $curry_type->id})
                                 %       ->first;
                                 %   next unless $menu;
-                    <tr>
-                        <td><%= ucfirst $ingredient->name %> <%= ucfirst
-                            $curry_type->name %></td>
-                        <td>
-                        % foreach my $heat ($menu->spiceynesses) {
-                            <a href="<%=
-                                url_for('orderdish' ,
-                                ingredient =>  $ingredient->link ,
-                                curry =>  $curry_type->link  ,
-                                spice => $heat->name
-                                )
-                                ->to_abs->scheme('https')
-                            %>">
-                                <span class="btn btn-mini <%=
-                                    $spiceyness_btns->{$heat->name}
-                                    %>"><%= $heat->name %></span></a>
-                        % }
-                        </td>
-                        <td><%= $menu->price %></td>
+                            <tr>
+                                <td><%= ucfirst $ingredient->name %> <%= ucfirst
+                                    $curry_type->name %></td>
+                                <td>
+                                % foreach my $heat ($menu->spiceynesses) {
+                                % if ($event->orders_open){
+                                    <a href="<%=
+                                    url_for(
+                                        'orderdish',
+                                        ingredient => $ingredient->link,
+                                        curry      => $curry_type->link,
+                                        spice      => $heat->name
+                                    )->to_abs->scheme('https')
+                                                    %>">
+                                        <span class="btn btn-mini <%=
+                                            $spiceyness_btns->{$heat->name}
+                                            %>"><%= $heat->name %></span>
+                                    </a>
+
                                 % }
-                    </tr>
+                                % else {
+                                        <span class="btn disabled btn-mini <%=
+                                            $spiceyness_btns->{$heat->name}
+                                            %>"><%= $heat->name %></span>
+
+                                %}
+                                % }
+                                </td>
+                                <td>$<%= $menu->price %></td>
+                              % }
+                            </tr>
                             % }
                         </tbody>
 
@@ -47,7 +57,59 @@
             % }
         </div>
     </div>
-    <div class="span2">
-        <h5>Shopping Cart</h5>
+    <div class="span4 well">
+        <h5>Your Account</h5>
+        <table class="table table-striped">
+            % if ($user_orders) {
+            <thead>
+                <tr>
+                    <th colspan=2>previous balance:</th><th>$<%= $previous_balance %></th>
+                </tr>
+
+            </thead>
+            %}
+            <tbody>
+                % if ($user_orders) {
+                    % while (my $order = $user_orders->next){
+                        % my $dish = $order->dish;
+                        % my $spicey_name = $order->spiceyness->name;
+                        % my $spicey_btn = $spiceyness_btns->{$spicey_name};
+                        <tr>
+                            <td>
+                                <span class="btn btn-small <%=
+                                    $spicey_btn
+                                    %>">
+                                    <%= $dish->base_ingredient->name %>
+                                    <%= $dish->curry_type->name %>
+                                        <%= $spicey_name %>
+                                </span>
+                                <td>
+                                    % if ($event->orders_open){
+                                    <a href="<%=
+                                        url_for(
+                                        cancelorder => id => $order->id
+                                        )->to_abs->scheme('https')
+                                        %>">
+                                        <button class="btn btn-mini btn-danger">
+                                            <b class="icon-white icon-trash"></b>
+                                        </button>
+                                    </a>
+                                    % }
+                                    % else {
+                                        <button class="btn disabled btn-mini btn-danger">
+                                            <b class="icon-white icon-trash"></b>
+                                        </button>
+                                    %}
+                                </td>
+                            </td>
+                            <td>$<%= $dish->price %></td>
+                        </tr>
+                    % }
+                % }
+                <tr>
+                    <th colspan=2>Total:</th> <th>$<%= current_user->balance %></th>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>

@@ -109,8 +109,16 @@ sub startup {
       ->to('events#admin');
     $event_admin->route('/close')->name('closeevent')->to('events#close');
 
-    $authenticated_route->route('/order-dish/:ingredient/:curry/:spice')->over(is =>
-        'user')->name('orderdish')->to('orders#order_dish');
+    my $user_order =
+      $authenticated_route->bridge('/order')->over( is => 'user' )
+      ->to('orders#verify_event');
+
+    $user_order->route('/dish/:ingredient/:curry/:spice')->name('orderdish')
+      ->to('orders#order_dish');
+    my $user_order_admin =
+      $user_order->bridge('/admin/:id')->to('orders#user_order_admin');
+    $user_order_admin->route('/cancel')->name('cancelorder')
+      ->to('orders#cancel_order');
     $r->route('/orders/closed')->name('ordersclosed')->to('orders#closed');
 
 }

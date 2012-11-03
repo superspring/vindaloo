@@ -21,6 +21,14 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key('id');
 
+__PACKAGE__->inflate_column(
+    balance => {
+        inflate => sub {
+            return sprintf "%.2f", shift;
+        },
+    }
+);
+
 __PACKAGE__->has_many(
     user_roles => UserRole => { 'foreign.curry_user' => 'self.id' } );
 

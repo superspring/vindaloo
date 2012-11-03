@@ -10,25 +10,45 @@ use Vindaloo::Forms::SideDish;
 use Vindaloo::Forms::MenuItem;
 
 sub index {
-    my $self               = shift;
-    my $model              = $self->db;
-    my $categories         = $model->resultset('IngredientCategory');
-    my $ingredients        = $self->db->resultset('BaseIngredient');
-    my $curry_types        = $self->db->resultset('CurryType');
-    my $spiceyness         = $self->db->resultset('Spiceyness');
-    my $menus              = $self->db->resultset('CurryMenu');
+    my $self        = shift;
+    my $model       = $self->db;
+    my $categories  = $model->resultset('IngredientCategory');
+    my $curry_types = $model->resultset('CurryType');
+
+    my $event_resultset = $model->resultset('OrderEvent');
+      my $latest_event_id =
+      $event_resultset->get_column('id')->max;
+    my $event =
+      $event_resultset->find($latest_event_id);
+
     my $spiceyness_btn_map = {
         mild   => 'btn-success',
         medium => 'btn-warning',
         hot    => 'btn-danger'
     };
+    my $user            = $self->current_user;
+    my $current_balance = $user->balance;
+    my ( $previous_balance, $user_orders );
+
+    if ($event) {
+        $user_orders =
+          $user->orders( { order_event => $event->id }, { 'join' => 'dish' } )
+          if $event;
+        my $event_sum = $user_orders->get_column('dish.price')->sum;
+        $event_sum = sprintf "%.2f",$event_sum;
+        $previous_balance = $current_balance - $event_sum;
+        $previous_balance = sprintf "%.2f", $previous_balance;
+
+        $self->app->log->debug( 'Event sum ' . $event_sum );
+
+    }
     $self->stash(
-        categories      => $categories,
-        ingredients     => $ingredients,
-        curry_types     => $curry_types,
-        spiceyness      => $spiceyness,
-        menus           => $menus,
-        spiceyness_btns => $spiceyness_btn_map
+        categories       => $categories,
+        curry_types      => $curry_types,
+        spiceyness_btns  => $spiceyness_btn_map,
+        event            => $event,
+        user_orders      => $user_orders,
+        previous_balance => $previous_balance
     );
 
 }

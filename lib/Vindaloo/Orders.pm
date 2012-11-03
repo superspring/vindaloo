@@ -4,6 +4,19 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use List::MoreUtils 'any';
 
+sub verify_event {
+    my $self = shift;
+    my $event =
+      $self->db->resultset('OrderEvent')->search( { orders_open => 1 } )->first;
+
+    if ( not $event ) {
+        $self->redirect_to(
+            $self->url_for('ordersclosed')->to_abs->scheme('https') );
+        return;
+    }
+    $self->stash( event => $event );
+}
+
 sub order_dish {
     my $self       = shift;
     my $ingredient = $self->param('ingredient');
@@ -23,7 +36,7 @@ sub order_dish {
         }
     )->first;
 
-    if ( not $menu and not $menu->spiceynesses( { name => $spice } )->count ) {
+    if ( any { not defined $_ } $ingred_obj, $curry_obj, $spice_obj ) {
         $self->app->log->error(
             "User tried to order a curry that did not exist!");
         $self->app->log->error( join " " => $ingredient, $curry, $spice );
@@ -32,15 +45,7 @@ sub order_dish {
         return 0;
     }
 
-    my $event =
-      $model->resultset('OrderEvent')->search( { orders_open => 1 } )->first;
-
-    # TODO: make a "orders closed" page
-    if ( not $event ) {
-        $self->redirect_to(
-            $self->url_for('ordersclosed')->to_abs->scheme('https') );
-        return;
-    }
+    my $event = $self->stash->{event};
     local $@;
     eval {
         $model->resultset('Order')->create(
@@ -62,6 +67,42 @@ sub order_dish {
     }
     $self->redirect_to( $self->url_for('/curries')->to_abs->scheme('https') );
 
+    return;
+}
+
+sub user_order_admin {
+    my $self         = shift;
+    my $order_id     = $self->param('id');
+    my $event        = $self->stash->{event};
+    my $current_user = $self->current_user;
+    my $order        = $current_user->orders->find($order_id);
+    if ( not defined $order ) {
+        $self->app->log->error( "User "
+              . $current_user->first_name . " "
+              . $current_user->surname
+              . " just tried to access an order "
+              ."that does not exist or does not"
+              ." belong to him/her." );
+        $self->render_not_found;
+        return;
+    }
+    $self->stash( order => $order );
+}
+
+sub cancel_order {
+    my $self         = shift;
+    my $order_id     = $self->param('id');
+    my $current_user = $self->current_user;
+
+    my $order   = $self->stash->{order};
+    my $dish    = $order->dish;
+    my $price   = $dish->price;
+    my $balance = $current_user->balance;
+    $balance -= $price;
+    $current_user->balance($balance);
+    $current_user->update;
+    $order->delete();
+    $self->redirect_to( $self->url_for('/curries')->to_abs->scheme('https') );
     return;
 }
 
