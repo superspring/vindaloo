@@ -7,9 +7,9 @@ WriteMakefile(
     VERSION   => '0.02',
     PREREQ_PM => {
         'Mojolicious'                         => '3.54',
+        'Mojolicious::Plugin::Authentication' => 0,
         'Mojolicious::Plugin::Authorization'  => 0,
-        'Mojoliciuos::Plugin::Authentication' => 0,
-        'Mojoliciuos::Plugin::Bcrypt'         => 0,
+        'Mojolicious::Plugin::Bcrypt'         => 0,
         'DBIx::Class'                         => 0,
         'HTML::FormHandler'                   => 0,
         'File::Basename'                      => 0,
