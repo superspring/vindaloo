@@ -3,11 +3,10 @@ package Vindaloo::Forms::UserAdmin;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Model::DBIC';
 
-
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 has '+item_class'     => ( default => 'Vindaloo::Schema::Result::User' );
 
-has mojo_bcrypt       => (
+has mojo_bcrypt => (
     is  => 'ro',
     isa => 'CodeRef',
 );
@@ -23,7 +22,7 @@ has_field first_name => (
     required    => 1,
 );
 
-has_field surname => ( type => 'Text', label => 'Last name', required => 1,);
+has_field surname => ( type => 'Text', label => 'Last name', required => 1, );
 has_field password => (
     type                 => 'Password',
     label                => 'Password',
@@ -36,7 +35,12 @@ has_field confirm_password => (
     required => 1,
     noupdate => 1,
 );
-has_field email => ( type => 'Text', label => 'Email', required => 1,);
+has_field email => ( type => 'Text', label => 'Email', required => 1, );
+has_field receive_email => (
+    type         => 'Checkbox',
+    label_column => 'receive_email',
+    label        => 'Receive Email'
+);
 has_field roles => (
     type         => 'Multiple',
     widget       => 'CheckboxGroup',
@@ -82,7 +86,8 @@ sub build_update_subfields {
 
 sub build_render_list {
     return [
-        qw/first_name surname password confirm_password email roles buttonset/];
+        qw/first_name surname password confirm_password email receive_email roles buttonset/
+    ];
 }
 
 no HTML::FormHandler::Moose;

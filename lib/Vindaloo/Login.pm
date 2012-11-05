@@ -28,6 +28,10 @@ sub validate {
         my $password = $self->param('password');
         if ( $self->authenticate( $login, $password ) ) {
 
+            my $current_user = $self->current_user;
+            my $user_role = $current_user->roles({name => 'user'})->first;
+            $current_user->add_to_roles({name => 'user'}) unless $user_role;
+
             $self->redirect_to(
                 $self->url_for('/curries')->to_abs->scheme('https') );
         }

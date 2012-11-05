@@ -130,18 +130,17 @@ sub signup_validated {
     $self->signup;
     my $form = $self->stash->{form};
     try {
-        $form->process( params => $self->req->params->to_hash );
+        $form->process( 
+            inactive => [qw/roles/],
+            params => $self->req->params->to_hash );
         if ( $form->validated ) {
             $self->app->log->debug("Validated");
             $self->redirect_to( $self->url_for('/')->to_abs->scheme('https') );
         }
-## Please see file perltidy.ERR
-## Please see file perltidy.ERR
-## Please see file perltidy.ERR
     }
     catch( DBIx::Class::Exception $e where { $_ ~~ qr/email_key/ } ) {
         $form->field('email')->add_error("This email already exists!");
-      }
+     }
 
       $self->render('users/signup');
 }
