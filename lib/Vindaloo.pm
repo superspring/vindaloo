@@ -150,7 +150,7 @@ sub load_user {
 sub validate_user {
     my ( $app, $username, $password, $extradata ) = @_;
     my $logger = $app->app->log;
-    $logger->debug( "Validating user " . "$username with pw $password" );
+    #$logger->debug( "Validating user " . "$username with pw $password" );
     my $user =
       $app->db->resultset('User')->search( { email => $username } )->first;
     $logger->debug( "Queried user with id: " . $user->id );
