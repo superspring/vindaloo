@@ -27,9 +27,12 @@ sub index {
     };
     my $user            = $self->current_user;
     my $current_balance = $user->balance // 0;
-    my ( $previous_balance, $user_orders, $user_side_orders );
+    my ( $previous_balance, $user_orders, $user_side_orders,$latest_payment );
 
     if ($event) {
+        my $event_date = $event->event_date;
+        $latest_payment = $user->payments->search({payment_date
+                => $event_date})->first;
         $user_orders =
           $user->orders( { order_event => $event->id }, { 'join' => 'dish' } );
         $user_side_orders = $user->side_orders( { order_event => $event->id },
@@ -42,9 +45,14 @@ sub index {
 
         $event_sum        = sprintf "%.2f", $event_sum;
         $previous_balance = $current_balance - $event_sum;
+        if ($latest_payment) {
+            my $payment_amount = $latest_payment->payment;
+            $previous_balance += $payment_amount if $payment_amount;
+        }
         $previous_balance = sprintf "%.2f", $previous_balance;
 
         $self->app->log->debug( 'Event sum ' . $event_sum );
+
     }
 
     $self->stash(
@@ -56,6 +64,7 @@ sub index {
         user_side_orders => $user_side_orders,
         previous_balance => $previous_balance,
         side_dishes      => $side_dishes,
+        latest_payment => $latest_payment
     );
 
 }

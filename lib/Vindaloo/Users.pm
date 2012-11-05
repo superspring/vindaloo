@@ -2,6 +2,8 @@ package Vindaloo::Users;
 
 use Mojo::Base 'Mojolicious::Controller';
 
+use feature 'switch';
+
 use Vindaloo::Forms::UserAdmin;
 use TryCatch;
 
@@ -14,8 +16,10 @@ sub authenticate {
 }
 
 sub index {
-    my $self  = shift;
-    my $users = $self->db->resultset('User');
+    my $self = shift;
+    my $users =
+      $self->db->resultset('User')
+      ->search( undef, { order_by => { -asc => [qw/id/] } } );
     $self->stash( users => $users );
 }
 
@@ -70,8 +74,8 @@ sub edit {
     my $self = shift;
     my $user = $self->stash->{user};
     my $form = Vindaloo::Forms::UserAdmin->new(
-        mojo_bcrypt_validate => sub {$self->mojo_bcrypt_validate(@_)},
-        mojo_bcrypt          => sub {$self->mojo_bcrypt(@_) }
+        mojo_bcrypt_validate => sub { $self->mojo_bcrypt_validate(@_) },
+        mojo_bcrypt          => sub { $self->mojo_bcrypt(@_) }
     );
     $form->process(
         item     => $user,
@@ -111,8 +115,8 @@ sub signup {
         }
     );
     $form->process(
-        schema => $self->db,
-        action => $self->url_for('signup')->to_abs->scheme('https'),
+        schema   => $self->db,
+        action   => $self->url_for('signup')->to_abs->scheme('https'),
         inactive => [qw/roles/],
     );
     $self->stash(
@@ -131,6 +135,9 @@ sub signup_validated {
             $self->app->log->debug("Validated");
             $self->redirect_to( $self->url_for('/')->to_abs->scheme('https') );
         }
+## Please see file perltidy.ERR
+## Please see file perltidy.ERR
+## Please see file perltidy.ERR
     }
     catch( DBIx::Class::Exception $e where { $_ ~~ qr/email_key/ } ) {
         $form->field('email')->add_error("This email already exists!");
@@ -140,14 +147,51 @@ sub signup_validated {
 }
 
 sub mojo_bcrypt_validate {
-    my ( $self,$bcrypted, $to_confirm ) = @_;
+    my ( $self, $bcrypted, $to_confirm ) = @_;
     return $self->bcrypt_validate( $to_confirm, $bcrypted );
 }
 
 sub mojo_bcrypt {
-    my ($self, $value) = @_;
+    my ( $self, $value ) = @_;
     my $bcrypted = $self->bcrypt($value);
     return $bcrypted;
+}
+
+sub payment {
+    my $self    = shift;
+    my $payment = $self->param('payment');
+    my $user    = $self->stash->{user};
+    my $balance = $user->balance;
+    my $reduce_by;
+    given ($payment) {
+        when (qr/\A\d+\z/) {
+            $reduce_by = $payment;
+        }
+        when ('today') {
+            my $event =
+              $self->db->resultset('OrderEvent')->get_column('id')->max;
+            my $orders =
+              $user->orders( { order_event => $event }, { 'join' => 'dish' } );
+            my $side_orders = $user->side_orders( { order_event => $event },
+                { 'join' => 'side_dish' } );
+
+            my $order_total = $orders->get_column('dish.price')->sum;
+            my $side_order_total =
+              $side_orders->get_column('side_dish.price')->sum;
+
+            $reduce_by = $order_total + $side_order_total;
+        }
+        when ('account') {
+            $reduce_by = $balance;
+        }
+    }
+    $balance -= $reduce_by;
+    $user->balance($balance);
+    $user->update;
+    $user->add_to_payments( { payment => $reduce_by } );
+    $self->redirect_to( $self->url_for('userlist')->to_abs->scheme('https') );
+    return;
+
 }
 
 1;

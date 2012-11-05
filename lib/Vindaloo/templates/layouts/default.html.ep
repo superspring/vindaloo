@@ -26,6 +26,7 @@
         %= javascript url_for('/js/bootstrap-typeahead.js');
         %= stylesheet url_for('/css/vindaloo.css');
         %= stylesheet url_for('/css/bootswatch/default/bootstrap-responsive.min.css');
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title><%= title %></title>
     </head>
     <body>

@@ -11,10 +11,18 @@ sub index {
 }
 
 sub admin {
-    my $self  = shift;
-    my $id    = $self->param('id');
-    my $event = $self->db->resultset('OrderEvent')->find($id);
-    $self->stash( event => $event );
+    my $self              = shift;
+    my $id                = $self->param('id');
+    my $event_rs          = $self->db->resultset('OrderEvent');
+    my $event             = $event_rs->find($id);
+    my $previous_event_id = $event->id - 1;
+    my $next_event_id     = $event->id + 1;
+    my ( $previous_event, $next_event );
+    $previous_event = $event_rs->find($previous_event_id)
+      unless $previous_event_id <= 0;
+    $next_event = $event_rs->find($next_event_id);
+    $self->stash( event => $event, previous_event => $previous_event,
+        next_event => $next_event );
 }
 
 sub create {

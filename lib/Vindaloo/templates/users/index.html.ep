@@ -1,39 +1,43 @@
 % layout 'default';
 % title 'HotTeenVindaloos';
 
-<div class="row">
+
+<div class="row" id="full-list">
     <div class="span12">
         <table class="table table-striped table-bordered">
             <thead>
                 <tr>
-                    <th>First Name</th>
-                    <th>Surname</th>
-                    <th>Email</th>
+                    <th>Name</th>
                     <th>Balance</th>
-                    <th>Receive Emails</th>
-                    <th>Roles</th>
-                    <th>Active</th>
-                    <th>Admin</th>
+                    <th colspan=5>Payment</th>
                 </tr>
             </thead>
             <tbody>
                 % while (my $user = $users->next){
-                    % my @role_list;
-                    % foreach my $role ($user->roles->all) {
-                        % push @role_list, $role->name;
-                    % }
                     <tr>
-                        <td><%= $user->first_name %></td>
-                        <td><%= $user->surname %></td>
-                        <td><%= $user->email %></td>
-                        <td>$<%= $user->balance // 0 %></td>
-                        <td><%= $user->receive_email %></td>
-                        <td><%= join ", " => @role_list %></td>
-                        <td><%= $user->active %></td>
-                        <td><a href="<%=
+                        <td>
+                        <a href="<%=
                                 url_for(edituser => id =>
                                 $user->id)->to_abs->scheme('https')
-                                %>">edit</a> | delete</td>
+                                %>">
+                        <%= $user->first_name %>
+                        <%= $user->surname %>
+                                </a>
+                        </td>
+                        <td>$<%= $user->balance // 0 %></td>
+                        % foreach my $value (1,10,11,12) {
+                            % my $btn_type = 'btn-primary';
+                            % $btn_type = 'btn-warning' if $user->balance ==
+                              % $value;
+                            <td>
+                                <a href="<%=
+                                    url_for(payment => id => $user->id =>
+                                    payment =>$value
+                                    )->to_abs->scheme('https')
+                                    %>"><span class="btn <%= $btn_type %>
+                                        btn-mini">$<%= $value %></span></a>
+                            </td>
+                        % }
                     </tr>
                 % }
             </tbody>

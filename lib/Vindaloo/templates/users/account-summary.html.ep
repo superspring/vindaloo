@@ -71,6 +71,11 @@
 
                     % }
                 % }
+                % if ($latest_payment) {
+                    <tr>
+                      <td colspan="2">Payment</td> <td>($<%= $latest_payment->payment %>) </td>
+                    </tr>
+                 %   }
                 <tr>
                     <th colspan=2>Total:</th> <th>$<%= current_user->balance %></th>
                 </tr>

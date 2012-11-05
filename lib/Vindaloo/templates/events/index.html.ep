@@ -30,13 +30,14 @@
                                         url_for(closeevent => id =>
                                         $event->id)->to_abs->scheme('https')
                                         %>">
-                                        <span class="btn btn-danger">Close<b class="icon-white
-                                        icon-flag"></b></span></a>
+                                        <span class="btn btn-danger">
+                                            Close
+                                            <b class="icon-white icon-flag"></b>
+                                        </span></a>
                                     %    }
                                     % else {
                                         <span class="btn btn-inverse">closed
                                         <b class="icon-white icon-lock"></b></span>
-
                                     %   }
                                 </td>
                                 <td>

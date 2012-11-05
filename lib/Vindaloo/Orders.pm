@@ -156,7 +156,7 @@ sub cancel_side_dish {
     my $balance         = $current_user->balance;
     my $side_dish       = $side_order->side_dish;
     my $side_dish_price = $side_dish->price;
-    $balance - +$side_dish_price;
+    $balance -= $side_dish_price;
     $current_user->balance($balance);
     $side_order->delete;
     $self->redirect_to( $self->url_for('/curries')->to_abs->scheme('https') );
@@ -164,29 +164,48 @@ sub cancel_side_dish {
 }
 
 sub orders {
-    my $self     = shift;
-    my $event    = $self->stash->{event};
-    my $model    = $self->db;
-    my $order_rs = $model->resultset('Order')->search({order_event => $event->id});
-    my $orders   = $order_rs->search(
-        { order_event => $event->id },
+    my $self  = shift;
+    my $event = $self->stash->{event};
+    my $model = $self->db;
+    my $order_rs = $event->orders;
+      #$model->resultset('Order')->search( { order_event => $event->id } );
+    my $orders = $order_rs->search(
+        undef,
         {
-            columns => [qw/dish spiceyness/],
+            columns  => [qw/dish spiceyness/],
             group_by => [qw/dish spiceyness/],
         }
     );
-    my $side_order_rs = $model->resultset('SideOrder')->search({order_event =>
-        $event->id});
+    my $user_orders =
+      $order_rs->search(
+          undef,
+        {
+            columns => [qw/curry_user /],
+            group_by => [qw/curry_user/]
+        }
+    );
+    my $side_order_rs = $event->side_orders;
+      #$model->resultset('SideOrder')->search( { order_event => $event->id } );
 
-    my $side_orders = $side_order_rs->search( { order_event => $event->id },
-        {columns => [qw/side_dish/], group_by => [qw/side_dish/] } );
-    $self->stash(
-        orders        => $orders,
-        order_rs      => $order_rs,
-        side_orders   => $side_orders,
-        side_order_rs => $side_order_rs
+    my $side_orders =
+      $side_order_rs->search( undef,
+        { columns => [qw/side_dish/], group_by => [qw/side_dish/] } );
+    my $user_side_orders = $side_order_rs->search(
+        undef,
+        {
+            columns  => [qw/curry_user side_dish/],
+            group_by => [qw/curry_user side_dish/]
+        }
     );
 
+    $self->stash(
+        orders           => $orders,
+        user_orders      => $user_orders,
+        order_rs         => $order_rs,
+        side_orders      => $side_orders,
+        user_side_orders => $user_side_orders,
+        side_order_rs    => $side_order_rs
+    );
 }
 
 sub closed {

@@ -1,66 +1,86 @@
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
-            <ul class="nav">
-                <li><a class="brand" href="">HotTeenVindaloos</a></li>
-                <li class="divider-vertical"> </li>
-                <li><a href="<%=
-                    url_for('/curries')->to_abs->scheme('https')
-                    %>">Menu</a></li>
-            </ul>
-
-            % if (is_user_authenticated){
-                % if (is('admin')){
+    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </a>
+    <a class="brand" href="">HotTeenVindaloos</a>
+            <div class="nav-collapse">
                 <ul class="nav">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            Admin
-                        <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="<%=
-                            url_for('/events')->to_abs->scheme('https')
-                            %>">Manage Events</a></li>
-                            <li><a href="<%=
-                                url_for('userlist')->to_abs->scheme('https')
-                                %>">Manage Users</a></li>
-                            <li><a href="<%=
-                            url_for('/curry/menu')->to_abs->scheme('https')
-                            %>">Manage Menu</a></li>
-                        </ul>
-                    </li>
+                    <li class="divider-vertical"> </li>
+                    <li><a href="<%=
+                        url_for('/curries')->to_abs->scheme('https')
+                        %>">Menu</a></li>
                 </ul>
-
-                % }
-            % my $user_name = join " " => current_user->first_name,
-            %  current_user->surname;
-            % my $user_id = current_user->id;
-                <ul class="nav pull-right">
-                    <li class="dropdown">
-                        <a href="#"
-                            class="dropdown-toggle"
-                            data-toggle="dropdown"
-                            >
-                            <%= join " " => current_user->first_name,
-                            current_user->surname %>
+                % if (is_user_authenticated){
+                    % if (is('admin')){
+                    % my $current_event =
+                        % db->resultset('OrderEvent')->search({orders_open =>
+                        % 1})->first;
+                    <ul class="nav ">
+                        % if ($current_event) {
+                        <li><a href="<%=
+                       url_for(eventorders => id => $current_event->id)
+                            ->to_abs->scheme('https')
+                        %>">Current order</a></li>
+                        %  }
+                        <li><a href="<%=
+                        url_for('userlist')->to_abs->scheme('https') %>">Accounts</a></li>
+                    </ul>
+                    <ul class="nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                Admin
                             <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="<%=
-                                url_for(editprofile => id =>
-                                $user_id)->to_abs->scheme('https')
-                                %>">Edit profile</a></li>
-                            <li><a href="<%=
-                                url_for(changepassword => id =>
-                                $user_id)->to_abs->scheme('https')
-                                %>">Change Password</a></li>
-                            <li><a href="<%=
-                                url_for('/logout')
-                                %>">Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            %  }
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="<%=
+                                url_for('/events')->to_abs->scheme('https')
+                                %>">Manage Events</a></li>
+                                <li><a href="<%=
+                                    url_for('userlist')->to_abs->scheme('https')
+                                    %>">Manage Users</a></li>
+                                <li><a href="<%=
+                                url_for('/curry/menu')->to_abs->scheme('https')
+                                %>">Manage Menu</a></li>
+    
+                            </ul>
+                        </li>
+                    </ul>
+    
+                    % }
+                % my $user_name = join " " => current_user->first_name,
+                %  current_user->surname;
+                % my $user_id = current_user->id;
+                    <ul class="nav pull-right">
+                        <li class="dropdown">
+                            <a href="#"
+                                class="dropdown-toggle"
+                                data-toggle="dropdown"
+                                >
+                                <%= join " " => current_user->first_name,
+                                current_user->surname %>
+                                <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="<%=
+                                    url_for(editprofile => id =>
+                                    $user_id)->to_abs->scheme('https')
+                                    %>">Edit profile</a></li>
+                                <li><a href="<%=
+                                    url_for(changepassword => id =>
+                                    $user_id)->to_abs->scheme('https')
+                                    %>">Change Password</a></li>
+                                <li><a href="<%=
+                                    url_for('/logout')
+                                    %>">Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                %  }
+            </div>
         </div>
     </div>
 </div>

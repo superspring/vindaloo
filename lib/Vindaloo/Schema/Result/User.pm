@@ -10,6 +10,7 @@ __PACKAGE__->add_columns(
       id
       first_name
       surname
+      nickname
       email
       password
       balance
@@ -24,7 +25,9 @@ __PACKAGE__->set_primary_key('id');
 __PACKAGE__->inflate_column(
     balance => {
         inflate => sub {
-            return sprintf "%.2f", shift;
+            my $value = shift;
+            $value = $value // 0;
+            return sprintf "%.2f", $value;
         },
     }
 );
@@ -34,6 +37,9 @@ __PACKAGE__->has_many(
 
 __PACKAGE__->has_many(
     orders => Order => { 'foreign.curry_user' => 'self.id' } );
+
+__PACKAGE__->has_many(
+    payments => Payment => { 'foreign.curry_user' => 'self.id' } );
 
 __PACKAGE__->has_many(
     side_orders => SideOrder => { 'foreign.curry_user' => 'self.id' } );

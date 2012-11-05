@@ -22,6 +22,7 @@ has_field first_name => (
     placeholder => 'First Name',
     required    => 1,
 );
+
 has_field surname => ( type => 'Text', label => 'Last name', required => 1,);
 has_field password => (
     type                 => 'Password',

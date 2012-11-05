@@ -12,7 +12,7 @@ has_field password => (
     required => 1
 );
 
-has_field submit  => ( type => 'Submit' );
+has_field submit  => ( type => 'Submit',value => 'Login' );
 has_field 'reset' => ( type => 'Reset' );
 
 has_block buttonset => (

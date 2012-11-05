@@ -72,6 +72,8 @@ sub startup {
       ->name('userlist')->to('users#index');
     $user_admin->get('/edit')->name('edituser')->to('users#edit');
     $user_admin->post('/edit')->to('users#post_edit');
+     $user_admin->route('/payment/:payment')->name('payment')->to('users#payment');
+
 
     $authenticated_route->route('/curry/menu')->over( is => 'admin' )
       ->to('curry#menu');
