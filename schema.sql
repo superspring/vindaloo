@@ -32,7 +32,8 @@ CREATE TABLE base_ingredients (
     id integer NOT NULL,
     name character varying,
     active boolean DEFAULT true,
-    category integer
+    category integer,
+    link character varying
 );
 
 
@@ -104,7 +105,8 @@ CREATE TABLE curry_orders (
     id integer NOT NULL,
     dish integer NOT NULL,
     order_event integer NOT NULL,
-    curry_user integer NOT NULL
+    curry_user integer NOT NULL,
+    spiceyness integer
 );
 
 
@@ -173,7 +175,8 @@ ALTER SEQUENCE curry_side_order_id_seq OWNED BY curry_side_order.id;
 CREATE TABLE curry_types (
     id integer NOT NULL,
     name character varying,
-    active boolean
+    active boolean,
+    link character varying
 );
 
 
@@ -280,6 +283,41 @@ ALTER SEQUENCE order_events_id_seq OWNED BY order_events.id;
 
 
 --
+-- Name: payment; Type: TABLE; Schema: public; Owner: hotteenvindaloos; Tablespace: 
+--
+
+CREATE TABLE payment (
+    id integer NOT NULL,
+    curry_user integer,
+    payment double precision,
+    payment_date date DEFAULT now()
+);
+
+
+ALTER TABLE public.payment OWNER TO hotteenvindaloos;
+
+--
+-- Name: payment_id_seq; Type: SEQUENCE; Schema: public; Owner: hotteenvindaloos
+--
+
+CREATE SEQUENCE payment_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.payment_id_seq OWNER TO hotteenvindaloos;
+
+--
+-- Name: payment_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: hotteenvindaloos
+--
+
+ALTER SEQUENCE payment_id_seq OWNED BY payment.id;
+
+
+--
 -- Name: roles; Type: TABLE; Schema: public; Owner: hotteenvindaloos; Tablespace: 
 --
 
@@ -319,7 +357,9 @@ ALTER SEQUENCE roles_id_seq OWNED BY roles.id;
 CREATE TABLE side_dishes (
     id integer NOT NULL,
     name character varying NOT NULL,
-    active boolean DEFAULT true
+    active boolean DEFAULT true,
+    link character varying,
+    price double precision
 );
 
 
@@ -404,7 +444,8 @@ CREATE TABLE users (
     receive_email boolean DEFAULT false,
     password character varying NOT NULL,
     balance double precision,
-    create_date date DEFAULT now() NOT NULL
+    create_date date DEFAULT now() NOT NULL,
+    nickname character varying
 );
 
 
@@ -478,6 +519,13 @@ ALTER TABLE ONLY ingredient_category ALTER COLUMN id SET DEFAULT nextval('ingred
 --
 
 ALTER TABLE ONLY order_events ALTER COLUMN id SET DEFAULT nextval('order_events_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: hotteenvindaloos
+--
+
+ALTER TABLE ONLY payment ALTER COLUMN id SET DEFAULT nextval('payment_id_seq'::regclass);
 
 
 --
@@ -565,6 +613,30 @@ ALTER TABLE ONLY ingredient_category
 
 
 --
+-- Name: link_unique; Type: CONSTRAINT; Schema: public; Owner: hotteenvindaloos; Tablespace: 
+--
+
+ALTER TABLE ONLY curry_types
+    ADD CONSTRAINT link_unique UNIQUE (link);
+
+
+--
+-- Name: link_unique_ingredient; Type: CONSTRAINT; Schema: public; Owner: hotteenvindaloos; Tablespace: 
+--
+
+ALTER TABLE ONLY base_ingredients
+    ADD CONSTRAINT link_unique_ingredient UNIQUE (link);
+
+
+--
+-- Name: link_unique_side_dish; Type: CONSTRAINT; Schema: public; Owner: hotteenvindaloos; Tablespace: 
+--
+
+ALTER TABLE ONLY side_dishes
+    ADD CONSTRAINT link_unique_side_dish UNIQUE (link);
+
+
+--
 -- Name: order_events_pkey; Type: CONSTRAINT; Schema: public; Owner: hotteenvindaloos; Tablespace: 
 --
 
@@ -578,6 +650,14 @@ ALTER TABLE ONLY order_events
 
 ALTER TABLE ONLY order_events
     ADD CONSTRAINT order_unique UNIQUE (event_date, orders_open);
+
+
+--
+-- Name: payment_pkey; Type: CONSTRAINT; Schema: public; Owner: hotteenvindaloos; Tablespace: 
+--
+
+ALTER TABLE ONLY payment
+    ADD CONSTRAINT payment_pkey PRIMARY KEY (id);
 
 
 --
@@ -621,6 +701,14 @@ ALTER TABLE ONLY spiceyness
 
 
 --
+-- Name: unique_spiceyness; Type: CONSTRAINT; Schema: public; Owner: hotteenvindaloos; Tablespace: 
+--
+
+ALTER TABLE ONLY spiceyness
+    ADD CONSTRAINT unique_spiceyness UNIQUE (name);
+
+
+--
 -- Name: user_roles_pkey; Type: CONSTRAINT; Schema: public; Owner: hotteenvindaloos; Tablespace: 
 --
 
@@ -634,6 +722,14 @@ ALTER TABLE ONLY user_roles
 
 ALTER TABLE ONLY users
     ADD CONSTRAINT users_email_key UNIQUE (email);
+
+
+--
+-- Name: users_nickname_key; Type: CONSTRAINT; Schema: public; Owner: hotteenvindaloos; Tablespace: 
+--
+
+ALTER TABLE ONLY users
+    ADD CONSTRAINT users_nickname_key UNIQUE (nickname);
 
 
 --
@@ -693,6 +789,14 @@ ALTER TABLE ONLY curry_orders
 
 
 --
+-- Name: curry_orders_spiceyness_fkey; Type: FK CONSTRAINT; Schema: public; Owner: hotteenvindaloos
+--
+
+ALTER TABLE ONLY curry_orders
+    ADD CONSTRAINT curry_orders_spiceyness_fkey FOREIGN KEY (spiceyness) REFERENCES spiceyness(id);
+
+
+--
 -- Name: curry_side_order_curry_user_fkey; Type: FK CONSTRAINT; Schema: public; Owner: hotteenvindaloos
 --
 
@@ -730,6 +834,14 @@ ALTER TABLE ONLY dish_spiceyness
 
 ALTER TABLE ONLY dish_spiceyness
     ADD CONSTRAINT dish_spiceyness_spiceyness_fkey FOREIGN KEY (spiceyness) REFERENCES spiceyness(id);
+
+
+--
+-- Name: payment_curry_user_fkey; Type: FK CONSTRAINT; Schema: public; Owner: hotteenvindaloos
+--
+
+ALTER TABLE ONLY payment
+    ADD CONSTRAINT payment_curry_user_fkey FOREIGN KEY (curry_user) REFERENCES users(id);
 
 
 --
