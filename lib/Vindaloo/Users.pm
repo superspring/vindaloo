@@ -130,7 +130,7 @@ sub signup_validated {
     $self->signup;
     my $form = $self->stash->{form};
     try {
-        $form->process( 
+        $form->process(
             inactive => [qw/roles/],
             params => $self->req->params->to_hash );
         if ( $form->validated ) {
@@ -147,6 +147,7 @@ sub signup_validated {
 
 sub mojo_bcrypt_validate {
     my ( $self, $bcrypted, $to_confirm ) = @_;
+
     return $self->bcrypt_validate( $to_confirm, $bcrypted );
 }
 

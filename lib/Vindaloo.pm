@@ -72,8 +72,8 @@ sub startup {
       ->name('userlist')->to('users#index');
     $user_admin->get('/edit')->name('edituser')->to('users#edit');
     $user_admin->post('/edit')->to('users#post_edit');
-     $user_admin->route('/payment/:payment')->name('payment')->to('users#payment');
-
+    $user_admin->route('/payment/:payment')->name('payment')
+      ->to('users#payment');
 
     $authenticated_route->route('/curry/menu')->over( is => 'admin' )
       ->to('curry#menu');
@@ -124,15 +124,15 @@ sub startup {
     $user_order_admin->route('/cancel')->name('cancelorder')
       ->to('orders#cancel_order');
 
-      $user_order->route('/side-dish/:dish')->name('ordersidedish')
+    $user_order->route('/side-dish/:dish')->name('ordersidedish')
       ->to('orders#side_dish');
 
-     my $side_dish_admin = $user_order->bridge('/side-dish/admin/:id')
-     ->to('orders#user_side_dish_admin');
+    my $side_dish_admin =
+      $user_order->bridge('/side-dish/admin/:id')
+      ->to('orders#user_side_dish_admin');
 
     $side_dish_admin->route('/cancel')->name('cancelsidedish')
       ->to('orders#cancel_side_dish');
-
 
     $r->route('/orders/closed')->name('ordersclosed')->to('orders#closed');
 
@@ -149,12 +149,17 @@ sub load_user {
 
 sub validate_user {
     my ( $app, $username, $password, $extradata ) = @_;
-    $app->app->log->debug( "Validating user " . "$username with pw $password" );
+    my $logger = $app->app->log;
+    $logger->debug( "Validating user " . "$username with pw $password" );
     my $user =
       $app->db->resultset('User')->search( { email => $username } )->first;
+    $logger->debug( "Queried user with id: " . $user->id );
     return 0 unless $user;
+    $logger->debug("User available");
     my $user_password = $user->password;
-    $app->bcrypt_validate( $user_password, $password );
+    my $result = $app->bcrypt_validate($password, $user_password );
+    $logger->debug( "User validated with result: " . $result );
+    return unless $result;
     return $user->id;
 }
 

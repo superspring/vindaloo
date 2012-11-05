@@ -9,6 +9,7 @@
                 </tr>
             </thead>
             % my (  $total, $num_of_curries,$num_of_sides );
+            % $total = 0;
             % while (my $order = $orders->next) {
                 % my $dish = $order->dish;
                 % my $ingredient = $dish->base_ingredient;
