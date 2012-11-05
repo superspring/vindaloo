@@ -1,0 +1,7 @@
+% layout 'default';
+% title  'Not Found!';
+
+<div class="hero-unit">
+    <h1>Not Found!</h1>
+    <p>There is a problem here you should probably fix.</p>
+</div>
