@@ -17,6 +17,6 @@ WriteMakefile(
         'TryCatch'                            => 0,
         'List::MoreUtils'                     => 0
     },
-    test => { TESTS => 't/*.t' },
-    EXE_FILES => [qw{script/vindaloo}]
+    EXE_FILES => [qw{script/vindaloo}],
+    test      => { TESTS => 't/*.t' },
 );
