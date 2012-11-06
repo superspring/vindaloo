@@ -89,21 +89,19 @@ sub user_order_admin {
     $self->stash( order => $order );
 }
 
-#sub order_history {
-    #my $self = shift;
-    #my $user = $self->current_user;
+sub order_history {
+    my $self = shift;
+    my $user = $self->current_user;
 
-    #my $events = $self->db->resultset('OrderEvent')->search(
-        #{},
-        #{
-            #'join' => [qw/orders side_orders/],
-            #order_by => {-desc => {[qw/event_date/]}},
-            #columns => [qw//],
-
-        #}
-    #);
-
-#}
+    my $events = $user->search(
+        undef,
+        {
+            prefetch => { orders => { order_event => 'side_orders' } },
+            order_by => { -desc => { [qw/order_event.event_date/] } },
+        }
+    );
+    $self->stash( events => $events );
+}
 
 sub cancel_order {
     my $self         = shift;
@@ -180,11 +178,12 @@ sub cancel_side_dish {
 }
 
 sub orders {
-    my $self  = shift;
-    my $event = $self->stash->{event};
-    my $model = $self->db;
+    my $self     = shift;
+    my $event    = $self->stash->{event};
+    my $model    = $self->db;
     my $order_rs = $event->orders;
-      #$model->resultset('Order')->search( { order_event => $event->id } );
+
+    #$model->resultset('Order')->search( { order_event => $event->id } );
     my $orders = $order_rs->search(
         undef,
         {
@@ -192,16 +191,16 @@ sub orders {
             group_by => [qw/dish spiceyness/],
         }
     );
-    my $user_orders =
-      $order_rs->search(
-          undef,
+    my $user_orders = $order_rs->search(
+        undef,
         {
-            columns => [qw/curry_user /],
+            columns  => [qw/curry_user /],
             group_by => [qw/curry_user/]
         }
     );
     my $side_order_rs = $event->side_orders;
-      #$model->resultset('SideOrder')->search( { order_event => $event->id } );
+
+    #$model->resultset('SideOrder')->search( { order_event => $event->id } );
 
     my $side_orders =
       $side_order_rs->search( undef,
