@@ -66,7 +66,7 @@ sub password {
           ->to_abs->scheme('https'),
         validate_redirect =>
           $self->url_for('/curries')->to_abs->scheme('https'),
-        inactive_fields => [qw/first_name surname roles email/]
+        inactive_fields => [qw/first_name surname roles email receive_email/]
     );
 }
 

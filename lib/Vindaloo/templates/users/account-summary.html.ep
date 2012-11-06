@@ -5,7 +5,7 @@
             % if ($user_orders) {
             <thead>
                 <tr>
-                    <th colspan=2>previous balance:</th>
+                    <th colspan=2>Previous Balance:</th>
                     <th>$<%= $previous_balance %></th>
                 </tr>
 
@@ -19,28 +19,28 @@
                         % my $spicey_btn = $spiceyness_btns->{$spicey_name};
                         <tr>
                             <td>
-                                    <%= $dish->base_ingredient->name %>
-                                    <%= $dish->curry_type->name %>
-                                        <%= $spicey_name %>
+                                <%= $dish->base_ingredient->name %>
+                                <%= $dish->curry_type->name %>
+                                    <%= $spicey_name %>
                             </td>
-                                <td>
-                                    % if ($event->orders_open){
-                                    <a href="<%=
-                                        url_for(
-                                        cancelorder => id => $order->id
-                                        )->to_abs->scheme('https')
-                                        %>">
-                                        <span class="btn btn-mini btn-danger">
-                                            <b class="icon-white icon-trash"></b>
-                                        </span>
-                                    </a>
-                                    % }
-                                    % else {
-                                        <span class="btn disabled btn-mini btn-danger">
-                                            <b class="icon-white icon-trash"></b>
-                                        </span>
-                                    %}
-                                </td>
+                            <td>
+                                % if ($event->orders_open){
+                                <a href="<%=
+                                    url_for(
+                                    cancelorder => id => $order->id
+                                    )->to_abs->scheme('https')
+                                    %>">
+                                    <span class="btn btn-mini btn-danger">
+                                        <b class="icon-white icon-trash"></b>
+                                    </span>
+                                </a>
+                                % }
+                                % else {
+                                    <span class="btn disabled btn-mini btn-danger">
+                                        <b class="icon-white icon-trash"></b>
+                                    </span>
+                                %}
+                            </td>
                             <td>$<%= $dish->price %></td>
                         </tr>
                     % }

@@ -25,7 +25,7 @@
                                 </a>
                         </td>
                         <td>$<%= $user->balance // 0 %></td>
-                        % foreach my $value (1,10,11,12) {
+                        % foreach my $value (12,11,10,1) {
                             % my $btn_type = 'btn-primary';
                             % $btn_type = 'btn-warning' if $user->balance ==
                               % $value;

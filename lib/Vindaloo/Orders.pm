@@ -89,6 +89,22 @@ sub user_order_admin {
     $self->stash( order => $order );
 }
 
+#sub order_history {
+    #my $self = shift;
+    #my $user = $self->current_user;
+
+    #my $events = $self->db->resultset('OrderEvent')->search(
+        #{},
+        #{
+            #'join' => [qw/orders side_orders/],
+            #order_by => {-desc => {[qw/event_date/]}},
+            #columns => [qw//],
+
+        #}
+    #);
+
+#}
+
 sub cancel_order {
     my $self         = shift;
     my $order_id     = $self->param('id');

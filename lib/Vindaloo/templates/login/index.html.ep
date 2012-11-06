@@ -1,6 +1,10 @@
 % layout 'default';
 % title 'Login Page';
-<%== $form->render %>
-<p>
-    <a href="<%= url_for('signup')->to_abs->scheme('https') %>">Sign up!</a>
-</p>
+<div clas="row">
+    <div class="span6 offset3">
+        <%== $form->render %>
+        <p>
+            <a href="<%= url_for('signup')->to_abs->scheme('https') %>">Sign up!</a>
+        </p>
+    </div>
+</div>
