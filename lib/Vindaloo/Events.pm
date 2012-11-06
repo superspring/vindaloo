@@ -44,3 +44,47 @@ sub close {
 1;
 
 __END__
+
+=head1 NAME
+
+Vindaloo::Events - Controller for managing events in Curry Land
+
+=head1 SYNOPSIS
+
+  use Vindaloo::Events;
+
+  # synopsis...
+
+=head1 DESCRIPTION
+
+# longer description...
+
+
+=head1 INTERFACE
+
+
+=head2 index
+
+Landing page for event management interface.
+
+
+=head2 admin
+
+Preprocessing step for managing events.
+
+
+=head2 create
+
+Add a new open event.
+
+=head2 close
+
+Close an open event.
+
+
+=head1 DEPENDENCIES
+
+
+=head1 SEE ALSO
+
+

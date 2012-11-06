@@ -208,6 +208,43 @@ sub orders {
     );
 }
 
+sub payment {
+    my $self    = shift;
+    my $payment = $self->param('payment');
+    my $user    = $self->stash->{user};
+    my $balance = $user->balance;
+    my $reduce_by;
+    given ($payment) {
+        when (qr/\A\d+\z/) {
+            $reduce_by = $payment;
+        }
+        when ('today') {
+            my $event =
+              $self->db->resultset('OrderEvent')->get_column('id')->max;
+            my $orders =
+              $user->orders( { order_event => $event }, { 'join' => 'dish' } );
+            my $side_orders = $user->side_orders( { order_event => $event },
+                { 'join' => 'side_dish' } );
+
+            my $order_total = $orders->get_column('dish.price')->sum;
+            my $side_order_total =
+              $side_orders->get_column('side_dish.price')->sum;
+
+            $reduce_by = $order_total + $side_order_total;
+        }
+        when ('account') {
+            $reduce_by = $balance;
+        }
+    }
+    $balance -= $reduce_by;
+    $user->balance($balance);
+    $user->update;
+    $user->add_to_payments( { payment => $reduce_by } );
+    $self->redirect_to( $self->url_for('userlist')->to_abs->scheme('https') );
+    return;
+
+}
+
 sub closed {
     my $self = shift;
 
@@ -216,3 +253,76 @@ sub closed {
 1;
 
 __END__
+
+=head1 NAME
+
+Vindaloo::Orders - Controller for managing order logic.
+
+=head1 SYNOPSIS
+
+  use Vindaloo::Orders;
+
+  # synopsis...
+
+=head1 DESCRIPTION
+
+# longer description...
+
+
+=head1 INTERFACE
+
+=head2 verify_event
+
+Check that an open event exists.
+
+
+=head2 order_dish
+
+Process an order request. Add information to set of orders for a particular
+B<open> event.
+
+
+=head2 user_order_admin
+
+Preprocessing step for several order operations. Main job is to store an order
+in the stash for following methods.
+
+
+=head2 cancel_order
+
+Remove an order from the system. Adjust logged in user's account balance
+accordingly.
+
+
+=head2 side_dish
+
+Process a side dish order. Add cost to what user owes.
+
+
+=head2 user_side_dish_admin
+
+Preprocessing step for processing side dish orders.
+
+
+=head2 cancel_side_dish
+
+Remove a side dish order from the system.
+
+
+=head2 orders
+
+Admin page for list of orders. Should be scrollable by event.
+
+
+
+=head2 payment
+
+Action for processing payments. Handles incrementing/decrementing users
+account balance.
+
+=head1 DEPENDENCIES
+
+
+=head1 SEE ALSO
+
+

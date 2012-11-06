@@ -207,3 +207,83 @@ sub edit {
 1;
 
 __END__
+
+=head1 NAME
+
+Vindaloo::Curry - Controller for managing curry list.
+
+=head1 SYNOPSIS
+
+  use Vindaloo::Curry;
+
+  # synopsis...
+
+=head1 DESCRIPTION
+
+# longer description...
+
+
+=head1 INTERFACE
+
+=head2 index
+
+Display list of available curries. 
+
+=head2 menu
+
+Manage interface for curries.
+
+=head2 base_ingredients
+
+Action for managing list of base ingredients.
+
+=head2 curry_types
+
+Action for managing list of curry types.
+
+
+=head2 side_dishes
+
+Action for managing list of side dishes.
+
+
+=head2 type
+
+Geneeral admin action to load relevant form for base ingredient, curry type,
+or side dish.
+
+
+=head2 admin
+
+Preprocessing step to fetch relevant object from db.
+
+=head2 create
+
+Create an object in the database.
+
+=head2 process_form
+
+Generic method for processing the menu item forms.
+
+
+=head2 edit
+
+Setup form for processing.
+
+
+
+
+
+
+
+
+
+
+
+
+=head1 DEPENDENCIES
+
+
+=head1 SEE ALSO
+
+

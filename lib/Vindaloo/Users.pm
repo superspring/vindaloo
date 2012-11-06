@@ -157,43 +157,94 @@ sub mojo_bcrypt {
     return $bcrypted;
 }
 
-sub payment {
-    my $self    = shift;
-    my $payment = $self->param('payment');
-    my $user    = $self->stash->{user};
-    my $balance = $user->balance;
-    my $reduce_by;
-    given ($payment) {
-        when (qr/\A\d+\z/) {
-            $reduce_by = $payment;
-        }
-        when ('today') {
-            my $event =
-              $self->db->resultset('OrderEvent')->get_column('id')->max;
-            my $orders =
-              $user->orders( { order_event => $event }, { 'join' => 'dish' } );
-            my $side_orders = $user->side_orders( { order_event => $event },
-                { 'join' => 'side_dish' } );
-
-            my $order_total = $orders->get_column('dish.price')->sum;
-            my $side_order_total =
-              $side_orders->get_column('side_dish.price')->sum;
-
-            $reduce_by = $order_total + $side_order_total;
-        }
-        when ('account') {
-            $reduce_by = $balance;
-        }
-    }
-    $balance -= $reduce_by;
-    $user->balance($balance);
-    $user->update;
-    $user->add_to_payments( { payment => $reduce_by } );
-    $self->redirect_to( $self->url_for('userlist')->to_abs->scheme('https') );
-    return;
-
-}
 
 1;
 
 __END__
+
+
+=head1 NAME
+
+Vindaloo::Users - Controller for managing users.
+
+=head1 SYNOPSIS
+
+  use Vindaloo::Users;
+
+  # synopsis...
+
+=head1 DESCRIPTION
+
+# longer description...
+
+
+=head1 INTERFACE
+
+=head2 authenticate
+
+Checks that a user is authenticated. Routes to L<login> if not.
+
+
+=head2 index
+
+Landing page for this controller. Displays list of users.
+
+
+=head2 admin
+
+Bridge method for fetching user object from db based on C<:id> parameter in
+request.
+
+
+=head2 profile
+
+Action for user profile changes.
+
+=head2 password
+
+Action for user password changes.
+
+
+
+=head2 edit
+
+Set up form for basic changes to user profile or administrative information.
+
+
+=head2 post_edit
+
+Handle the POSTed form data for an edit.
+
+=head2 signup
+
+Set up form for users to sign up to the site.
+
+=head2 signup_validated
+
+Handle POSTed form data for user signup.
+
+
+=head2 mojo_bcrypt_validate
+
+Callback handed to instance of L<HTML::FormHandler|HTML::FormHandler> for
+validating password fields submitted during signup.
+
+
+=head2 mojo_bcrypt
+
+Callback passed to L<HTML::FormHandler> instance. This calls the
+L<Mojolicious::Plugin::BCrypt> method internally.
+
+
+
+
+
+
+
+
+=head1 DEPENDENCIES
+
+
+=head1 SEE ALSO
+
+

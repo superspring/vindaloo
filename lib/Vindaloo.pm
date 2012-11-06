@@ -1,7 +1,6 @@
 package Vindaloo;
 use Mojo::Base 'Mojolicious';
 
-# This method will run once at server start
 use File::Basename 'dirname';
 use File::Spec::Functions 'catdir';
 
@@ -73,7 +72,7 @@ sub startup {
     $user_admin->get('/edit')->name('edituser')->to('users#edit');
     $user_admin->post('/edit')->to('users#post_edit');
     $user_admin->route('/payment/:payment')->name('payment')
-      ->to('users#payment');
+      ->to('orders#payment');
 
     $authenticated_route->route('/curry/menu')->over( is => 'admin' )
       ->to('curry#menu');
@@ -218,6 +217,48 @@ Nothing special
 =head2 load_user
 
 Authentication method.
+
+=head2 startup
+
+Sets up routing and helpers.
+
+=head2 load_user
+
+Authorization method used to fetch the user object (a
+L<DBIx::Class|DBIx::Class>) object from the database.
+
+=head2 validate_user
+
+Use the BCrypt plugin to validate the password submitted by the user with that
+stored in the db.
+
+
+=head2 has_priv
+
+Check to see if user has specified privilege. Not implemented at the moment as
+there are no privileges.
+
+
+=head2 is_role
+
+Check to see if user has a specific role. Current possibilties are B<user> and
+B<admin>.
+
+
+=head2 user_privs
+
+Return set of privileges for a the current user. Currently not implemented.
+
+
+=head2 user_roles
+
+Return set of roles for a given user.
+
+
+
+
+
+
 
 
 =head1 DEPENDENCIES
