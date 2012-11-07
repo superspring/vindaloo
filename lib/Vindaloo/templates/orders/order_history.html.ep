@@ -32,8 +32,6 @@
                             <td>$<%= $side_dish->price %></td>
                         </tr>
                     % }
-                    % my $payments = current_user->payments({payment_date =>
-                    %    $date});
                     % while (my $payment = $payments->next) {
                     <tr>
                         <td>Payment:</td>

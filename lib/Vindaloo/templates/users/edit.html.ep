@@ -1,4 +1,16 @@
 % layout 'default';
 % title 'Edit user';
 
-<%== $form->render %>
+<div class="row">
+    <div class="span6 offset3">
+        <%== $form->render %>
+    % if (is('admin')){
+            <a href="<%=
+            url_for(adminpasswordedit => id =>
+            $user->id)->to_abs->scheme('https')
+            %>">change password</a>
+    %    }
+    </div>
+</div>
+
+
