@@ -56,7 +56,7 @@ sub order_dish {
                 spiceyness  => $spice_obj->id,
             }
         );
-        my $balance = $user->balance;
+        my $balance = $user->balance // 0;
         $balance += $menu->price;
         $user->balance($balance);
         $user->update;
@@ -137,7 +137,7 @@ sub side_dish {
             order_event => $event->id,
         }
     );
-    my $balance = $current_user->balance;
+    my $balance = $current_user->balance // 0;
     $balance += $side_dish->price;
     $current_user->balance($balance);
     $current_user->update;
