@@ -13,8 +13,8 @@ has schema => sub {
     my $schema_config = $config->{'Vindaloo::Schema'};
     my $connect_info  = $schema_config->{connect_info};
     ### connect info: $connect_info
-    my ( $dsn, $user ) = @{$connect_info}{qw/dsn user/};
-    return Vindaloo::Schema->connect( $dsn, $user );
+    my ( $dsn, $user,$password ) = @{$connect_info}{qw/dsn user password/};
+    return Vindaloo::Schema->connect( $dsn, $user ,$password);
 };
 
 sub startup {
