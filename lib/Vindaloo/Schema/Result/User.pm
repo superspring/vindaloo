@@ -44,6 +44,9 @@ __PACKAGE__->has_many(
 __PACKAGE__->has_many(
     side_orders => SideOrder => { 'foreign.curry_user' => 'self.id' } );
 
+__PACKAGE__->many_to_many(order_events => orders => 'order_event' );
+__PACKAGE__->many_to_many(side_order_events => side_orders => 'order_event' );
+
 __PACKAGE__->many_to_many( roles => user_roles => 'role' );
 
 1;

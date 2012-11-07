@@ -5,6 +5,7 @@
 <div class="row">
     %= include 'users/account-summary';
     <div class="span7">
+    <h4>Orders are currently <%= $event->orders_open ? 'open' : 'closed' %>.</h4>
     <ul class="nav nav-tabs" id="myTab" >
         % foreach my $category ($categories->all){
             <li>

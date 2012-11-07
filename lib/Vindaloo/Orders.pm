@@ -92,15 +92,15 @@ sub user_order_admin {
 sub order_history {
     my $self = shift;
     my $user = $self->current_user;
+    my %dates;
 
-    my $events = $user->search(
-        undef,
-        {
-            prefetch => { orders => { order_event => 'side_orders' } },
-            order_by => { -desc => { [qw/order_event.event_date/] } },
-        }
-    );
-    $self->stash( events => $events );
+    my $order_events = $user->order_events;
+    $dates{$_}++ foreach $order_events->get_column('event_date')->all;
+    my $side_order_events = $user->side_order_events;
+    $dates{$_}++ foreach $side_order_events->get_column('event_date')->all;
+    my @dates = sort {$a cmp $b } keys %dates;
+
+    $self->stash(  dates => \@dates);
 }
 
 sub cancel_order {

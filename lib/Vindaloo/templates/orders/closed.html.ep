@@ -3,9 +3,9 @@
 
 <h4>Bummer</h4>
 <p>
-    Sorry, ya missed out. 
+    Sorry, ya missed out.
     Orders are currently closed.
 </p>
-<p><a href="<%= 
-url_for('/curries')->to_abs->scheme('https') 
+<p><a href="<%=
+url_for('/curries')->to_abs->scheme('https')
 %>">Go back</a> to curries.</p>

@@ -39,8 +39,7 @@ sub admin {
 
 sub profile {
     my $self = shift;
-    my $id   = $self->param('id');
-    my $user = $self->db->resultset('User')->find($id);
+    my $user = $self->current_user;
 
     # override the action set in admin
     $self->stash(
@@ -56,17 +55,28 @@ sub profile {
 
 sub password {
     my $self = shift;
-    my $id   = $self->param('id');
-    my $user = $self->db->resultset('User')->find($id);
+    my ( $current_user, $user, $form_action, $validate_redirect );
+    $current_user = $self->current_user;
+    $user         = $self->stash->{user};
+    if ( $self->is('admin') and ( $user->id != $current_user->id ) ) {
+        $form_action =
+          $self->url_for( adminpasswordedit => id => $user->id )
+          ->to_abs->scheme('https');
+        $validate_redirect =
+          $self->url_for('userlist')->to_abs->scheme('https');
+    }
+    else {
+        $form_action =
+          $self->url_for('changepassword')->to_abs->scheme('https');
+        $validate_redirect =
+          $self->url_for('/curries')->to_abs->scheme('https');
 
-    # override the action set in admin
+    }
     $self->stash(
-        user        => $user,
-        form_action => $self->url_for( changepassword => id => $user->id )
-          ->to_abs->scheme('https'),
-        validate_redirect =>
-          $self->url_for('/curries')->to_abs->scheme('https'),
-        inactive_fields => [qw/first_name surname roles email receive_email/]
+        user              => $user,
+        form_action       => $form_action,
+        validate_redirect => $validate_redirect,
+        inactive_fields   => [qw/first_name surname roles email receive_email/]
     );
 }
 

@@ -1,0 +1,48 @@
+% layout 'default';
+% title 'Order History';
+
+<div class="row">
+    <div class="span6 offset3">
+        <h2>Current balance $<%= current_user->balance %></h2>
+        % foreach my $date (@{$dates}) {
+            % my $user_orders = current_user->orders(
+            %  { 'order_event.event_date' => $date},{'join' => 'order_event'});
+            % my $user_side_orders = current_user->side_orders(
+            %  {'order_event.event_date' => $date},{'join' =>
+                    % 'order_event'});
+            % my $payments = current_user->payments({pay_date => $date});
+            <div class="well">
+                <%= $date %>
+                <table class="table table-striped">
+                    % while (my $order = $user_orders->next) {
+                        % my $dish = $order->dish;
+                        <tr>
+                            <td>
+                                <%= $dish->base_ingredient->name %>
+                                <%= $dish->curry_type->name %>
+                                <%= $order->spiceyness->name %>
+                            </td>
+                            <td>$<%= $dish->price %></td>
+                        </tr>
+                    %     }
+                    % while (my $side_order  = $user_side_orders->next){
+                    % my $side_dish = $side_order->side_dish;
+                        <tr>
+                            <td><%= $side_dish->name %></td>
+                            <td>$<%= $side_dish->price %></td>
+                        </tr>
+                    % }
+                    % my $payments = current_user->payments({payment_date =>
+                    %    $date});
+                    % while (my $payment = $payments->next) {
+                    <tr>
+                        <td>Payment:</td>
+                        <td>($<%= $payment->payment %>)</td>
+                    </tr>
+
+                    % }
+                </table>
+            </div>
+        %  }
+    </div>
+</div>
