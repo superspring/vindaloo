@@ -33,7 +33,7 @@ sub validate {
             $current_user->add_to_roles({name => 'user'}) unless $user_role;
 
             $self->redirect_to(
-                $self->url_for('/curries')->to_abs->scheme('https') );
+                $self->url_for('menu')->to_abs->scheme('https') );
         }
         else {
             $self->app->log->error("User not authenticated!");

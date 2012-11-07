@@ -10,7 +10,7 @@
             % my $user_side_orders = current_user->side_orders(
             %  {'order_event.event_date' => $date},{'join' =>
                     % 'order_event'});
-            % my $payments = current_user->payments({pay_date => $date});
+            % my $payments = current_user->payments({payment_date => $date});
             <div class="well">
                 <%= $date %>
                 <table class="table table-striped">

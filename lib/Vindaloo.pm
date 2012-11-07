@@ -13,8 +13,8 @@ has schema => sub {
     my $schema_config = $config->{'Vindaloo::Schema'};
     my $connect_info  = $schema_config->{connect_info};
     ### connect info: $connect_info
-    my ( $dsn, $user,$password ) = @{$connect_info}{qw/dsn user password/};
-    return Vindaloo::Schema->connect( $dsn, $user ,$password);
+    my ( $dsn, $user, $password ) = @{$connect_info}{qw/dsn user password/};
+    return Vindaloo::Schema->connect( $dsn, $user, $password );
 };
 
 sub startup {
@@ -80,20 +80,23 @@ sub startup {
       ->to('users#edit');
     $user_password_admin->post('/edit')->to('users#post_edit');
 
-    $authenticated_route->route('/curry/menu')->over( is => 'admin' )
-      ->to('curry#menu');
+    $authenticated_route->route('/curry/manage')->over( is => 'admin' )
+      ->name('currymanager')->to('curry#menu');
     $authenticated_route->route('/curry/base-ingredients')
       ->over( is => 'admin' )->to('curry#base_ingredients');
     $authenticated_route->route('/curry/curry-types')->over( is => 'admin' )
       ->to('curry#curry_types');
     $authenticated_route->route('/curry/side-dishes')->over( is => 'admin' )
       ->to('curry#side_dishes');
-    my $curry_admin =
+    my $curry_manager =
       $authenticated_route->bridge('/curry/type/:type')
       ->over( is => 'admin' )->to('curry#type');
-    $curry_admin->route('/create')->name('createmenuitem')->to('curry#create');
-    my $edit_curry = $curry_admin->bridge('/admin/:id')->to('curry#admin');
-    $edit_curry->route('/edit')->name('editmenuitem')->to('curry#edit');
+    $curry_manager->route('/create')->name('createmenuitem')
+      ->to('curry#create');
+    my $admin_curry = $curry_manager->bridge('/admin/:id')->to('curry#admin');
+    $admin_curry->route('/edit')->name('editmenuitem')->to('curry#edit');
+    $admin_curry->route('/deactivate')->name('deactivatemenuitem')
+      ->to('curry#deactivate');
 
     my $profile_admin =
       $authenticated_route->bridge('/user/profile')->to('users#profile');
@@ -107,7 +110,7 @@ sub startup {
     $authenticated_route->route('/user/order-history')->name('orderhistory')
       ->to('orders#order_history');
 
-    $authenticated_route->route('/curries')->to('curry#index');
+    $authenticated_route->route('/menu')->name('menu')->to('curry#index');
     $authenticated_route->route('/logout')->to('logout#index');
 
     $authenticated_route->route('/events')->over( is => 'admin' )

@@ -4,6 +4,8 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use feature 'switch';
 
+use TryCatch;
+
 use Vindaloo::Forms::Ingredient;
 use Vindaloo::Forms::CurryType;
 use Vindaloo::Forms::SideDish;
@@ -135,7 +137,7 @@ sub type {
         }
 
     }
-    $redirect_to = $self->url_for('/curry/menu')->to_abs->scheme('https');
+    $redirect_to = $self->url_for('currymanager')->to_abs->scheme('https');
     $self->stash( form => $form, type => $type, redirect_to => $redirect_to );
 }
 
@@ -165,6 +167,17 @@ sub admin {
     }
 }
 
+sub deactivate {
+    my $self = shift;
+    my $item = $self->stash->{item};
+    $item->active(undef);
+    $item->update;
+    $self->redirect_to(
+        $self->url_for('currymanager')->to_abs->scheme('https')
+    );
+    return;
+}
+
 sub create {
     my $self = shift;
     my $type = $self->stash->{type};
@@ -182,16 +195,21 @@ sub process_form {
         qw/type form item
           form_action/
     };
-    my @item_param;
-    push @item_param, item => $item if $item;
-    $form->process(
-        @item_param,
-        params => $self->req->params->to_hash,
-        schema => $self->db,
-        action => $action
-    );
-    if ( $form->validated ) {
-        $self->redirect_to( $self->stash->{redirect_to} );
+    try {
+        my @item_param;
+        push @item_param, item => $item if $item;
+        $form->process(
+            @item_param,
+            params => $self->req->params->to_hash,
+            schema => $self->db,
+            action => $action
+        );
+        if ( $form->validated ) {
+            $self->redirect_to( $self->stash->{redirect_to} );
+        }
+    }
+    catch (DBIx::Class::Exception $e) {
+        $form->field('active')->add_error("This item already exists!");
     }
 
 }

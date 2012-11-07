@@ -55,7 +55,11 @@
                                     editmenuitem => type => menu => id =>
                                     $item->id
                                     )->to_abs->scheme('https')
-                                    %>">edit</a> | <a href="">deactivate</a></td>
+                                    %>">edit</a> | <a href="<%=
+                                    url_for(
+                                        deactivatemenuitem => type => menu =>
+                                          id => $item->id )
+                                    %>">deactivate</a></td>
                         </tr>
                         % }
                     % }

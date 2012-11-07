@@ -41,7 +41,7 @@ sub order_dish {
             "User tried to order a curry that did not exist!");
         $self->app->log->error( join " " => $ingredient, $curry, $spice );
         $self->redirect_to(
-            $self->url_for('/curries')->to_abs->scheme('https') );
+            $self->url_for('menu')->to_abs->scheme('https') );
         return 0;
     }
 
@@ -65,7 +65,7 @@ sub order_dish {
     if ( my $e = $@ ) {
         $self->app->log->error( "Error inserting order: " . $e );
     }
-    $self->redirect_to( $self->url_for('/curries')->to_abs->scheme('https') );
+    $self->redirect_to( $self->url_for('menu')->to_abs->scheme('https') );
 
     return;
 }
@@ -116,7 +116,7 @@ sub cancel_order {
     $current_user->balance($balance);
     $current_user->update;
     $order->delete();
-    $self->redirect_to( $self->url_for('/curries')->to_abs->scheme('https') );
+    $self->redirect_to( $self->url_for('menu')->to_abs->scheme('https') );
     return;
 }
 
@@ -141,7 +141,7 @@ sub side_dish {
     $balance += $side_dish->price;
     $current_user->balance($balance);
     $current_user->update;
-    $self->redirect_to( $self->url_for('/curries')->to_abs->scheme('https') );
+    $self->redirect_to( $self->url_for('menu')->to_abs->scheme('https') );
     return;
 }
 
@@ -173,7 +173,7 @@ sub cancel_side_dish {
     $balance -= $side_dish_price;
     $current_user->balance($balance);
     $side_order->delete;
-    $self->redirect_to( $self->url_for('/curries')->to_abs->scheme('https') );
+    $self->redirect_to( $self->url_for('menu')->to_abs->scheme('https') );
     return;
 }
 

@@ -7,5 +7,5 @@
     Orders are currently closed.
 </p>
 <p><a href="<%=
-url_for('/curries')->to_abs->scheme('https')
+url_for('menu')->to_abs->scheme('https')
 %>">Go back</a> to curries.</p>

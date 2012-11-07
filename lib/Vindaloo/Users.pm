@@ -47,7 +47,7 @@ sub profile {
         form_action => $self->url_for( editprofile => id => $user->id )
           ->to_abs->scheme('https'),
         validate_redirect =>
-          $self->url_for('/curries')->to_abs->scheme('https'),
+          $self->url_for('menu')->to_abs->scheme('https'),
         inactive_fields => [qw/roles password confirm_password/]
     );
 
@@ -69,7 +69,7 @@ sub password {
         $form_action =
           $self->url_for('changepassword')->to_abs->scheme('https');
         $validate_redirect =
-          $self->url_for('/curries')->to_abs->scheme('https');
+          $self->url_for('menu')->to_abs->scheme('https');
 
     }
     $self->stash(

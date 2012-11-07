@@ -11,7 +11,7 @@
                 <ul class="nav">
                     <li class="divider-vertical"> </li>
                     <li><a href="<%=
-                        url_for('/curries')->to_abs->scheme('https')
+                        url_for('menu')->to_abs->scheme('https')
                         %>">Menu</a></li>
                 </ul>
                 % if (is_user_authenticated){
@@ -43,7 +43,7 @@
                                     url_for('userlist')->to_abs->scheme('https')
                                     %>">Manage Users</a></li>
                                 <li><a href="<%=
-                                url_for('/curry/menu')->to_abs->scheme('https')
+                                url_for('currymanager')->to_abs->scheme('https')
                                 %>">Manage Menu</a></li>
     
                             </ul>
