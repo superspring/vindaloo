@@ -17,8 +17,11 @@ sub index {
     my $side_dishes = $model->resultset('SideDish')->search( { active => 1 } );
 
     my $event_resultset = $model->resultset('OrderEvent');
-    my $latest_event_id = $event_resultset->get_column('id')->max;
-    my $event           = $event_resultset->find($latest_event_id);
+    my $event;
+    if ( $event_result->count ) {
+        my $latest_event_id = $event_resultset->get_column('id')->max;
+        $event = $event_resultset->find($latest_event_id);
+    }
 
     my $spiceyness_btn_map = {
         mild   => 'btn-success',
