@@ -64,15 +64,21 @@ sub startup {
     $r->get('/signup')->name('signup')->to('users#signup');
     $r->post('/signup')->to('users#signup_validated');
 
-    my $user_admin =
-      $authenticated_route->bridge('/user/admin/:id')
-      ->over( is => 'admin' )->to('users#admin');
     $authenticated_route->route('/users')->over( is => 'admin' )
       ->name('userlist')->to('users#index');
+    my $user_admin =
+      $authenticated_route->bridge('/user/admin/:id')->over( is => 'admin' )
+      ->to('users#admin');
     $user_admin->get('/edit')->name('edituser')->to('users#edit');
     $user_admin->post('/edit')->to('users#post_edit');
     $user_admin->route('/payment/:payment')->name('payment')
       ->to('orders#payment');
+    my $user_password_admin =
+      $user_admin->bridge('/password')->to('users#password');
+
+    $user_password_admin->get('/edit')->name('adminpasswordedit')
+      ->to('users#edit');
+    $user_password_admin->post('/edit')->to('users#post_edit');
 
     $authenticated_route->route('/curry/menu')->over( is => 'admin' )
       ->to('curry#menu');
@@ -90,13 +96,16 @@ sub startup {
     $edit_curry->route('/edit')->name('editmenuitem')->to('curry#edit');
 
     my $profile_admin =
-      $authenticated_route->bridge('/user/profile/:id')->to('users#profile');
+      $authenticated_route->bridge('/user/profile')->to('users#profile');
     $profile_admin->get('/edit')->name('editprofile')->to('users#edit');
     $profile_admin->post('/edit')->to('users#post_edit');
     my $password_admin =
-      $authenticated_route->bridge('/user/password/:id')->to('users#password');
+      $profile_admin->bridge('/password')->to('users#password');
     $password_admin->get('/edit')->name('changepassword')->to('users#edit');
     $password_admin->post('/edit')->to('users#post_edit');
+
+    $authenticated_route->route('/user/order-history')->name('orderhistory')
+      ->to('orders#order_history');
 
     $authenticated_route->route('/curries')->to('curry#index');
     $authenticated_route->route('/logout')->to('logout#index');
@@ -149,6 +158,7 @@ sub load_user {
 sub validate_user {
     my ( $app, $username, $password, $extradata ) = @_;
     my $logger = $app->app->log;
+
     #$logger->debug( "Validating user " . "$username with pw $password" );
     my $user =
       $app->db->resultset('User')->search( { email => $username } )->first;
@@ -156,7 +166,7 @@ sub validate_user {
     return 0 unless $user;
     $logger->debug("User available");
     my $user_password = $user->password;
-    my $result = $app->bcrypt_validate($password, $user_password );
+    my $result = $app->bcrypt_validate( $password, $user_password );
     $logger->debug( "User validated with result: " . $result );
     return unless $result;
     return $user->id;
