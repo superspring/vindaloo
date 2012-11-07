@@ -3,7 +3,7 @@ package Vindaloo::Forms::MenuBase;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Model::DBIC';
 
-use Smart::Comments;
+#use Smart::Comments;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 
