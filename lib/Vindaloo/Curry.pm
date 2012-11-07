@@ -18,7 +18,7 @@ sub index {
 
     my $event_resultset = $model->resultset('OrderEvent');
     my $event;
-    if ( $event_result->count ) {
+    if ( $event_resultset->count ) {
         my $latest_event_id = $event_resultset->get_column('id')->max;
         $event = $event_resultset->find($latest_event_id);
     }
