@@ -24,7 +24,10 @@
                         <%= $user->surname %>
                                 </a> 
                         </td>
-                        <td>$<%= $user->balance // 0 %></td>
+                        <td><a href="<%=
+                        url_for(payment => id => $user->id => payment =>
+                        'account')->to_abs->scheme('https')
+                        %>"><span class="btn btn-warning btn-mini">$<%= $user->balance // 0 %></span></a></td>
                         % foreach my $value (12,11,10,1) {
                             % my $btn_type = 'btn-primary';
                             % $btn_type = 'btn-warning' if $user->balance ==
