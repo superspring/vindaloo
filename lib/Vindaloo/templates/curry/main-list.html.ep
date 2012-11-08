@@ -2,8 +2,8 @@
         <div class="row tab-content">
                 % my $active = 'active';
             % while (my $category = $categories->next) {
-            <div class="span6 well tab-pane <%= $active %> " id="<%= 
-            lc $category->name 
+            <div class="span6 well tab-pane <%= $active %> " id="<%=
+            lc $category->name
             %>">
                     <h4><%= ucfirst(lc $category->name )%></h4>
                     <table class="table table-condensed table-striped">
@@ -19,7 +19,8 @@
                                 <td><%= ucfirst $ingredient->name %> <%= ucfirst
                                     $curry_type->name %></td>
                                 <td>
-                                % foreach my $heat ($menu->spiceynesses) {
+                % foreach my $heat ( $menu->spiceynesses->search(undef,{order_by
+                    %  => {-asc => [qw/spiceyness.id/]}})) {
                                 % if ($event and $event->orders_open){
                                     <a href="<%=
                                     url_for(
@@ -35,7 +36,9 @@
                                     </a>
                                 % }
                                 % else {
-                                        <span class="btn disabled btn-mini btn-inverted"><%= $heat->name %></span>
+                                <span class="btn disabled btn-mini btn-inverted"><%=
+                                    $heat->name
+                                    %></span>
                                 %}
                                 % }
                                 </td>
