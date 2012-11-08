@@ -1,7 +1,7 @@
 package Vindaloo::Events;
 
 use Mojo::Base 'Mojolicious::Controller';
-
+use TryCatch;
 sub index {
     my $self = shift;
     my $events =
@@ -39,6 +39,12 @@ sub close {
     $event->update;
     $self->redirect_to( $self->url_for('/events')->to_abs->scheme('https') );
     return 0;
+}
+
+sub open {
+    my $self = shift;
+    my $event = $self->stash->{event};
+    
 }
 
 1;
