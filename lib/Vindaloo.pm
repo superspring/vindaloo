@@ -121,6 +121,7 @@ sub startup {
       $authenticated_route->bridge('/event/admin/:id')->over( is => 'admin' )
       ->to('events#admin');
     $event_admin->route('/close')->name('closeevent')->to('events#close');
+    $event_admin->route('/open')->name('openevent')->to('events#open');
 
     $event_admin->route('/orders')->name('eventorders')->to('orders#orders');
 
