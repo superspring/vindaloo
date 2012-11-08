@@ -165,11 +165,11 @@ sub validate_user {
     #$logger->debug( "Validating user " . "$username with pw $password" );
     my $user =
       $app->db->resultset('User')->search( { email => $username } )->first;
-    $logger->debug( "Queried user with id: " . $user->id );
     if ( not $user ) {
         $app->redirect_to( $app->url_for('menu')->to_abs->scheme('https') );
         return;
     }
+    $logger->debug( "Queried user with id: " . $user->id );
     $logger->debug("User available");
     my $user_password = $user->password;
     my $result = $app->bcrypt_validate( $password, $user_password );
