@@ -26,6 +26,10 @@ sub startup {
     my $config = $self->plugin('Config');
     $self->app->config( %{$config} );
     $self->plugin( 'bcrypt', { cost => 4 } );
+    $self->plugin(gravatar => {
+        size => 30,
+        rating => 'PG'
+        });
     $self->helper(
         db => sub {
             my $app = shift;
