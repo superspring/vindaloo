@@ -12,11 +12,18 @@
                 % my $user = $user_order->curry_user;
                 % my $dishes_ordered = $order_rs->search({curry_user => $user->id},
                 % {'join' => 'dish'});
-                % my $curry_owing = $dishes_ordered->get_column('dish.price')->sum;
+                % my $curry_owing =
+                % $dishes_ordered->get_column('dish.price')->sum // 0;
+                % my $sides_owing = $side_order_rs->search({curry_user =>
+                % $user->id})->sum // 0;
                 <tr>
                     <td><%= $user->first_name %> <%= $user->surname %></td>
-                    <td><%= sprintf "%.2f", $curry_owing %></td>
-                    <td><a href=""><span class="btn btn-success">Pay</span></a></td>
+                    <td><%= sprintf "%.2f", ( $curry_owing + $sides_owing ) %></td>
+                    <td>
+                    
+                    </td>
+
+
                 </tr>
             %  }
         </tbody>
