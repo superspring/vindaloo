@@ -61,7 +61,7 @@
                                 class="dropdown-toggle"
                                 data-toggle="dropdown"
                                 >
-                                <%= gravatar current_user->email , size => 40 %>
+                                <%= gravatar current_user->email %>
                                 <%= join " " => current_user->first_name,
                                 current_user->surname %>
                                 <b class="caret"></b>
