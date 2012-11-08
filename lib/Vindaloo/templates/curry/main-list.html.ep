@@ -35,9 +35,7 @@
                                     </a>
                                 % }
                                 % else {
-                                        <span class="btn disabled btn-mini <%=
-                                            $spiceyness_btns->{$heat->name}
-                                            %>"><%= $heat->name %></span>
+                                        <span class="btn disabled btn-mini btn-inverted"><%= $heat->name %></span>
                                 %}
                                 % }
                                 </td>

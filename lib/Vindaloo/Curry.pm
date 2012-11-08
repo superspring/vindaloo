@@ -30,14 +30,15 @@ sub index {
         medium => 'btn-warning',
         hot    => 'btn-danger'
     };
-    my $user            = $self->current_user;
+    my $user = $self->current_user;
     my $current_balance = $user->balance // 0;
-    my ( $previous_balance, $user_orders, $user_side_orders,$latest_payment );
+    my ( $previous_balance, $user_orders, $user_side_orders, $latest_payment );
 
+        my $payment_amount;
     if ($event) {
         my $event_date = $event->event_date;
-        $latest_payment = $user->payments->search({payment_date
-                => $event_date})->first;
+        $latest_payment =
+          $user->payments->search( { payment_date => $event_date } );
         $user_orders =
           $user->orders( { order_event => $event->id }, { 'join' => 'dish' } );
         $user_side_orders = $user->side_orders( { order_event => $event->id },
@@ -46,18 +47,16 @@ sub index {
         my $event_sum = $user_orders->get_column('dish.price')->sum // 0;
         my $side_dish_event_sum =
           $user_side_orders->get_column('side_dish.price')->sum // 0;
-        $event_sum += $side_dish_event_sum ;
+        $event_sum += $side_dish_event_sum;
 
-        $event_sum        = sprintf "%.2f", $event_sum;
+        $event_sum = sprintf "%.2f", $event_sum;
         $previous_balance = $current_balance - $event_sum;
-        if ($latest_payment) {
-            my $payment_amount = $latest_payment->payment;
-            $previous_balance += $payment_amount if $payment_amount;
-        }
+        $payment_amount = sprintf "%.2f", $latest_payment->get_column('payment')->sum
+          if $latest_payment;
+        $previous_balance += $payment_amount if $payment_amount;
         $previous_balance = sprintf "%.2f", $previous_balance;
 
         $self->app->log->debug( 'Event sum ' . $event_sum );
-
     }
 
     $self->stash(
@@ -69,7 +68,7 @@ sub index {
         user_side_orders => $user_side_orders,
         previous_balance => $previous_balance,
         side_dishes      => $side_dishes,
-        latest_payment => $latest_payment
+        latest_payment   => $payment_amount
     );
 
 }
@@ -209,7 +208,7 @@ sub process_form {
         }
     }
     catch (DBIx::Class::Exception $e) {
-        $form->field('active')->add_error("This item already exists!");
+        $form->add_form_error("This item already exists!");
     }
 
 }

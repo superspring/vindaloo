@@ -36,7 +36,8 @@
                                 </a>
                                 % }
                                 % else {
-                                    <span class="btn disabled btn-mini btn-danger">
+                                    <span class="btn disabled btn-mini
+                                    btn-inverted">
                                         <b class="icon-white icon-trash"></b>
                                     </span>
                                 %}
@@ -61,7 +62,8 @@
                                 </a>
                                 % }
                                 % else {
-                                    <span class="btn disabled btn-mini btn-danger">
+                                    <span class="btn disabled btn-mini
+                                    btn-inverted">
                                         <b class="icon-white icon-trash"></b>
                                     </span>
                                 %}
@@ -73,7 +75,7 @@
                 % }
                 % if ($latest_payment) {
                     <tr>
-                      <td colspan="2">Payment</td> <td>($<%= $latest_payment->payment %>) </td>
+                      <td colspan="2">Payment</td> <td>($<%= $latest_payment %>) </td>
                     </tr>
                  %   }
                 <tr>
