@@ -5,7 +5,6 @@
             <div class="span6 well tab-pane <%= $active %> " id="<%= 
             lc $category->name 
             %>">
-                %  $active = '';
                     <h4><%= ucfirst(lc $category->name )%></h4>
                     <table class="table table-condensed table-striped">
                         <tbody>

@@ -167,11 +167,12 @@ sub cancel_side_dish {
     my $self            = shift;
     my $side_order      = $self->stash->{side_order};
     my $current_user    = $self->current_user;
-    my $balance         = $current_user->balance;
+    my $balance         = $current_user->balance // 0;
     my $side_dish       = $side_order->side_dish;
     my $side_dish_price = $side_dish->price;
     $balance -= $side_dish_price;
     $current_user->balance($balance);
+    $current_user->update;
     $side_order->delete;
     $self->redirect_to( $self->url_for('menu')->to_abs->scheme('https') );
     return;

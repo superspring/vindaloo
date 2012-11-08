@@ -89,8 +89,8 @@ sub startup {
     $authenticated_route->route('/curry/side-dishes')->over( is => 'admin' )
       ->to('curry#side_dishes');
     my $curry_manager =
-      $authenticated_route->bridge('/curry/type/:type')
-      ->over( is => 'admin' )->to('curry#type');
+      $authenticated_route->bridge('/curry/type/:type')->over( is => 'admin' )
+      ->to('curry#type');
     $curry_manager->route('/create')->name('createmenuitem')
       ->to('curry#create');
     my $admin_curry = $curry_manager->bridge('/admin/:id')->to('curry#admin');
@@ -166,7 +166,10 @@ sub validate_user {
     my $user =
       $app->db->resultset('User')->search( { email => $username } )->first;
     $logger->debug( "Queried user with id: " . $user->id );
-    return 0 unless $user;
+    if ( not $user ) {
+        $app->redirect_to( $app->url_for('menu')->to_abs->scheme('https') );
+        return;
+    }
     $logger->debug("User available");
     my $user_password = $user->password;
     my $result = $app->bcrypt_validate( $password, $user_password );
