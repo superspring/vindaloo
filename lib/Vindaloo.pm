@@ -63,11 +63,16 @@ sub startup {
 
     # Basic authentication for all routes.
     my $authenticated_route = $r->bridge('/')->to('users#authenticate');
+
+    # This is the landing page
+    $authenticated_route->route('/menu')->name('menu')->to('curry#index');
+
     $authenticated_route->get('')->to('curry#index');
     $r->get('/login')->to('login#index');
     $r->post('/login')->to('login#validate');
     $r->get('/signup')->name('signup')->to('users#signup');
     $r->post('/signup')->to('users#signup_validated');
+    $authenticated_route->route('/logout')->to('logout#index');
 
     # Main user list
     $authenticated_route->route('/users')->over( is => 'admin' )
@@ -137,8 +142,6 @@ sub startup {
     $authenticated_route->route('/user/order-history')->name('orderhistory')
       ->to('orders#order_history');
 
-    $authenticated_route->route('/menu')->name('menu')->to('curry#index');
-    $authenticated_route->route('/logout')->to('logout#index');
 
     # User routes for ordering dishes and sides.
     my $user_order =
