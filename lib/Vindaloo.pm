@@ -26,10 +26,12 @@ sub startup {
     my $config = $self->plugin('Config');
     $self->app->config( %{$config} );
     $self->plugin( 'bcrypt', { cost => 4 } );
-    $self->plugin(gravatar => {
-        size => 30,
-        rating => 'PG'
-        });
+    $self->plugin(
+        gravatar => {
+            size   => 30,
+            rating => 'PG'
+        }
+    );
     $self->helper(
         db => sub {
             my $app = shift;
@@ -60,7 +62,6 @@ sub startup {
     my $r = $self->routes;
 
     # Basic authentication for all routes.
-
     my $authenticated_route = $r->bridge('/')->to('users#authenticate');
     $authenticated_route->get('')->to('curry#index');
     $r->get('/login')->to('login#index');
@@ -68,8 +69,11 @@ sub startup {
     $r->get('/signup')->name('signup')->to('users#signup');
     $r->post('/signup')->to('users#signup_validated');
 
+    # Main user list
     $authenticated_route->route('/users')->over( is => 'admin' )
       ->name('userlist')->to('users#index');
+
+    # User admin route. Takes :id param from path
     my $user_admin =
       $authenticated_route->bridge('/user/admin/:id')->over( is => 'admin' )
       ->to('users#admin');
@@ -84,6 +88,7 @@ sub startup {
       ->to('users#edit');
     $user_password_admin->post('/edit')->to('users#post_edit');
 
+    # Menu (curry) management
     $authenticated_route->route('/curry/manage')->over( is => 'admin' )
       ->name('currymanager')->to('curry#menu');
     $authenticated_route->route('/curry/base-ingredients')
@@ -92,6 +97,22 @@ sub startup {
       ->to('curry#curry_types');
     $authenticated_route->route('/curry/side-dishes')->over( is => 'admin' )
       ->to('curry#side_dishes');
+
+    # Event management
+    $authenticated_route->route('/events')->over( is => 'admin' )
+      ->to('events#index');
+    $authenticated_route->route('/event/create')->name('createevent')
+      ->over( is => 'admin' )->to('events#create');
+    my $event_admin =
+      $authenticated_route->bridge('/event/admin/:id')->over( is => 'admin' )
+      ->to('events#admin');
+    $event_admin->route('/close')->name('closeevent')->to('events#close');
+    $event_admin->route('/open')->name('openevent')->to('events#open');
+
+    $event_admin->route('/orders')->name('eventorders')->to('orders#orders');
+
+    # Edit a type of curry (type means "base ingredient", "curry type", or
+    # "side dish", not necessarily a type of curry
     my $curry_manager =
       $authenticated_route->bridge('/curry/type/:type')->over( is => 'admin' )
       ->to('curry#type');
@@ -102,6 +123,8 @@ sub startup {
     $admin_curry->route('/deactivate')->name('deactivatemenuitem')
       ->to('curry#deactivate');
 
+    # Profile management (user stuff like change profile, edit pw, name,
+    # etc.
     my $profile_admin =
       $authenticated_route->bridge('/user/profile')->to('users#profile');
     $profile_admin->get('/edit')->name('editprofile')->to('users#edit');
@@ -117,18 +140,7 @@ sub startup {
     $authenticated_route->route('/menu')->name('menu')->to('curry#index');
     $authenticated_route->route('/logout')->to('logout#index');
 
-    $authenticated_route->route('/events')->over( is => 'admin' )
-      ->to('events#index');
-    $authenticated_route->route('/event/create')->name('createevent')
-      ->over( is => 'admin' )->to('events#create');
-    my $event_admin =
-      $authenticated_route->bridge('/event/admin/:id')->over( is => 'admin' )
-      ->to('events#admin');
-    $event_admin->route('/close')->name('closeevent')->to('events#close');
-    $event_admin->route('/open')->name('openevent')->to('events#open');
-
-    $event_admin->route('/orders')->name('eventorders')->to('orders#orders');
-
+    # User routes for ordering dishes and sides.
     my $user_order =
       $authenticated_route->bridge('/order')->over( is => 'user' )
       ->to('orders#verify_event');
