@@ -4,28 +4,18 @@
             <tr>
                 <th>User</th>
                 <th>Amount</th>
-                <th></th>
+                <th>Price</th>
             </tr>
         </thead>
         <tbody>
-            % while (my $user_order = $user_orders->next){
-                % my $user = $user_order->curry_user;
-                % my $dishes_ordered = $order_rs->search({curry_user => $user->id},
-                % {'join' => 'dish'});
-                % my $curry_owing =
-                % $dishes_ordered->get_column('dish.price')->sum // 0;
-                % my $sides_owing = $side_order_rs->search({curry_user =>
-                % $user->id})->sum // 0;
-                <tr>
-                    <td><%= $user->first_name %> <%= $user->surname %></td>
-                    <td><%= sprintf "%.2f", ( $curry_owing + $sides_owing ) %></td>
-                    <td>
-                    
-                    </td>
-
-
-                </tr>
-            %  }
+        % while (my $user = $users->next) {
+            % my $user_order = $user_order_hash->{$user->id};
+            <tr>
+                <td><%= join " " => $user->first_name, $user->surname %></td>
+                <td><%= join ", " => @{$user_order->{dishes}} %></td>
+                <td>$<%= $user_order->{price} %></td>
+            </tr>
+         %   }
         </tbody>
     </table>
 </div>

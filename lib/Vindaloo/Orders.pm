@@ -3,6 +3,7 @@ package Vindaloo::Orders;
 use Mojo::Base 'Mojolicious::Controller';
 
 use List::MoreUtils 'any';
+use Data::Dumper;
 
 sub verify_event {
     my $self = shift;
@@ -184,7 +185,47 @@ sub orders {
     my $model    = $self->db;
     my $order_rs = $event->orders;
 
-    #$model->resultset('Order')->search( { order_event => $event->id } );
+    my $event_users = $model->resultset('User')->search(
+        {
+            -or => [
+                { 'orders.order_event'      => $event->id },
+                { 'side_orders.order_event' => $event->id }
+              ]
+
+        },
+        { join => [qw/orders side_orders/], distinct => 1 }
+    );
+    my $user_order_hash;
+    foreach my $user ( $event_users->all ) {
+        my ( @order_param, @side_order_param );
+        my $orders =
+          $user->orders( { order_event => $event->id }, )->grouped_dish;
+        my $total_user_price;
+        foreach my $order ( $orders->all ) {
+            my %columns = $order->get_columns;
+            my @fields  = @columns{
+                qw/num_of_dishes ingredient curry
+                  spiceyness /
+            };
+            $total_user_price += $columns{price};
+            my $dish_set = join " " => @fields;
+            push @{ $user_order_hash->{ $user->id }->{dishes} }, $dish_set;
+        }
+
+        my $side_orders =
+          $user->side_orders( { order_event => $event->id }, )
+          ->grouped_side_dish;
+        foreach my $side_order ( $side_orders->all ) {
+            my %columns = $side_order->get_columns;
+            my @fields  = @columns{qw/num_of_sides side /};
+            $total_user_price += $columns{price};
+            my $dish_set = join " " => @fields;
+            push @{ $user_order_hash->{ $user->id }->{dishes} }, $dish_set;
+        }
+        $user_order_hash->{ $user->id }->{price} = sprintf "%.2f",
+          $total_user_price;
+    }
+
     my $orders = $order_rs->search(
         undef,
         {
@@ -192,35 +233,19 @@ sub orders {
             group_by => [qw/dish spiceyness/],
         }
     );
-    my $user_orders = $order_rs->search(
-        undef,
-        {
-            columns  => [qw/curry_user /],
-            group_by => [qw/curry_user/]
-        }
-    );
     my $side_order_rs = $event->side_orders;
-
-    #$model->resultset('SideOrder')->search( { order_event => $event->id } );
 
     my $side_orders =
       $side_order_rs->search( undef,
         { columns => [qw/side_dish/], group_by => [qw/side_dish/] } );
-    my $user_side_orders = $side_order_rs->search(
-        undef,
-        {
-            columns  => [qw/curry_user side_dish/],
-            group_by => [qw/curry_user side_dish/]
-        }
-    );
 
     $self->stash(
         orders           => $orders,
-        user_orders      => $user_orders,
         order_rs         => $order_rs,
         side_orders      => $side_orders,
-        user_side_orders => $user_side_orders,
-        side_order_rs    => $side_order_rs
+        side_order_rs    => $side_order_rs,
+        users            => $event_users,
+        user_order_hash  => $user_order_hash
     );
 }
 
