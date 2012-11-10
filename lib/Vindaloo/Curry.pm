@@ -34,7 +34,7 @@ sub index {
     my $current_balance = $user->balance // 0;
     my ( $previous_balance, $user_orders, $user_side_orders, $latest_payment );
 
-        my $payment_amount;
+    my $payment_amount;
     if ($event) {
         my $event_date = $event->event_date;
         $latest_payment =
@@ -53,7 +53,7 @@ sub index {
         $previous_balance = $current_balance - $event_sum;
         if ($latest_payment) {
             my $sum = $latest_payment->get_column('payment')->sum // 0;
-            $payment_amount = sprintf "%.2f", $sum ;
+            $payment_amount = sprintf "%.2f", $sum;
         }
         $previous_balance += $payment_amount if $payment_amount;
         $previous_balance = sprintf "%.2f", $previous_balance;

@@ -70,7 +70,6 @@
                             </td>
                             <td>$<%= $side_dish->price %></td>
                         </tr>
-
                     % }
                 % }
                 % if ($latest_payment and $latest_payment > 0) {

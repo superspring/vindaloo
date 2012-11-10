@@ -25,6 +25,22 @@
                 $next_event->id)->to_abs->scheme('https')
                 %>">Next event</a></li>
             % }
+        <li class="pull-right">
+            % if ($event->orders_open){
+                    <a href="<%=
+                        url_for(closeevent => id =>
+                        $event->id)->to_abs->scheme('https')
+                    %>">
+                        Close
+                    </a>
+            %    }
+            % else {
+                    <a href="<%=
+                    url_for(openevent => id =>
+                    $event->id)->to_abs->scheme('https') %>">
+                    Open</a>
+            %    }
+        </li>
         </ul>
     </div>
 <div class="tab-content">
