@@ -76,7 +76,16 @@ sub user_order_admin {
     my $order_id     = $self->param('id');
     my $event        = $self->stash->{event};
     my $current_user = $self->current_user;
-    my $order        = $current_user->orders->find($order_id);
+    my $order        = $current_user->orders(
+        {
+            id => $order_id,
+            'order_event.orders_open' => 1
+        },
+        {
+            join => 'order_event'
+        }
+    )->first;
+
     if ( not defined $order ) {
         $self->app->log->error( "User "
               . $current_user->first_name . " "
