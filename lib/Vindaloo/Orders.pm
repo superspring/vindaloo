@@ -99,7 +99,7 @@ sub order_history {
     $dates{$_}++ foreach $order_events->get_column('event_date')->all;
     my $side_order_events = $user->side_order_events;
     $dates{$_}++ foreach $side_order_events->get_column('event_date')->all;
-    my @dates = sort {$a cmp $b } keys %dates;
+    my @dates = sort {$b cmp $a } keys %dates;
 
     $self->stash(  dates => \@dates);
 }
