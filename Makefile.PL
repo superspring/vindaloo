@@ -4,13 +4,13 @@ use warnings;
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-    VERSION   => '0.20',
+    VERSION   => '0.21',
     PREREQ_PM => {
         'Mojolicious'                         => '3.54',
         'Mojolicious::Plugin::Authentication' => 0,
         'Mojolicious::Plugin::Authorization'  => 0,
         'Mojolicious::Plugin::Bcrypt'         => 0,
-        'Mojolicious::Plugin::Gravatar'       => 0,
+        'Mojolicious::Plugin::Libravatar'     => 0,
         'DBIx::Class'                         => 0,
         'HTML::FormHandler'                   => 0,
         'HTML::FormHandler::Model::DBIC'      => 0,
