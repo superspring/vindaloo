@@ -16,6 +16,7 @@ sub index {
     my $model       = $self->db;
     my $categories  = $model->resultset('IngredientCategory');
     my $curry_types = $model->resultset('CurryType');
+    my $spiceynesses = $model->resultset('Spiceyness');
     my $side_dishes = $model->resultset('SideDish')->search( { active => 1 } );
 
     my $event_resultset = $model->resultset('OrderEvent');
@@ -70,7 +71,8 @@ sub index {
         user_side_orders => $user_side_orders,
         previous_balance => $previous_balance,
         side_dishes      => $side_dishes,
-        latest_payment   => $payment_amount
+        latest_payment   => $payment_amount,
+        spiceynesses => $spiceynesses,
     );
 
 }

@@ -19,9 +19,10 @@
                                 <td><%= ucfirst $ingredient->name %> <%= ucfirst
                                     $curry_type->name %></td>
                                 <td>
-                % foreach my $heat ( $menu->spiceynesses->search(undef,{order_by
-                    %  => {-asc => [qw/spiceyness.id/]}})) {
-                                % if ($event and $event->orders_open){
+                   % foreach my $heat ($spiceynesses->all) {
+                    % my $item = $menu->spiceynesses({id => $heat->id})
+                    %    ->first;
+                                % if ($item and $event and $event->orders_open){
                                     <a href="<%=
                                     url_for(
                                         'orderdish',
