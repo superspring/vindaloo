@@ -149,7 +149,7 @@ sub signup_validated {
         }
     }
     catch( DBIx::Class::Exception $e where { $_ ~~ qr/email_key/ } ) {
-        $form->field('email')->add_error("This email already exists!");
+        $form->field('email')->add_error("A user with this email already exists!");
      }
 
       $self->render('users/signup');

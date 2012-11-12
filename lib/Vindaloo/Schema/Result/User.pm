@@ -49,6 +49,7 @@ __PACKAGE__->many_to_many(side_order_events => side_orders => 'order_event' );
 
 __PACKAGE__->many_to_many( roles => user_roles => 'role' );
 
+
 1;
 
 __END__

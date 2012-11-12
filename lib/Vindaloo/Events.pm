@@ -1,6 +1,7 @@
 package Vindaloo::Events;
 
 use Mojo::Base 'Mojolicious::Controller';
+use TryCatch;
 
 sub index {
     my $self = shift;
@@ -21,8 +22,11 @@ sub admin {
     $previous_event = $event_rs->find($previous_event_id)
       unless $previous_event_id <= 0;
     $next_event = $event_rs->find($next_event_id);
-    $self->stash( event => $event, previous_event => $previous_event,
-        next_event => $next_event );
+    $self->stash(
+        event          => $event,
+        previous_event => $previous_event,
+        next_event     => $next_event
+    );
 }
 
 sub create {
@@ -38,7 +42,23 @@ sub close {
     $event->orders_open(undef);
     $event->update;
     $self->redirect_to( $self->url_for('/events')->to_abs->scheme('https') );
-    return 0;
+    return;
+}
+
+sub open {
+    my $self  = shift;
+    my $event = $self->stash->{event};
+    try {
+        $event->orders_open(1);
+        $event->update;
+    }
+    catch (DBIx::Class::Exception $e) {
+        $self->app->log->error("User tried to open an event"
+            ." when one already exists. ".$e);
+    }
+    $self->redirect_to( $self->url_for('/events')->to_abs->scheme('https') );
+    return;
+
 }
 
 1;

@@ -1,5 +1,6 @@
 vindaloo.conf
 *.swp
+*.swo
 *.tar.gz
 MANIFEST
 *META*
@@ -11,3 +12,4 @@ inc
 *.project
 *.log
 *.DS_Store
+*.orig

@@ -38,6 +38,10 @@
                                     % else {
                                         <span class="btn btn-inverse">closed
                                         <b class="icon-white icon-lock"></b></span>
+                                        <a href="<%=
+                                        url_for(openevent => id =>
+                                        $event->id)->to_abs->scheme('https') %>">
+                                        <span class="btn btn-primary">open</span></a>
                                     %   }
                                 </td>
                                 <td>

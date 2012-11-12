@@ -61,7 +61,8 @@
                                 class="dropdown-toggle"
                                 data-toggle="dropdown"
                                 >
-                                <%= gravatar current_user->email %>
+                                <img src="<%=
+                                libravatar_url current_user->email %>" alt="" />
                                 <%= join " " => current_user->first_name,
                                 current_user->surname %>
                                 <b class="caret"></b>
