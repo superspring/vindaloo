@@ -136,7 +136,7 @@ sub user_order_admin {
     my $current_user = $self->current_user;
     my $order        = $current_user->orders(
         {
-            id => $order_id,
+            'me.id' => $order_id,
             'order_event.orders_open' => 1
         },
         {
