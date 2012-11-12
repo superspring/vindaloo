@@ -39,7 +39,7 @@ sub random_curry {
         }
     );
     my @ids          = $eligible_curries->get_column('me.id')->all;
-    my $random_id    = $ids[ int( rand($#ids) ) ];
+    my $random_id    = $ids[ int( rand(scalar @ids) ) ];
     my $random_curry = $curry_menu->find($random_id);
     $self->create_curry_order( $random_curry, $spice_obj );
 
