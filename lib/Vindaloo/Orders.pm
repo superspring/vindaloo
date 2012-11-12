@@ -18,6 +18,37 @@ sub verify_event {
     $self->stash( event => $event );
 }
 
+sub random_curry {
+    my $self       = shift;
+    my $category   = ucfirst( lc $self->param('category') );
+    my $spiceyness = lc $self->param('spice');
+    my $model      = $self->db;
+    my $spice_obj =
+      $model->resultset('Spiceyness')->find( { name => $spiceyness } );
+    my $curry_menu       = $model->resultset('CurryMenu');
+    my $eligible_curries = $curry_menu->search(
+        {
+            'category.name'   => $category,
+            'spiceyness.name' => $spiceyness,
+        },
+        {
+            join => [
+                { dish_spiceynesses => 'spiceyness' },
+                { base_ingredient   => 'category' }
+            ]
+        }
+    );
+    my @ids          = $eligible_curries->get_column('me.id')->all;
+    my $random_id    = $ids[ int( rand($#ids) ) ];
+    my $random_curry = $curry_menu->find($random_id);
+    $self->create_curry_order( $random_curry, $spice_obj );
+
+    $self->redirect_to( $self->url_for('menu')->to_abs->scheme('https') );
+
+    return;
+
+}
+
 sub order_dish {
     my $self       = shift;
     my $ingredient = $self->param('ingredient');
@@ -37,7 +68,7 @@ sub order_dish {
         }
     )->first;
 
-    if ( any { not defined $_ } $ingred_obj, $curry_obj, $spice_obj ) {
+    if ( any { not defined $_ } $ingred_obj, $curry_obj, $spice_obj,$menu ) {
         $self->app->log->error(
             "User tried to order a curry that did not exist!");
         $self->app->log->error( join " " => $ingredient, $curry, $spice );
@@ -45,8 +76,38 @@ sub order_dish {
             $self->url_for('menu')->to_abs->scheme('https') );
         return 0;
     }
+    $self->create_curry_order($menu,$spice_obj);
 
+    #my $event = $self->stash->{event};
+    #local $@;
+    #eval {
+        #$model->resultset('Order')->create(
+            #{
+                #dish        => $menu->id,
+                #order_event => $event->id,
+                #curry_user  => $user->id,
+                #spiceyness  => $spice_obj->id,
+            #}
+        #);
+        #my $balance = $user->balance // 0;
+        #$balance += $menu->price;
+        #$user->balance($balance);
+        #$user->update;
+
+    #};
+    #if ( my $e = $@ ) {
+        #$self->app->log->error( "Error inserting order: " . $e );
+    #}
+    $self->redirect_to( $self->url_for('menu')->to_abs->scheme('https') );
+
+    return;
+}
+
+sub create_curry_order {
+    my ($self,$menu,$spice_obj ) = @_;
+    my $user = $self->current_user;
     my $event = $self->stash->{event};
+    my $model = $self->db;
     local $@;
     eval {
         $model->resultset('Order')->create(
@@ -66,9 +127,6 @@ sub order_dish {
     if ( my $e = $@ ) {
         $self->app->log->error( "Error inserting order: " . $e );
     }
-    $self->redirect_to( $self->url_for('menu')->to_abs->scheme('https') );
-
-    return;
 }
 
 sub user_order_admin {

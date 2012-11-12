@@ -12,12 +12,12 @@ use Vindaloo::Forms::SideDish;
 use Vindaloo::Forms::MenuItem;
 
 sub index {
-    my $self        = shift;
-    my $model       = $self->db;
-    my $categories  = $model->resultset('IngredientCategory');
-    my $curry_types = $model->resultset('CurryType');
+    my $self         = shift;
+    my $model        = $self->db;
+    my $categories   = $model->resultset('IngredientCategory');
+    my $curry_types  = $model->resultset('CurryType');
     my $spiceynesses = $model->resultset('Spiceyness');
-    my $side_dishes = $model->resultset('SideDish')->search( { active => 1 } );
+    my $side_dishes  = $model->resultset('SideDish')->search( { active => 1 } );
 
     my $event_resultset = $model->resultset('OrderEvent');
     my $event;
@@ -72,7 +72,7 @@ sub index {
         previous_balance => $previous_balance,
         side_dishes      => $side_dishes,
         latest_payment   => $payment_amount,
-        spiceynesses => $spiceynesses,
+        spiceynesses     => $spiceynesses,
     );
 
 }

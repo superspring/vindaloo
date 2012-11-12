@@ -24,7 +24,6 @@ sub startup {
     $self->static->paths->[0]   = $self->home->rel_dir('public');
     $self->renderer->paths->[0] = $self->home->rel_dir('templates');
 
-
     my $config = $self->plugin('Config');
     $self->app->config( %{$config} );
     $self->plugin( 'bcrypt', { cost => 4 } );
@@ -154,6 +153,9 @@ sub startup {
 
     $user_order->route('/dish/:ingredient/:curry/:spice')->name('orderdish')
       ->to('orders#order_dish');
+
+    $user_order->route('/random/:category/:spice')->name('randomcategoryorder')
+      ->to('orders#random_curry');
     my $user_order_admin =
       $user_order->bridge('/admin/:id')->to('orders#user_order_admin');
     $user_order_admin->route('/cancel')->name('cancelorder')

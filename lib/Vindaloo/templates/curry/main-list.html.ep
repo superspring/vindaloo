@@ -8,6 +8,31 @@
                     <h4><%= ucfirst(lc $category->name )%></h4>
                     <table class="table table-condensed table-striped">
                         <tbody>
+                            <tr>
+                                <td>Random <%= ucfirst $category->name %> Curry</td>
+                                <td>
+                                % foreach my $heat ($spiceynesses->all) {
+                                        % if ( $event and $event->orders_open){
+                                            <a href="<%=
+                                            url_for(
+                                                'randomcategoryorder',
+                                                category => lc $category->name,
+                                                spice      => $heat->name
+                                            )->to_abs->scheme('https')
+                                                            %>">
+                                                <span class="btn btn-mini <%=
+                                                    $spiceyness_btns->{$heat->name}
+                                                    %>"><%= $heat->name %></span>
+                                            </a>
+                                        % }
+                                        % else {
+                                        <span class="btn disabled btn-mini btn-inverted"><%=
+                                            $heat->name
+                                            %></span>
+                                        %}
+                                    % }
+                                </td>
+                            </tr>
                             % my $base_ingredients = $category->base_ingredients;
                             % while (my $ingredient = $base_ingredients->next) {
                                 % foreach my $curry_type ($curry_types->all) {
