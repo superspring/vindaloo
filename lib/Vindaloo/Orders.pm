@@ -158,10 +158,36 @@ sub user_order_admin {
     $self->stash( order => $order );
 }
 
+sub reorder {
+    my $self       = shift;
+    my $model      = $self->db;
+    my $past_event = $self->param('event');
+    my $event      = $model->resultset('OrderEvent')->find($past_event);
+
+    my $user = $self->current_user;
+    my $orders = $event->orders( { curry_user => $user->id, } );
+    while ( my $order = $orders->next ) {
+        my $dish       = $order->dish;
+        my $spiceyness = $order->spiceyness;
+        $self->create_curry_order( $dish, $spiceyness );
+    }
+    my $side_orders = $event->side_orders( { curry_user => $user->id } );
+    while (my $side_order  = $side_orders->next) {
+        my $side_dish = $side_order->side_dish;
+        $self->create_side_dish_order($side_dish);
+    }
+    $self->redirect_to(
+        $self->url_for('menu')->to_abs->scheme('https')
+    );
+    return;
+}
+
 sub order_history {
     my $self = shift;
     my $user = $self->current_user;
     my %dates;
+    my $active_event = $self->db->resultset('OrderEvent')->search({orders_open
+        => 1})->first;
 
     my $order_events = $user->order_events;
     $dates{$_}++ foreach $order_events->get_column('event_date')->all;
@@ -169,7 +195,7 @@ sub order_history {
     $dates{$_}++ foreach $side_order_events->get_column('event_date')->all;
     my @dates = sort {$b cmp $a } keys %dates;
 
-    $self->stash(  dates => \@dates);
+    $self->stash(  dates => \@dates, active_event => $active_event);
 }
 
 sub cancel_order {
@@ -198,6 +224,13 @@ sub side_dish {
         $self->render_not_found;
         return 0;
     }
+    $self->create_side_dish_order($side_dish);
+    $self->redirect_to( $self->url_for('menu')->to_abs->scheme('https') );
+    return;
+}
+
+sub create_side_dish_order {
+    my ($self,$side_dish) = @_;
     my $event        = $self->stash->{event};
     my $current_user = $self->current_user;
     $current_user->add_to_side_orders(
@@ -210,8 +243,8 @@ sub side_dish {
     $balance += $side_dish->price;
     $current_user->balance($balance);
     $current_user->update;
-    $self->redirect_to( $self->url_for('menu')->to_abs->scheme('https') );
     return;
+
 }
 
 sub user_side_dish_admin {
