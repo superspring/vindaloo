@@ -150,7 +150,7 @@ sub startup {
     my $user_order =
       $authenticated_route->bridge('/order')->over( is => 'user' )
       ->to('orders#verify_event');
-      $user_order->route('/reorder/:event')->name('reorder')->to('orders#reorder');
+      $user_order->route('/reorder/:past_event')->name('reorder')->to('orders#reorder');
 
     $user_order->route('/dish/:ingredient/:curry/:spice')->name('orderdish')
       ->to('orders#order_dish');

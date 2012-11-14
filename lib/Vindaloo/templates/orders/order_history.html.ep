@@ -14,7 +14,7 @@
                 <%= $date %>
                 <table class="table table-striped">
                     % while (my $order = $user_orders->next) {
-                        % $event_id = $order->order_event;
+                        % $event_id = $order->order_event->id;
                         % my $dish = $order->dish;
                         <tr>
                             <td>
@@ -33,10 +33,10 @@
                         </tr>
                     % }
                 </table>
-                % if ($event and $event_id != $event->id) {
+                % if ($active_event and $event_id != $active_event->id) {
                     <p>
                         <a href="<%=
-                        url_for(reorder => event =>
+                        url_for(reorder => past_event =>
                         $event_id)->to_abs->scheme('https')
                         %>">
                             <span class="btn btn-primary">Order</span>

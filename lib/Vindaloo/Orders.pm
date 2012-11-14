@@ -15,6 +15,7 @@ sub verify_event {
             $self->url_for('ordersclosed')->to_abs->scheme('https') );
         return;
     }
+    $self->app->log->debug("verified event");
     $self->stash( event => $event );
 }
 
@@ -161,7 +162,7 @@ sub user_order_admin {
 sub reorder {
     my $self       = shift;
     my $model      = $self->db;
-    my $past_event = $self->param('event');
+    my $past_event = $self->param('past_event');
     my $event      = $model->resultset('OrderEvent')->find($past_event);
 
     my $user = $self->current_user;
@@ -174,7 +175,7 @@ sub reorder {
     my $side_orders = $event->side_orders( { curry_user => $user->id } );
     while (my $side_order  = $side_orders->next) {
         my $side_dish = $side_order->side_dish;
-        $self->create_side_dish_order($side_dish);
+        $self->create_side_dish_order($side_dish) ;
     }
     $self->redirect_to(
         $self->url_for('menu')->to_abs->scheme('https')
@@ -233,6 +234,11 @@ sub create_side_dish_order {
     my ($self,$side_dish) = @_;
     my $event        = $self->stash->{event};
     my $current_user = $self->current_user;
+    my $side_dish_id = $side_dish->id;
+    $self->app->log->debug("Got event  $event");
+    my $event_id = $event->id;
+
+    $self->app->log->debug("Got side_dish id from $side_dish: $side_dish_id");
     $current_user->add_to_side_orders(
         {
             side_dish   => $side_dish->id,
