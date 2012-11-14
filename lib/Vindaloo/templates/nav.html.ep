@@ -16,10 +16,13 @@
                         %>">Menu</a></li>
                 </ul>
                 % if (is_user_authenticated){
+                    % my $events_rs = db->resultset('OrderEvent');
                     % if (is('admin')){
-                    % my $current_event =
-                        % db->resultset('OrderEvent')->search({orders_open =>
+                    % my $current_event = $events_rs->search({orders_open =>
                         % 1})->first;
+                    % my $most_recent_event =
+                    % $events_rs->search(undef,{order_by => {-desc =>
+                    % [qw/event_date/]}  })->first;
                     <ul class="nav ">
                         % if ($current_event) {
                         <li><a href="<%=
@@ -27,6 +30,12 @@
                             ->to_abs->scheme('https')
                         %>">Current order</a></li>
                         %  }
+                        % elsif ($most_recent_event) {
+                        <li><a href="<%=
+                       url_for(eventorders => id => $most_recent_event->id)
+                            ->to_abs->scheme('https')
+                        %>">Recent order</a></li>
+                        %    }
                         <li><a href="<%=
                         url_for('userlist')->to_abs->scheme('https') %>">Accounts</a></li>
                     </ul>
