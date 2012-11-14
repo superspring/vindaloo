@@ -38,9 +38,9 @@
                         <a href="<%=
                         url_for(reorder => past_event =>
                         $event_id)->to_abs->scheme('https')
-                        %>">
-                            <span class="btn btn-primary">Order</span>
-                        </a> this again!
+                        %>"><span
+                            class="btn btn-primary"
+                            >Order</span></a> this again!
                     </p>
 
                %   }

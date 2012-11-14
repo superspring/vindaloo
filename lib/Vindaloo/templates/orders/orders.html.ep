@@ -44,10 +44,10 @@
         </ul>
     </div>
 <div class="tab-content">
-    <div class="row tab-pane active" id="by-dish" >
+    <div class="row tab-pane " id="by-dish" >
         %= include 'orders/by-dish';
     </div>
-    <div class="row tab-pane" id="by-user">
+    <div class="row tab-pane active" id="by-user">
         %= include 'orders/by-user';
     </div>
 </div>

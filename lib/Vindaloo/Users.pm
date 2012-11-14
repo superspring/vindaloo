@@ -11,7 +11,7 @@ sub authenticate {
     my $self = shift;
     $self->app->log->debug("Calling basic authentication.");
     $self->redirect_to( $self->url_for('/login')->to_abs->scheme('https') )
-      and return 0
+      and return 
       unless $self->is_user_authenticated;
 }
 
@@ -20,7 +20,7 @@ sub index {
     my $users =
       $self->db->resultset('User')
       ->search( undef, { order_by => { -asc => [qw/id/] } } );
-    $self->stash( users => $users );
+    $self->stash( users => $users, );
 }
 
 sub admin {
