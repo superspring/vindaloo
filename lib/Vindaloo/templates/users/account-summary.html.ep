@@ -82,7 +82,7 @@
                 </tr>
             </tbody>
         </table>
-        % if ($event->orders_open) {
+        % if ($event and $event->orders_open) {
             % if ($previous_event) {
             <h6><a href="<%=
             url_for(reorder => past_event => $previous_event->id)
