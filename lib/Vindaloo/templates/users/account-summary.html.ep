@@ -82,6 +82,13 @@
                 </tr>
             </tbody>
         </table>
+        % if ($event->orders_open) {
+            % if ($previous_event) {
+            <h6><a href="<%=
+            url_for(reorder => past_event => $previous_event->id)
+            %>">Same as last time!</a></h6>
+            % }
+        %    }
         <h6><a href="<%=
         url_for('orderhistory')->to_abs->scheme('https')
         %>">Order History</a></h6>
