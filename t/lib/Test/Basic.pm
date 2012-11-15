@@ -22,7 +22,8 @@ test user_login => { desc => "Test login" } => sub {
             email    => 'testy@test.com',
             password => 'test123'
         }
-    )->status_is(302)->content_like(qr/Menu/);
+    )->status_is(302);
+    $app->get_ok('/')->status_is('200')->content_like(qr/Random/);
 };
 
 
