@@ -1,4 +1,4 @@
-package Test::Basic;
+package Test::Admin;
 
 use Test::Routine;
 use Test::More;
@@ -10,24 +10,19 @@ before run_test => sub {
       if $app->mode eq 'production';
 };
 
-test basic_request => { desc => "Make basic request to Vindaloo page" } => sub {
-    my $self = shift;
-    my $app  = $self->app;
-    $app->get_ok('/')->status_is(302);
-};
-
 test user_login => { desc => "Test login" } => sub {
     my $self = shift;
     my $app  = $self->app;
     $app->post_form_ok(
         '/login',
         {
-            email    => 'testy@test.com',
-            password => 'test123'
+            email    => 'user@info.com',
+            password => 'optimus'
         }
     )->status_is(302);
     $app->get_ok('/')->status_is('200')->content_like(qr/Random/);
 };
+
 
 1;
 

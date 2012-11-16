@@ -15,8 +15,6 @@ has app_init => (
         my $app  = Test::Mojo->new('Vindaloo');
         return $app;
     },
-
-    # other attributes
 );
 
 has app => (
@@ -24,6 +22,7 @@ has app => (
     isa     => 'Test::Mojo',
     builder => 'app_init',
 );
+
 
 
 
