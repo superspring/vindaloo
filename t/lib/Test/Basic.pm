@@ -10,7 +10,7 @@ before run_test => sub {
       if $app->mode eq 'production';
 };
 
-test basic_request => { desc => "Make basic request to Vindaloo page" } => sub {
+test basic_request => { desc => "Test request to landing page." } => sub {
     my $self = shift;
     my $app  = $self->app;
     $app->get_ok('/')->status_is(302);
@@ -22,8 +22,8 @@ test user_login => { desc => "Test login" } => sub {
     $app->post_form_ok(
         '/login',
         {
-            email    => 'testy@test.com',
-            password => 'test123'
+            email    => 'test1@test.com',
+            password => '1234'
         }
     )->status_is(302);
     $app->get_ok('/')->status_is('200')->content_like(qr/Random/);

@@ -16,11 +16,10 @@ test user_login => { desc => "Test login" } => sub {
     $app->post_form_ok(
         '/login',
         {
-            email    => 'user@info.com',
-            password => 'optimus'
+            email    => 'admin@user.com',
+            password => 'test123'
         }
     )->status_is(302);
-    $app->get_ok('/')->status_is('200')->content_like(qr/Random/);
 };
 
 
