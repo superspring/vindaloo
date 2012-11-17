@@ -35,12 +35,12 @@
                         url_for(payment => id => $user->id => payment =>
                         'account')->to_abs->scheme('https')
                         %>"><span class="btn btn-warning btn-mini"><%=
-                            $user->balance_as_absolute_credit %></span>
+                            $user->balance %></span>
                             </a>
                             % }
                             % else {
                             <span class="btn btn-inverted disabled
-                            btn-mini"><%= $user->balance_as_absolute_credit %></span>
+                            btn-mini"><%= $user->balance %></span>
 
                             % }
                         </td>

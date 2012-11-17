@@ -6,6 +6,6 @@ use Test::Routine::Util;
 use Test::More tests => 1;
 
 run_tests("Admin navigate to accounts interface.",
-    [qw/Test Test::Admin Test::Users/]
+    [qw/Test Test::Admin Test::Users Test::Logout /]
 );
 
