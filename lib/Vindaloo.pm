@@ -26,6 +26,7 @@ sub startup {
 
     my $config = $self->plugin('Config');
     $self->app->config( %{$config} );
+    $self->app->secret($config->{'Vindaloo::Schema'}->{connect_info}->{dsn});
     $self->plugin( 'bcrypt', { cost => 4 } );
     $self->plugin(
         Libravatar => {
