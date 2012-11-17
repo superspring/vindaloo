@@ -32,6 +32,7 @@
                                         %}
                                     % }
                                 </td>
+                                <td></td>
                             </tr>
                             % my $base_ingredients = $category->base_ingredients;
                             % while (my $ingredient = $base_ingredients->next) {

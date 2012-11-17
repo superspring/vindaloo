@@ -5,8 +5,10 @@
             % if ($user_orders) {
             <thead>
                 <tr>
-                    <th colspan=2>Previous Balance:</th>
-                    <th><%=  $previous_balance %> </th>
+                    <th colspan=2>Previous <%= 
+                    $previous_balance < 0 ?  'Credit' : 'Outstanding Balance' 
+                    %>:</th>
+                    <th>$<%= sprintf "%.2f", abs $previous_balance %></th>
                 </tr>
 
             </thead>
@@ -21,7 +23,7 @@
                             <td>
                                 <%= $dish->base_ingredient->name %>
                                 <%= $dish->curry_type->name %>
-                                    <%= ucfirst $spicey_name %>
+                                    <%= $spicey_name %>
                             </td>
                             <td>
                                 % if ($event->orders_open){
@@ -78,8 +80,11 @@
                     </tr>
                  %   }
                 <tr>
-                    <th colspan=2>Total:</th> <th><%=
-                        current_user->balance_as_absolute_credit %></th>
+                % my $current_balance = current_user->balance;
+                    <th colspan=2>Total <%= 
+                    $current_balance < 0 ? 'Credit': 'Outstanding Balance' 
+                    %>:</th> 
+                    <th>$<%= sprintf "%.2f", abs $current_balance %></th>
                 </tr>
             </tbody>
         </table>
