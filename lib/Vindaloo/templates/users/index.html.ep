@@ -39,9 +39,16 @@
                             </a>
                             % }
                             % else {
-                            <span class="btn btn-inverted disabled btn-mini">$<%= $user->balance // 0 %></span>
+                            <span class="btn btn-inverted disabled
+                            btn-mini"><%= $user->balance_as_absolute_credit %></span>
 
                             % }
+                        </td>
+                        <td>
+                            <a href="<%=
+                            url_for(directpay => id =>
+                            $user->id)->to_abs->scheme('https')
+                            %>"><span class="btn btn-info btn-mini">Payment</span></a>
                         </td>
                         % foreach my $value (12,11,10,1) {
                             % my $btn_type = 'btn-primary';
@@ -56,12 +63,6 @@
                                         btn-mini">$<%= $value %></span></a>
                             </td>
                         % }
-                        <td>
-                            <a href="<%=
-                            url_for(directpay => id =>
-                            $user->id)->to_abs->scheme('https')
-                            %>"><span class="btn btn-info btn-mini">Payment</span></a>
-                        </td>
                     </tr>
                 % }
             </tbody>
