@@ -50,6 +50,18 @@ __PACKAGE__->many_to_many(side_order_events => side_orders => 'order_event' );
 __PACKAGE__->many_to_many( roles => user_roles => 'role' );
 
 
+sub balance_as_absolute_credit {
+    my $self = shift;
+    my $balance = $self->balance;
+    my $negative = $balance < 0;
+    my $balance_string = sprintf "%.2f", abs $balance;
+
+    $balance_string = '$'.$balance_string;
+    $balance_string .= ' (Credit)' if $negative;
+    return $balance_string;
+
+}
+
 1;
 
 __END__

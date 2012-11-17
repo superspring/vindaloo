@@ -5,13 +5,14 @@ use Mojo::Base 'Mojolicious::Controller';
 use feature 'switch';
 
 use Vindaloo::Forms::UserAdmin;
+use Vindaloo::Forms::DirectPayment;
 use TryCatch;
 
 sub authenticate {
     my $self = shift;
     $self->app->log->debug("Calling basic authentication.");
     $self->redirect_to( $self->url_for('/login')->to_abs->scheme('https') )
-      and return 
+      and return
       unless $self->is_user_authenticated;
 }
 
@@ -153,6 +154,30 @@ sub signup_validated {
      }
 
       $self->render('users/signup');
+}
+
+sub direct_pay {
+    my $self = shift;
+    my $user = $self->stash->{user};
+    my $form_action = $self->url_for(directpay => id =>
+        $user->id)->to_abs->scheme('https');
+    my $form = Vindaloo::Forms::DirectPayment->new();
+    my @request_params;
+    my $params = $self->req->params->to_hash;
+    push @request_params, params => $params;
+
+    $form->process(
+        @request_params,
+        action => $form_action
+    );
+    if ($form->validated) {
+        my $payment = $self->param('payment');
+        $self->redirect_to($self->url_for(payment => payment =>
+                $payment)->to_abs->scheme('https'));
+        return;
+    }
+    $self->stash(form => $form);
+
 }
 
 sub mojo_bcrypt_validate {

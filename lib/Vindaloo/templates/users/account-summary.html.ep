@@ -6,7 +6,7 @@
             <thead>
                 <tr>
                     <th colspan=2>Previous Balance:</th>
-                    <th>$<%= $previous_balance %></th>
+                    <th><%=  $previous_balance %> </th>
                 </tr>
 
             </thead>
@@ -21,7 +21,7 @@
                             <td>
                                 <%= $dish->base_ingredient->name %>
                                 <%= $dish->curry_type->name %>
-                                    <%= $spicey_name %>
+                                    <%= ucfirst $spicey_name %>
                             </td>
                             <td>
                                 % if ($event->orders_open){
@@ -78,7 +78,8 @@
                     </tr>
                  %   }
                 <tr>
-                    <th colspan=2>Total:</th> <th>$<%= current_user->balance %></th>
+                    <th colspan=2>Total:</th> <th><%=
+                        current_user->balance_as_absolute_credit %></th>
                 </tr>
             </tbody>
         </table>

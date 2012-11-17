@@ -52,24 +52,27 @@ sub index {
 
         $event_sum = sprintf "%.2f", $event_sum;
         $previous_balance = $current_balance - $event_sum;
+
         if ($latest_payment) {
             my $sum = $latest_payment->get_column('payment')->sum // 0;
             $payment_amount = sprintf "%.2f", $sum;
         }
         $previous_balance += $payment_amount if $payment_amount;
-        $previous_balance = sprintf "%.2f", $previous_balance;
+        my $previous_negative = $previous_balance < 0;
+        $previous_balance = sprintf "%.2f",  abs $previous_balance;
+        $previous_balance = '$'.$previous_balance;
+        $previous_balance = join ' ' =>$previous_balance,'(Credit)'  if
+        $previous_negative;
 
         $self->app->log->debug( 'Event sum ' . $event_sum );
         $previous_event = $event_resultset->search(
             {
                 'orders.curry_user' => $user->id,
                 'me.id'             => { '<' => $event->id },
-
             },
             {
                 'join'   => 'orders',
                 order_by => { -desc => ['id'] }
-
             }
         )->first;
     }

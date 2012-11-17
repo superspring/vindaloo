@@ -9,7 +9,7 @@
                 <tr>
                     <th>Name</th>
                     <th>Balance</th>
-                    <th colspan=5>Payment</th>
+                    <th colspan=6>Payment</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,7 +34,8 @@
                             <a href="<%=
                         url_for(payment => id => $user->id => payment =>
                         'account')->to_abs->scheme('https')
-                        %>"><span class="btn btn-warning btn-mini">$<%= $user->balance // 0 %></span>
+                        %>"><span class="btn btn-warning btn-mini"><%=
+                            $user->balance_as_absolute_credit %></span>
                             </a>
                             % }
                             % else {
@@ -55,6 +56,12 @@
                                         btn-mini">$<%= $value %></span></a>
                             </td>
                         % }
+                        <td>
+                            <a href="<%=
+                            url_for(directpay => id =>
+                            $user->id)->to_abs->scheme('https')
+                            %>"><span class="btn btn-info btn-mini">Payment</span></a>
+                        </td>
                     </tr>
                 % }
             </tbody>

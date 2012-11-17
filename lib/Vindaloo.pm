@@ -96,6 +96,7 @@ sub startup {
     $user_password_admin->get('/edit')->name('adminpasswordedit')
       ->to('users#edit');
     $user_password_admin->post('/edit')->to('users#post_edit');
+    $user_admin->route('/direct-pay')->name('directpay')->to('users#direct_pay');
 
     # Menu (curry) management
     $authenticated_route->route('/curry/manage')->over( is => 'admin' )
