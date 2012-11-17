@@ -3,13 +3,11 @@ package Test::Users;
 use Test::Routine;
 use Test::More;
 
-test navigate_to_curry_menu =>
-  { desc => "Navigate to curry menu interface" } => sub {
+test navigate_to_manage_curry =>
+  { desc => "Navigate to curry management interface" } => sub {
     my $self = shift;
-    my $app = $self->app;
-    $self->user_login({email => 'test1@test.com',password => '1234'});
-    $self->navigate_to_manage_curry;
-    $app->status_is(404);
+    $self->navigate_to_manage_curry_as_user(
+        { email => 'test1@test.com', password => '1234' } )->status_is(404);
   };
 
 1;
