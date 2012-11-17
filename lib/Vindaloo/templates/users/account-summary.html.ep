@@ -23,7 +23,7 @@
                             <td>
                                 <%= $dish->base_ingredient->name %>
                                 <%= $dish->curry_type->name %>
-                                    <%= $spicey_name %>
+                                    <%= ucfirst $spicey_name %>
                             </td>
                             <td>
                                 % if ($event->orders_open){
@@ -50,7 +50,7 @@
                     % while (my $side_order = $user_side_orders->next){
                         % my $side_dish = $side_order->side_dish;
                         <tr>
-                            <td><%= $side_dish->name %></td>
+                            <td><%= ucfirst $side_dish->name %></td>
                             <td>
                                 % if ($event->orders_open){
                                 <a href="<%=
@@ -81,7 +81,7 @@
                  %   }
                 <tr>
                 % my $current_balance = current_user->balance;
-                    <th colspan=2>Total <%= 
+                    <th colspan=2><%= 
                     $current_balance < 0 ? 'Credit': 'Outstanding Balance' 
                     %>:</th> 
                     <th>$<%= sprintf "%.2f", abs $current_balance %></th>
