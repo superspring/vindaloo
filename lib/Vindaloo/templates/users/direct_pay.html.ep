@@ -1,0 +1,9 @@
+% layout 'default';
+% title 'User direct payment';
+
+<div class="row">
+    <div class="span6 offset3">
+    <h1><%= join " " => $user->first_name, $user->surname %></h1>
+        <%== $form->render %>
+    </div>
+</div>
