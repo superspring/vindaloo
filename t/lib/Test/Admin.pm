@@ -10,7 +10,7 @@ before run_test => sub {
       if $app->mode eq 'production';
 };
 
-test user_login => { desc => "Test login" } => sub {
+test admin_login => { desc => "Test login" } => sub {
     my $self = shift;
     my $app  = $self->app;
     $app->post_form_ok(
@@ -21,6 +21,8 @@ test user_login => { desc => "Test login" } => sub {
         }
     )->status_is(302);
 };
+
+
 
 
 1;
