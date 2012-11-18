@@ -21,17 +21,7 @@ has app => (
     builder => 'app_init',
 );
 
-sub login_admin_user {
-    my $self = shift;
-    return $self->login(
-        {
-            email    => 'admin@user.com',
-            password => 'test123'
-        }
-    );
-}
-
-sub get_curry_manage {
+sub get_curry_manage_ok {
     my $self = shift;
     my $app  = $self->app;
    return $app->get_ok('/curry/manage');

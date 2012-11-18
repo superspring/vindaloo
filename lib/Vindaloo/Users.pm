@@ -7,6 +7,7 @@ use feature 'switch';
 use Vindaloo::Forms::UserAdmin;
 use Vindaloo::Forms::DirectPayment;
 use TryCatch;
+use Data::Dumper;
 
 sub authenticate {
     my $self = shift;
@@ -102,6 +103,7 @@ sub post_edit {
     $self->edit;
     my $form    = $self->stash->{form};
     my $request = $self->req->params->to_hash;
+    $self->app->log->debug("submitted: ".Dumper($request));
     $form->process(
         params   => $request,
         item     => $self->stash->{user},
@@ -109,6 +111,9 @@ sub post_edit {
     );
     if ( $form->validated ) {
         $self->redirect_to( $self->stash->{validate_redirect} );
+    }
+    else {
+        $self->app->log->error("User submitted invalid data.");
     }
     $self->render('users/edit');
 }
