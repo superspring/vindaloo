@@ -4,7 +4,7 @@ use warnings;
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-    VERSION   => '0.24',
+    VERSION   => '0.25',
     PREREQ_PM => {
         'Mojolicious'                         => '3.54',
         'Mojolicious::Plugin::Authentication' => 0,
@@ -18,7 +18,8 @@ WriteMakefile(
         'File::Spec::Functions'               => 0,
         'TryCatch'                            => 0,
         'List::MoreUtils'                     => 0,
-        'Smart::Comments'                     => 0
+        'Smart::Comments'                     => 0,
+        'Test::Routine'                       => 0
     },
     EXE_FILES => [qw{script/vindaloo}],
     test      => { TESTS => 't/*.t' },
