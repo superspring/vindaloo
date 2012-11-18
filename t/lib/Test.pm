@@ -43,7 +43,7 @@ sub logout_user {
 sub navigate_to_manage_curry_as_user {
     my ($self, $credentials) = @_;
     $self->login($credentials);
-    return $self->get_curry_manage;
+    return $self->get_curry_manage_ok;
 }
 
 1;
