@@ -2,8 +2,7 @@ package Test::Hack;
 
 use Test::Routine;
 use Test::More;
-use Test::Exception;
-use Smart::Comments;
+#use Smart::Comments;
 
 test navigate_to_manage_events =>
   { desc => 'Try going to manage events as user' } => sub {

@@ -15,7 +15,7 @@
                 % my $ingredient = $dish->base_ingredient;
                 % my $curry = $dish->curry_type;
                 % my $ingredient_name =    $ingredient->name ;
-                % my $curry_name =    $curry->name ;
+                % my $curry_name = $curry->name ;
                 % my $spiceyness = $order->spiceyness;
                 % my $spiceyness_name = ucfirst(  lc(  $spiceyness->name ) );
                 % my $count = $order_rs->search(

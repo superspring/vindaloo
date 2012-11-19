@@ -17,7 +17,6 @@ test admin_login => { desc => "Test login" } => sub {
 test navigate_to_manage_events => {desc => 'Test  managing some events.'} => sub {
      my $self = shift;
      $self->app->get_ok('/events')->status_is(200);
-
 };
 
 
