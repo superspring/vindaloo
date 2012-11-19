@@ -9,5 +9,5 @@ use Test::Routine::Util;
 
 run_tests(
     'Test basic request to web app',
-    [qw/Test Test::CheckEnv Test::Users /]
+    [qw/Test Test::CheckEnv Test::Basic Test::Hack /]
 );

@@ -2,71 +2,87 @@
 % title 'HotTeenVindaloos';
 
 
-<div class="row" id="full-list">
+<div class="row">
     <div class="span12">
-        <table class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Balance</th>
-                    <th colspan=6>Payment</th>
-                </tr>
-            </thead>
-            <tbody>
-                % while (my $user = $users->next){
-                 % my $balance = $user->balance // 0;
-                 % my $email = $user->email;
-                 % my $url = libravatar_url $email;
-                 % app->log->debug("Fetched url: ".$url);
-                    <tr>
-                        <td>
-                        <a href="<%=
-                                url_for(edituser => id =>
-                                $user->id)->to_abs->scheme('https')
-                                %>">
-                        <%= $user->first_name %>
-                        <%= $user->surname %>
-                        <img src="<%= $url %>" />
-                                </a>
-                        </td>
-                        <td>
-                            % if ($balance > 0) {
-                            <a href="<%=
-                        url_for(payment => id => $user->id => payment =>
-                        'account')->to_abs->scheme('https')
-                        %>"><span class="btn btn-warning btn-mini"><%=
-                            $user->balance %></span>
-                            </a>
+    <ul class="nav nav-tabs" id="myTab" >
+        <li class="<%= $outstanding %>">
+            <a  href="<%=
+                url_for('outstanding')->to_abs->scheme('https')
+                %>" >Outstanding</a>
+            </li>
+            <li class="<%= $allclass %>">
+            <a  href="<%=
+                url_for('userlist')->to_abs->scheme('https')
+                %>">All</a></li>
+    </ul>
+        <div class="row" id="full-list">
+            <div class="span12">
+              %  if ($users->count){
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Balance</th>
+                                <th colspan=4>Payment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            % while (my $user = $users->next){
+                             % my $balance = $user->balance // 0;
+                             % my $email = $user->email;
+                             % my $url = libravatar_url $email;
+                             % app->log->debug("Fetched url: ".$url);
+                                <tr>
+                                    <td>
+                                    <a href="<%=
+                                            url_for(edituser => id =>
+                                            $user->id)->to_abs->scheme('https')
+                                            %>">
+                                    <%= $user->first_name %>
+                                    <%= $user->surname %>
+                                    <img src="<%= $url %>" />
+                                            </a>
+                                    </td>
+                                    <td>
+                                        % if ($balance > 0) {
+                                        <a href="<%=
+                                    url_for(payment => id => $user->id => payment =>
+                                    'account')->to_abs->scheme('https')
+                                    %>"><span class="btn btn-warning btn-mini"><%=
+                                        $user->balance %></span>
+                                        </a>
+                                        % }
+                                        % else {
+                                        <span class="btn btn-inverted disabled
+                                        btn-mini"><%= $user->balance %></span>
+                                        % }
+                                    </td>
+                                    <td>
+                                        <a href="<%=
+                                        url_for(directpay => id =>
+                                        $user->id)->to_abs->scheme('https')
+                                        %>"><span class="btn btn-info btn-mini">Payment</span></a>
+                                    </td>
+                                    % foreach my $value (12,11,10) {
+                                        % my $btn_type = 'btn-primary';
+                                        % $btn_type = 'btn-warning' if $user->balance ==
+                                          % $value;
+                                        <td>
+                                            <a href="<%=
+                                                url_for(payment => id => $user->id =>
+                                                payment =>$value
+                                                )->to_abs->scheme('https')
+                                                %>"><span class="btn <%= $btn_type %>
+                                                    btn-mini">$<%= $value %></span></a>
+                                        </td>
+                                    % }
+                                </tr>
                             % }
-                            % else {
-                            <span class="btn btn-inverted disabled
-                            btn-mini"><%= $user->balance %></span>
-
-                            % }
-                        </td>
-                        <td>
-                            <a href="<%=
-                            url_for(directpay => id =>
-                            $user->id)->to_abs->scheme('https')
-                            %>"><span class="btn btn-info btn-mini">Payment</span></a>
-                        </td>
-                        % foreach my $value (12,11,10,1) {
-                            % my $btn_type = 'btn-primary';
-                            % $btn_type = 'btn-warning' if $user->balance ==
-                              % $value;
-                            <td>
-                                <a href="<%=
-                                    url_for(payment => id => $user->id =>
-                                    payment =>$value
-                                    )->to_abs->scheme('https')
-                                    %>"><span class="btn <%= $btn_type %>
-                                        btn-mini">$<%= $value %></span></a>
-                            </td>
-                        % }
-                    </tr>
+                        </tbody>
+                    </table>
                 % }
-            </tbody>
-        </table>
+            </div>
+        </div>
     </div>
 </div>
 

@@ -22,7 +22,15 @@ sub index {
     my $users =
       $self->db->resultset('User')
       ->search( undef, { order_by => { -asc => [qw/id/] } } );
-    $self->stash( users => $users, );
+    $self->stash( allclass => 'active', outstanding => '',users => $users, );
+}
+
+sub outstanding {
+    my $self = shift;
+    $self->index;
+    my $users = $self->stash->{users}->search({balance => {'>' => 0}});
+    $self->stash(outstanding => 'active',allclass=> '',users => $users);
+    $self->render('users/index');
 }
 
 sub admin {
@@ -113,7 +121,8 @@ sub post_edit {
         $self->redirect_to( $self->stash->{validate_redirect} );
     }
     else {
-        $self->app->log->error("User submitted invalid data.");
+        $self->app->log->error(Dumper($form->errors));
+        $self->app->log->error("User submitted invalid data: ".Dumper($request));
     }
     $self->render('users/edit');
 }

@@ -26,7 +26,7 @@ sub startup {
 
     my $config = $self->plugin('Config');
     $self->app->config( %{$config} );
-    $self->app->secret($config->{'Vindaloo::Schema'}->{connect_info}->{dsn});
+    $self->app->secret( $config->{'Vindaloo::Schema'}->{connect_info}->{dsn} );
     $self->plugin( 'bcrypt', { cost => 4 } );
     $self->plugin(
         Libravatar => {
@@ -82,6 +82,8 @@ sub startup {
     # Main user list
     $authenticated_route->route('/users')->over( is => 'admin' )
       ->name('userlist')->to('users#index');
+    $authenticated_route->route('/users/outstanding')->over( is => 'admin' )
+      ->name('outstanding')->to('users#outstanding');
 
     # User admin route. Takes :id param from path
     my $user_admin =
@@ -97,7 +99,8 @@ sub startup {
     $user_password_admin->get('/edit')->name('adminpasswordedit')
       ->to('users#edit');
     $user_password_admin->post('/edit')->to('users#post_edit');
-    $user_admin->route('/direct-pay')->name('directpay')->to('users#direct_pay');
+    $user_admin->route('/direct-pay')->name('directpay')
+      ->to('users#direct_pay');
 
     # Menu (curry) management
     $authenticated_route->route('/curry/manage')->over( is => 'admin' )
@@ -152,7 +155,8 @@ sub startup {
     my $user_order =
       $authenticated_route->bridge('/order')->over( is => 'user' )
       ->to('orders#verify_event');
-      $user_order->route('/reorder/:past_event')->name('reorder')->to('orders#reorder');
+    $user_order->route('/reorder/:past_event')->name('reorder')
+      ->to('orders#reorder');
 
     $user_order->route('/dish/:ingredient/:curry/:spice')->name('orderdish')
       ->to('orders#order_dish');
