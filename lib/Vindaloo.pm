@@ -31,8 +31,8 @@ sub startup {
     $self->plugin(
         Libravatar => {
             size       => 30,
-            rating     => 'PG',
-            https      => 1,
+            #   rating     => 'PG',
+            #   https      => 1,
             mojo_cache => 1,
         }
     );
