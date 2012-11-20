@@ -11,7 +11,7 @@
                             <tr>
                                 <td>Random <%= ucfirst $category->name %> Curry</td>
                                 <td>
-                                % foreach my $heat ($spiceynesses->all) {
+                                % foreach my $heat (@{$spiceynesses}) {
                                         % if ( $event and $event->orders_open){
                                             <a href="<%=
                                             url_for(
@@ -34,18 +34,24 @@
                                 </td>
                                 <td></td>
                             </tr>
-                            % my $base_ingredients = $category->base_ingredients;
+                            % my $base_ingredients =
+                            % $category->base_ingredients(undef,
+                            % {prefetch =>  'curry_menus'  });
                             % while (my $ingredient = $base_ingredients->next) {
-                                % foreach my $curry_type ($curry_types->all) {
+                                % foreach my $curry_type (@{$curry_types}) {
                                 %   my $menu = $ingredient->curry_menus(
-                                %     {active => 1, curry_type => $curry_type->id})
-                                %       ->first;
+                                %     {active => 1, curry_type =>
+                                %      $curry_type->id},
+                                %       {
+                                %         prefetch => {
+                                %           dish_spiceynesses => 'spiceyness'}
+                                %       })->first;
                                 %   next unless $menu;
                             <tr>
                                 <td><%= ucfirst $ingredient->name %> <%= ucfirst
                                     $curry_type->name %></td>
                                 <td>
-                   % foreach my $heat ($spiceynesses->all) {
+                   % foreach my $heat (@{$spiceynesses}) {
                     % my $item = $menu->spiceynesses({id => $heat->id})
                     %    ->first;
                                 % if ($item and $event and $event->orders_open){
