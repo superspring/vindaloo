@@ -6,8 +6,6 @@
         %= javascript url_for('/css/bootswatch/js/bootstrap.min.js');
         %= javascript url_for('/js/jquery.min.js');
         %= stylesheet url_for('/css/bootswatch/cerulean/bootstrap.min.css');
-        %= javascript url_for('/css/bootswatch/js/application.js');
-        %= javascript url_for('/css/bootswatch/js/bsa.js');
         %= javascript url_for('/js/bootstrap-dropdown.js');
         %= javascript url_for('/js/bootstrap-tab.js');
         %= stylesheet url_for('/css/vindaloo.css');
