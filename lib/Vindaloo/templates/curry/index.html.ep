@@ -2,20 +2,30 @@
 % title 'Available Curries';
 
 
-<div class="row">
-    %= include 'users/account-summary';
-    <div class="span7">
-    <h4>Orders are currently <%= ($event and $event->orders_open) ? 'open' : 'closed' %>.</h4>
-    <ul class="nav nav-tabs" id="myTab" >
-        % foreach my $category ($categories->all){
-            <li>
-                <a data-toggle="tab" href="#<%= lc $category->name %>" ><%=
-                $category->name
-                %></a>
-            </li>
-        %  }
-        <li><a data-toggle="tab" href="#extras">Extras</a></li>
-    </ul>
-        %= include 'curry/main-list';
+    <div class="row">
+        <div class="span12">
+            <div class="row">
+                <div class="span12">
+                    <h4>Orders are currently <%=
+                    ($event and $event->orders_open) ? 'open' : 'closed' %>.
+                    </h4>
+                </div>
+            </div>
+        <div class="row">
+            %= include 'users/account-summary';
+            <div class="span7">
+            <ul class="nav nav-tabs" id="myTab" >
+                % foreach my $category ($categories->all){
+                    <li>
+                        <a data-toggle="tab" href="#<%= lc $category->name %>" ><%=
+                        $category->name
+                        %></a>
+                    </li>
+                %  }
+                <li><a data-toggle="tab" href="#extras">Extras</a></li>
+            </ul>
+                %= include 'curry/main-list';
+            </div>
+        </div>
+        </div>
     </div>
-</div>

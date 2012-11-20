@@ -47,10 +47,10 @@
                 %   { prefetch => {dish_spiceynesses =>'spiceyness' }  }
                 %   )->first;
                 %   next unless $menu;
-                            <tr>
-                                <td><%= ucfirst $ingredient->name %> <%= ucfirst
-                                    $curry_type->name %></td>
-                                <td>
+                        <tr>
+                            <td><%= ucfirst $ingredient->name %> <%= ucfirst
+                                $curry_type->name %></td>
+                            <td>
                    % foreach my $heat (@{$spiceynesses}) {
                    % my $item = $menu->spiceynesses()->find($heat->id);
                     % if ($item and $event and $event->orders_open){
