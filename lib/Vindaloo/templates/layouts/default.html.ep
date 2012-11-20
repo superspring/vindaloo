@@ -9,21 +9,14 @@
         %= javascript url_for('/css/bootswatch/js/application.js');
         %= javascript url_for('/css/bootswatch/js/bsa.js');
         %= javascript url_for('/js/jquery-ui.min.js');
-        %= javascript url_for('/js/jquery.iframe-transport.js');
-        %= javascript url_for('/js/jquery.ui.datepicker.js');
-        %= javascript url_for('/js/vendor/jquery.ui.widget.js');
         %= javascript url_for('/js/bootstrap-alert.js');
         %= javascript url_for('/js/bootstrap-button.js');
-        %= javascript url_for('/js/bootstrap-carousel.js');
         %= javascript url_for('/js/bootstrap-collapse.js');
         %= javascript url_for('/js/bootstrap-dropdown.js');
-        %= javascript url_for('/js/bootstrap-modal.js');
         %= javascript url_for('/js/bootstrap-popover.js');
-        %= javascript url_for('/js/bootstrap-scrollspy.js');
         %= javascript url_for('/js/bootstrap-tab.js');
         %= javascript url_for('/js/bootstrap-tooltip.js');
         %= javascript url_for('/js/bootstrap-transition.js');
-        %= javascript url_for('/js/bootstrap-typeahead.js');
         %= stylesheet url_for('/css/vindaloo.css');
         %= stylesheet url_for('/css/bootswatch/default/bootstrap-responsive.min.css');
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
