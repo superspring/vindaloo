@@ -34,19 +34,15 @@
                                 </td>
                                 <td></td>
                             </tr>
-                            % my $base_ingredients =
-                            % $category->base_ingredients(undef,
-                            % {prefetch =>  'curry_menus'  });
-                            % while (my $ingredient = $base_ingredients->next) {
-                                % foreach my $curry_type (@{$curry_types}) {
-                                %   my $menu = $ingredient->curry_menus(
-                                %     {active => 1, curry_type =>
-                                %      $curry_type->id},
-                                %       {
-                                %         prefetch => {
-                                %           dish_spiceynesses => 'spiceyness'}
-                                %       })->first;
-                                %   next unless $menu;
+            % my $base_ingredients =
+            % $category->base_ingredients;
+            % while (my $ingredient = $base_ingredients->next) {
+                % foreach my $curry_type (@{$curry_types}) {
+                %   my $menu = $ingredient->curry_menus(
+                %     {active => 1, curry_type => $curry_type->id},
+                %      { prefetch => {dish_spiceynesses =>'spiceyness' }  }
+                %      )->first;
+                %   next unless $menu;
                             <tr>
                                 <td><%= ucfirst $ingredient->name %> <%= ucfirst
                                     $curry_type->name %></td>
