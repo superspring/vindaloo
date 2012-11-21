@@ -47,29 +47,30 @@
             %       }
             %    );
             % while (my $ingredient = $base_ingredients->next) {
+            %  my $ingredient_link = $ingredient->link;
             % my $curry_menus = $ingredient->curry_menus({active => 1}  );
                 % while (my $menu = $curry_menus->next){
                      % my $menu_spiceynesses = $menu->spiceynesses({},{order_by
                      %    => {-asc => [qw/spiceyness.id/]}});
                      % my $curry_type = $menu->curry_type;
+                     % my $curry_type_link = $curry_type->link;
             <tr>
                       <td>
                           <%=
                           ucfirst $ingredient->name
                           %> <%= ucfirst $curry_type->name %>
                       </td>
-                            <td>
-                     % my %spiceyness_set ;
-                     % $spiceyness_set{$_->name} = $_->id foreach
-                     %            $menu_spiceynesses->all;
-                     % foreach my $heat (qw/mild medium hot/) {
-                     % if ($spiceyness_set{$heat}
-                     %      and current_user and $event and $event->orders_open){
+                      <td>
+                     %   my $heat_set = {mild => 0,medium => 1, hot => 2};
+                     %   my @available;
+                     %   while (my $spiceyness = $menu_spiceynesses->next) {
+                     %      my $heat = $spiceyness->name;
+                     %      if ( current_user and $event and $event->orders_open){
                                 <a href="<%=
                                 url_for(
                                     'orderdish',
-                                    ingredient => $ingredient->link,
-                                    curry      => $curry_type->link,
+                                    ingredient => $ingredient_link,
+                                    curry      => $curry_type_link,
                                     spice      => $heat
                                 )->to_abs->scheme('https')
                                                 %>">
