@@ -32,11 +32,12 @@ sub index {
         hot    => 'btn-danger'
     };
     my $user = $self->current_user;
-    my $current_balance = $user->balance // 0;
-    my ( $previous_balance, $user_orders, $user_side_orders, $latest_payment );
+    my ($current_balance, $previous_balance, $user_orders);
+    my ($user_side_orders, $latest_payment );
+    $current_balance = $user->balance // 0 if $user;
 
     my ( $previous_event, $payment_amount );
-    if ($event) {
+    if ($user and $event) {
         my $event_date = $event->event_date;
         $latest_payment =
           $user->payments->search( { payment_date => $event_date } );

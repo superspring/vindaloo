@@ -13,7 +13,7 @@
                                 <td>Random <%= ucfirst $category->name %> Curry</td>
                                 <td>
         % foreach my $heat (@{$spiceynesses}) {
-                % if ( $event and $event->orders_open){
+                % if ( current_user and $event and $event->orders_open){
                     <a href="<%=
                     url_for(
                         'randomcategoryorder',
@@ -43,7 +43,7 @@
                 % foreach my $curry_type (@{$curry_types}) {
                 %   my $menu = $ingredient->curry_menus(
                 %     {
-                %      active => 1, 
+                %      active => 1,
                 %      curry_type => $curry_type->id
                 %     },
                 %   { prefetch => {dish_spiceynesses =>'spiceyness' }  }
@@ -55,7 +55,7 @@
                             <td>
                    % foreach my $heat (@{$spiceynesses}) {
                    % my $item = $menu->spiceynesses()->find($heat->id);
-                    % if ($item and $event and $event->orders_open){
+                    % if (current_user and $item and $event and $event->orders_open){
                         <a href="<%=
                         url_for(
                             'orderdish',

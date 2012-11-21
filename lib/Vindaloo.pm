@@ -69,7 +69,8 @@ sub startup {
     # Basic authentication for all routes.
 
     # This is the landing page
-    $authenticated_route->route('/menu')->name('menu')->to('curry#index');
+    $r->route('/')->to('curry#index');
+    $r->route('/menu')->over(is => 'user')->name('menu')->to('curry#index');
 
     #$authenticated_route->get('')->to('curry#index');
     $r->get('/login')->to('login#index');
@@ -79,14 +80,13 @@ sub startup {
     $r->route('/logout')->to('logout#index');
 
     # Main user list
-    $authenticated_route->route('/users')->over( is => 'admin' )
-      ->name('userlist')->to('users#index');
-    $authenticated_route->route('/users/outstanding')->over( is => 'admin' )
+    $r->route('/users')->over( is => 'admin' )->name('userlist')->to('users#index');
+    $r->route('/users/outstanding')->over( is => 'admin' )
       ->name('outstanding')->to('users#outstanding');
 
     # User admin route. Takes :id param from path
     my $user_admin =
-      $authenticated_route->bridge('/user/admin/:id')->over( is => 'admin' )
+      $r->bridge('/user/admin/:id')->over( is => 'admin' )
       ->to('users#admin');
     $user_admin->get('/edit')->name('edituser')->to('users#edit');
     $user_admin->post('/edit')->to('users#post_edit');
@@ -102,22 +102,22 @@ sub startup {
       ->to('users#direct_pay');
 
     # Menu (curry) management
-    $authenticated_route->route('/curry/manage')->over( is => 'admin' )
+    $r->route('/curry/manage')->over( is => 'admin' )
       ->name('currymanager')->to('curry#menu');
-    $authenticated_route->route('/curry/base-ingredients')
+    $r->route('/curry/base-ingredients')
       ->over( is => 'admin' )->to('curry#base_ingredients');
-    $authenticated_route->route('/curry/curry-types')->over( is => 'admin' )
+    $r->route('/curry/curry-types')->over( is => 'admin' )
       ->to('curry#curry_types');
-    $authenticated_route->route('/curry/side-dishes')->over( is => 'admin' )
+    $r->route('/curry/side-dishes')->over( is => 'admin' )
       ->to('curry#side_dishes');
 
     # Event management
-    $authenticated_route->route('/events')->over( is => 'admin' )
+    $r->route('/events')->over( is => 'admin' )
       ->to('events#index');
-    $authenticated_route->route('/event/create')->name('createevent')
+    $r->route('/event/create')->name('createevent')
       ->over( is => 'admin' )->to('events#create');
     my $event_admin =
-      $authenticated_route->bridge('/event/admin/:id')->over( is => 'admin' )
+      $r->bridge('/event/admin/:id')->over( is => 'admin' )
       ->to('events#admin');
     $event_admin->route('/close')->name('closeevent')->to('events#close');
     $event_admin->route('/open')->name('openevent')->to('events#open');
@@ -127,7 +127,7 @@ sub startup {
     # Edit a type of curry (type means "base ingredient", "curry type", or
     # "side dish", not necessarily a type of curry
     my $curry_manager =
-      $authenticated_route->bridge('/curry/type/:type')->over( is => 'admin' )
+      $r->bridge('/curry/type/:type')->over( is => 'admin' )
       ->to('curry#type');
     $curry_manager->route('/create')->name('createmenuitem')
       ->to('curry#create');
@@ -139,7 +139,7 @@ sub startup {
     # Profile management (user stuff like change profile, edit pw, name,
     # etc.
     my $profile_admin =
-      $authenticated_route->bridge('/user/profile')->to('users#profile');
+      $r->bridge('/user/profile')->over(is => 'user')->to('users#profile');
     $profile_admin->get('/edit')->name('editprofile')->to('users#edit');
     $profile_admin->post('/edit')->to('users#post_edit');
     my $password_admin =
@@ -147,13 +147,12 @@ sub startup {
     $password_admin->get('/edit')->name('changepassword')->to('users#edit');
     $password_admin->post('/edit')->to('users#post_edit');
 
-    $authenticated_route->route('/user/order-history')->name('orderhistory')
+    $r->route('/user/order-history')->over(is => 'user')->name('orderhistory')
       ->to('orders#order_history');
 
     # User routes for ordering dishes and sides.
     my $user_order =
-      $authenticated_route->bridge('/order')->over( is => 'user' )
-      ->to('orders#verify_event');
+      $r->bridge('/order')->over( is => 'user' )->to('orders#verify_event');
     $user_order->route('/reorder/:past_event')->name('reorder')
       ->to('orders#reorder');
 
@@ -223,9 +222,10 @@ sub is_role {
     $app->app->log->info("Calling is_role");
     my $user = $app->current_user;
     if ( not $user ) {
+        $app->app->log->info("User not defined.");
         $app->redirect_to(
             $app->url_for( '/login', )->to_abs->scheme('https') );
-        return 0;
+        return;
     }
     $app->app->log->info(
         "Checking if " . $user->email . " has role " . $role );
@@ -243,7 +243,7 @@ sub user_privs {
 
 sub user_roles {
     my ( $app, $extradata ) = @_;
-    $app->log->info("Called user roles");
+    $app->app->log->info("Called user roles");
     return $app->current_user->roles->first->name;
 
 }

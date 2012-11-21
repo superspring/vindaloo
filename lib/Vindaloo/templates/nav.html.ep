@@ -11,11 +11,13 @@
             <div class="nav-collapse">
                 <ul class="nav">
                     <li class="divider-vertical"> </li>
-                    <li><a href="<%=
-                        url_for('menu')->to_abs->scheme('https')
-                        %>">Menu</a></li>
                 </ul>
-                % if (is_user_authenticated){
+                % if ( is_user_authenticated){
+                    <ul class="nav">
+                        <li><a href="<%=
+                            url_for('menu')->to_abs->scheme('https')
+                            %>">Menu</a></li>
+                    </ul>
                     % my $events_rs = db->resultset('OrderEvent');
                     % if (is('admin')){
                     % my $current_event = $events_rs->search({orders_open =>
@@ -35,7 +37,7 @@
                        url_for(eventorders => id => $most_recent_event->id)
                             ->to_abs->scheme('https')
                         %>">Recent order</a></li>
-                        %    }
+                        % }
                         <li><a href="<%=
                         url_for('outstanding')->to_abs->scheme('https') %>">Accounts</a></li>
                     </ul>
@@ -92,6 +94,14 @@
                         </li>
                     </ul>
                 %  }
+                % else {
+                    <ul class="nav pull-right">
+                        <li ><a href="<%=
+                            url_for('/login')->to_abs->scheme('https')
+                            %>">Login</a></li>
+                    </ul>
+
+                % }
             </div>
         </div>
     </div>

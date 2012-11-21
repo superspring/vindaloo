@@ -12,7 +12,7 @@
                 </div>
             </div>
         <div class="row">
-            %= include 'users/account-summary';
+            %= include 'users/account-summary' if current_user;
             <div class="span7">
             <ul class="nav nav-tabs" id="myTab" >
                 % foreach my $category ($categories->all){

@@ -5,8 +5,8 @@
             % if ($user_orders) {
             <thead>
                 <tr>
-                    <th colspan=2>Previous <%= 
-                    $previous_balance < 0 ?  'Credit' : 'Outstanding Balance' 
+                    <th colspan=2>Previous <%=
+                    $previous_balance < 0 ?  'Credit' : 'Outstanding Balance'
                     %>:</th>
                     <th>$<%= sprintf "%.2f", abs $previous_balance %></th>
                 </tr>
@@ -81,9 +81,9 @@
                  %   }
                 <tr>
                 % my $current_balance = current_user->balance;
-                    <th colspan=2><%= 
-                    $current_balance < 0 ? 'Credit': 'Outstanding Balance' 
-                    %>:</th> 
+                    <th colspan=2><%=
+                    $current_balance < 0 ? 'Credit': 'Outstanding Balance'
+                    %>:</th>
                     <th>$<%= sprintf "%.2f", abs $current_balance %></th>
                 </tr>
             </tbody>
