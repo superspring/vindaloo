@@ -12,12 +12,16 @@ use Vindaloo::Forms::SideDish;
 use Vindaloo::Forms::MenuItem;
 
 sub index {
-    my $self         = shift;
-    my $model        = $self->db;
-    my $categories   = $model->resultset('IngredientCategory');
-    my $curry_types  = $model->resultset('CurryType');
-    my $spiceynesses = $model->resultset('Spiceyness');
-    my $side_dishes  = $model->resultset('SideDish')->search( { active => 1 } );
+    my $self          = shift;
+    my $model         = $self->db;
+    my $categories    = $model->resultset('IngredientCategory');
+    my $curry_types   = $model->resultset('CurryType');
+    my $spiceyness_rs = $model->resultset('Spiceyness');
+    my $spiceynesses  = {};
+    while ( my $heat = $spiceyness_rs->next ) {
+        $spiceynesses->{ $heat->id } = $heat->name;
+    }
+    my $side_dishes = $model->resultset('SideDish')->search( { active => 1 } );
 
     my $event_resultset = $model->resultset('OrderEvent');
     my $event;
@@ -32,12 +36,12 @@ sub index {
         hot    => 'btn-danger'
     };
     my $user = $self->current_user;
-    my ($current_balance, $previous_balance, $user_orders);
-    my ($user_side_orders, $latest_payment );
+    my ( $current_balance, $previous_balance, $user_orders );
+    my ( $user_side_orders, $latest_payment );
     $current_balance = $user->balance // 0 if $user;
 
     my ( $previous_event, $payment_amount );
-    if ($user and $event) {
+    if ( $user and $event ) {
         my $event_date = $event->event_date;
         $latest_payment =
           $user->payments->search( { payment_date => $event_date } );
@@ -77,7 +81,7 @@ sub index {
 
     $self->stash(
         categories       => $categories,
-        curry_types      => [$curry_types->all],
+        curry_types      => [ $curry_types->all ],
         spiceyness_btns  => $spiceyness_btn_map,
         event            => $event,
         user_orders      => $user_orders,
@@ -85,7 +89,7 @@ sub index {
         previous_balance => $previous_balance,
         side_dishes      => $side_dishes,
         latest_payment   => $payment_amount,
-        spiceynesses     => [$spiceynesses->all],
+        spiceynesses     => $spiceynesses,
         previous_event   => $previous_event,
     );
 

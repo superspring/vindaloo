@@ -12,23 +12,24 @@
                             <tr>
                                 <td>Random <%= ucfirst $category->name %> Curry</td>
                                 <td>
-        % foreach my $heat (@{$spiceynesses}) {
+        % foreach my $id (sort { $a <=> $b} keys %{$spiceynesses}) {
+            % my $heat = $spiceynesses->{$id};
                 % if ( current_user and $event and $event->orders_open){
                     <a href="<%=
                     url_for(
                         'randomcategoryorder',
                         category => lc $category->name,
-                        spice      => $heat->name
+                        spice      => $heat
                     )->to_abs->scheme('https')
                                     %>">
                         <span class="btn btn-mini <%=
-                            $spiceyness_btns->{$heat->name}
-                            %>"><%= $heat->name %></span>
+                            $spiceyness_btns->{$heat}
+                            %>"><%= $heat %></span>
                     </a>
                 % }
                 % else {
                 <span class="btn disabled btn-mini btn-inverted"><%=
-                    $heat->name
+                    $heat
                     %></span>
                 %}
             % }
@@ -41,31 +42,33 @@
             %       {
             %           prefetch =>{
             %               curry_menus => [
-            %            'curry_type','base_ingredient',
-            %               { dish_spiceynesses => 'spiceyness' }]
+            %            'curry_type','base_ingredient','dish_spiceynesses',
+            %#               { dish_spiceynesses => 'spiceyness' }
+            %            ]
             %           }
             %       }
             %    );
             % while (my $ingredient = $base_ingredients->next) {
             %  my $ingredient_link = $ingredient->link;
+            % my $ingredient_name = $ingredient->name;
             % my $curry_menus = $ingredient->curry_menus({active => 1}  );
                 % while (my $menu = $curry_menus->next){
-                     % my $menu_spiceynesses = $menu->dish_spiceynesses({},{order_by
-                     %    => {-asc => [qw/me.spiceyness/]}});
                      % my $curry_type = $menu->curry_type;
                      % my $curry_type_link = $curry_type->link;
             <tr>
                       <td>
                           <%=
-                          ucfirst $ingredient->name
+                          ucfirst $ingredient_name
                           %> <%= ucfirst $curry_type->name %>
                       </td>
                       <td>
-                     %   my $heat_set = {mild => 0,medium => 1, hot => 2};
-                     %   my @available;
-                     %   while (my $spiceyness = $menu_spiceynesses->next) {
-                     %      my $heat = $spiceyness->spiceyness->name;
-                     %      if ( current_user and $event and $event->orders_open){
+                     %   my %available;
+                     %   $available{$_->spiceyness->id} = $_->spiceyness->name
+                     %      foreach   $menu->dish_spiceynesses->all;
+                     %   foreach my $id (sort {$a <=> $b} keys %{$spiceynesses}){
+                     %      my $heat = $spiceynesses->{$id};
+                     %      if ( $available{$id} and
+                     %             current_user and $event and $event->orders_open){
                                 <a href="<%=
                                 url_for(
                                     'orderdish',
