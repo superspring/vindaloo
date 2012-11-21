@@ -185,7 +185,7 @@ sub startup {
 sub load_user {
     my ( $app, $uid ) = @_;
     my $ref_app = ref $app;
-    $app->app->log->debug("$ref_app loading user $uid");
+    $app->app->log->info("$ref_app loading user $uid");
     my $schema = $app->db;
     my $user   = $schema->resultset('User')->find($uid);
     return $user;
@@ -195,18 +195,18 @@ sub validate_user {
     my ( $app, $username, $password, $extradata ) = @_;
     my $logger = $app->app->log;
 
-    #$logger->debug( "Validating user " . "$username with pw $password" );
+    #$logger->info( "Validating user " . "$username with pw $password" );
     my $user =
       $app->db->resultset('User')->find( { email => $username } );
     if ( not $user ) {
         $app->redirect_to( $app->url_for('menu')->to_abs->scheme('https') );
         return;
     }
-    $logger->debug( "Queried user with id: " . $user->id );
-    $logger->debug("User available");
+    $logger->info( "Queried user with id: " . $user->id );
+    $logger->info("User available");
     my $user_password = $user->password;
     my $result = $app->bcrypt_validate( $password, $user_password );
-    $logger->debug( "User validated with result: " . $result );
+    $logger->info( "User validated with result: " . $result );
     return unless $result;
     return $user->id;
 }
@@ -225,7 +225,7 @@ sub is_role {
             $app->url_for( '/login', )->to_abs->scheme('https') );
         return 0;
     }
-    $app->app->log->debug(
+    $app->app->log->info(
         "Checking if " . $user->email . " has role " . $role );
     my $count = $user->roles( { 'role.name' => $role } )->count;
     return $count;
