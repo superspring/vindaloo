@@ -14,6 +14,8 @@ sub setup_form {
 
 sub index {
     my $self = shift;
+    $self->redirect_to($self->url_for('menu')->to_abs->scheme('https')) if
+    $self->is_user_authenticated;
     $self->setup_form;
     $self->app->log->debug("Redirected to login.");
 }

@@ -37,48 +37,58 @@
                             </tr>
                             % app->log->info("Querying ingredients");
             % my $base_ingredients = $category->base_ingredients(
-            %    undef, { prefetch =>'curry_menus' }
+            %    undef,
+            %       {
+            %           prefetch =>{
+            %               curry_menus => [
+            %            'curry_type',
+            %               { dish_spiceynesses => 'spiceyness' }]
+            %           }
+            %       }
             %    );
             % while (my $ingredient = $base_ingredients->next) {
-                % foreach my $curry_type (@{$curry_types}) {
-                %   my $menu = $ingredient->curry_menus(
-                %     {
-                %      active => 1,
-                %      curry_type => $curry_type->id
-                %     },
-                %   { prefetch => {dish_spiceynesses =>'spiceyness' }  }
-                %   )->first;
-                %   next unless $menu;
-                        <tr>
-                            <td><%= ucfirst $ingredient->name %> <%= ucfirst
-                                $curry_type->name %></td>
+            % my $curry_menus = $ingredient->curry_menus({active => 1}  );
+                % while (my $menu = $curry_menus->next){
+                     % my $menu_spiceynesses = $menu->spiceynesses({},{order_by
+                     %    => {-asc => [qw/spiceyness.id/]}});
+                     % my $curry_type = $menu->curry_type;
+            <tr>
+                      <td>
+                          <%=
+                          ucfirst $ingredient->name
+                          %> <%= ucfirst $curry_type->name %>
+                      </td>
                             <td>
-                   % foreach my $heat (@{$spiceynesses}) {
-                   % my $item = $menu->spiceynesses()->find($heat->id);
-                    % if (current_user and $item and $event and $event->orders_open){
-                        <a href="<%=
-                        url_for(
-                            'orderdish',
-                            ingredient => $ingredient->link,
-                            curry      => $curry_type->link,
-                            spice      => $heat->name
-                        )->to_abs->scheme('https')
-                                        %>">
-                            <span class="btn btn-mini <%=
-                                $spiceyness_btns->{$heat->name}
-                                %>"><%= $heat->name %></span>
-                        </a>
-                    % }
-                    % else {
-                    <span class="btn disabled btn-mini btn-inverted"><%=
-                        $heat->name
-                        %></span>
-                    %}
-                  % }
-                                </td>
-                                <td>$<%= $menu->price %></td>
+                     % my %spiceyness_set ;
+                     % $spiceyness_set{$_->name} = $_->id foreach
+                     %            $menu_spiceynesses->all;
+                     % foreach my $heat (qw/mild medium hot/) {
+                     % if ($spiceyness_set{$heat}
+                     %      and current_user and $event and $event->orders_open){
+                                <a href="<%=
+                                url_for(
+                                    'orderdish',
+                                    ingredient => $ingredient->link,
+                                    curry      => $curry_type->link,
+                                    spice      => $heat
+                                )->to_abs->scheme('https')
+                                                %>">
+                                    <span class="btn btn-mini <%=
+                                        $spiceyness_btns->{$heat}
+                                        %>"><%= $heat %></span>
+                                </a>
+                            % }
+                            % else {
+                            <span class="btn disabled btn-mini btn-inverted"><%=
+                                $heat
+                                %></span>
+                            %}
+                     % }
+                            </td>
+                     <td>$<%= $menu->price %></td>
+            </tr>
                 % }
-                            </tr>
+
             % }
             % app->log->info("Done querying ingredients");
                         </tbody>

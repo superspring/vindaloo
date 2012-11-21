@@ -31,8 +31,7 @@ sub startup {
     $self->plugin(
         Libravatar => {
             size       => 30,
-            #   rating     => 'PG',
-            #   https      => 1,
+            https      => 1,
             mojo_cache => 1,
         }
     );
@@ -198,7 +197,7 @@ sub validate_user {
     my $user =
       $app->db->resultset('User')->find( { email => $username } );
     if ( not $user ) {
-        $app->redirect_to( $app->url_for('menu')->to_abs->scheme('https') );
+        $app->redirect_to( $app->url_for('/login')->to_abs->scheme('https') );
         return;
     }
     $logger->info( "Queried user with id: " . $user->id );
