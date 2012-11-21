@@ -69,7 +69,7 @@ sub startup {
 
     # This is the landing page
     $r->route('/')->to('curry#index');
-    $r->route('/menu')->over(is => 'user')->name('menu')->to('curry#index');
+    $r->route('/menu')->name('menu')->to('curry#index');
 
     #$authenticated_route->get('')->to('curry#index');
     $r->get('/login')->to('login#index');
@@ -232,9 +232,9 @@ sub is_role {
     my $role_obj  = $model->resultset('Role')->find({name => $role});
     my $user_role = $model->resultset('UserRole')->find({curry_user =>
             $user->id, user_role => $role_obj->id});
-    return unless $user_role;
-    $app->app->log->info("whoot..he does") if $user_role;
-    return $role_obj->id;
+    return 0 unless $user_role;
+    $app->app->log->info("whoot..he does") ;
+    return 1;
 
 }
 
