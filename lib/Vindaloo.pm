@@ -67,7 +67,6 @@ sub startup {
     my $r = $self->routes;
 
     # Basic authentication for all routes.
-    my $authenticated_route = $r->bridge('/')->to('users#authenticate');
 
     # This is the landing page
     $authenticated_route->route('/menu')->name('menu')->to('curry#index');
