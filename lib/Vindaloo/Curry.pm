@@ -13,6 +13,7 @@ use Vindaloo::Forms::MenuItem;
 
 sub index {
     my $self          = shift;
+    $self->app->log->info("Begin processing index.");
     my $model         = $self->db;
     my $categories    = $model->resultset('IngredientCategory');
     my $curry_types   = $model->resultset('CurryType');
@@ -41,6 +42,7 @@ sub index {
     $current_balance = $user->balance // 0 if $user;
 
     my ( $previous_event, $payment_amount );
+    $self->app->log->info("Work out user balance ");
     if ( $user and $event ) {
         my $event_date = $event->event_date;
         $latest_payment =
@@ -78,6 +80,7 @@ sub index {
             }
         )->first;
     }
+    $self->app->log->info("Finished with account stuff.");
 
     $self->stash(
         categories       => $categories,
