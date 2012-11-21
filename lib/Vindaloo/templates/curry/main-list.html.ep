@@ -45,7 +45,7 @@
             %            'curry_type','base_ingredient','dish_spiceynesses',
             %#               { dish_spiceynesses => 'spiceyness' }
             %            ]
-            %           }
+            %           },
             %       }
             %    );
             % while (my $ingredient = $base_ingredients->next) {
@@ -63,8 +63,11 @@
                       </td>
                       <td>
                      %   my %available;
-                     %   $available{$_->spiceyness->id} = $_->spiceyness->name
-                     %      foreach   $menu->dish_spiceynesses->all;
+                     %  my $menu_spiceynesses = $menu->dish_spiceynesses;
+                     %   while (my $spiceyness = $menu_spiceynesses->next){
+                     %   $available{$spiceyness->spiceyness->id}
+                     %      = $spiceyness->spiceyness->name
+                     %  }
                      %   foreach my $id (sort {$a <=> $b} keys %{$spiceynesses}){
                      %      my $heat = $spiceynesses->{$id};
                      %      if ( $available{$id} and
