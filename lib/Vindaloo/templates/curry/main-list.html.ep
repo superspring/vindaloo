@@ -43,7 +43,6 @@
             %           prefetch =>{
             %               curry_menus => [
             %            'curry_type','base_ingredient','dish_spiceynesses',
-            %#               { dish_spiceynesses => 'spiceyness' }
             %            ]
             %           },
             %       }
@@ -65,8 +64,8 @@
                      %   my %available;
                      %  my $menu_spiceynesses = $menu->dish_spiceynesses;
                      %   while (my $spiceyness = $menu_spiceynesses->next){
-                     %   $available{$spiceyness->spiceyness->id}
-                     %      = $spiceyness->spiceyness->name
+                     %   $available{$spiceyness->get_column('spiceyness')}
+                     %      = 1;
                      %  }
                      %   foreach my $id (sort {$a <=> $b} keys %{$spiceynesses}){
                      %      my $heat = $spiceynesses->{$id};

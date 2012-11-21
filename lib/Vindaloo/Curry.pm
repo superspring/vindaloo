@@ -14,10 +14,6 @@ use Vindaloo::Forms::MenuItem;
 sub index {
     my $self          = shift;
     $self->app->log->info("Begin processing index.");
-    if (not $self->is('user')) {
-        $self->render_not_found;
-        return;
-    }
     my $model         = $self->db;
     my $categories    = $model->resultset('IngredientCategory');
     my $curry_types   = $model->resultset('CurryType');
