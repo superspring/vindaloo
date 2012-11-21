@@ -197,7 +197,7 @@ sub validate_user {
 
     #$logger->debug( "Validating user " . "$username with pw $password" );
     my $user =
-      $app->db->resultset('User')->search( { email => $username } )->first;
+      $app->db->resultset('User')->find( { email => $username } );
     if ( not $user ) {
         $app->redirect_to( $app->url_for('menu')->to_abs->scheme('https') );
         return;
