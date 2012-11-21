@@ -11,7 +11,7 @@ use Data::Dumper;
 
 sub authenticate {
     my $self = shift;
-    $self->app->log->debug("Calling basic authentication.");
+    $self->app->log->info("Calling basic authentication.");
     $self->redirect_to( $self->url_for('/login')->to_abs->scheme('https') )
       and return
       unless $self->is_user_authenticated;

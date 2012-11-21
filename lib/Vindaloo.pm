@@ -228,6 +228,7 @@ sub is_role {
     $app->app->log->info(
         "Checking if " . $user->email . " has role " . $role );
     my $count = $user->roles( { 'role.name' => $role } )->count;
+    $app->app->log->info("whoot..he does");
     return $count;
 
 }
