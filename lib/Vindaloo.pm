@@ -80,8 +80,7 @@ sub startup {
 
     # Main user list
     $r->route('/users')->over( is => 'admin' )->name('userlist')->to('users#index');
-    $r->route('/users/outstanding')->over( is => 'admin' )
-      ->name('outstanding')->to('users#outstanding');
+    $r->route('/users/outstanding') ->name('outstanding')->to('users#outstanding');
 
     # User admin route. Takes :id param from path
     my $user_admin =
@@ -228,9 +227,14 @@ sub is_role {
     }
     $app->app->log->info(
         "Checking if " . $user->email . " has role " . $role );
-    my $count = $user->roles( { 'role.name' => $role } )->count;
-    $app->app->log->info("whoot..he does");
-    return $count;
+    my $model = $app->app->db;
+
+    my $role_obj  = $model->resultset('Role')->find({name => $role});
+    my $user_role = $model->resultset('UserRole')->find({curry_user =>
+            $user->id, user_role => $role_obj->id});
+    return unless $user_role;
+    $app->app->log->info("whoot..he does") if $user_role;
+    return $role_obj->id;
 
 }
 

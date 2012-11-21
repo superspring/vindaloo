@@ -41,7 +41,7 @@
             %       {
             %           prefetch =>{
             %               curry_menus => [
-            %            'curry_type',
+            %            'curry_type','base_ingredient',
             %               { dish_spiceynesses => 'spiceyness' }]
             %           }
             %       }
@@ -50,8 +50,8 @@
             %  my $ingredient_link = $ingredient->link;
             % my $curry_menus = $ingredient->curry_menus({active => 1}  );
                 % while (my $menu = $curry_menus->next){
-                     % my $menu_spiceynesses = $menu->spiceynesses({},{order_by
-                     %    => {-asc => [qw/spiceyness.id/]}});
+                     % my $menu_spiceynesses = $menu->dish_spiceynesses({},{order_by
+                     %    => {-asc => [qw/me.spiceyness/]}});
                      % my $curry_type = $menu->curry_type;
                      % my $curry_type_link = $curry_type->link;
             <tr>
@@ -64,7 +64,7 @@
                      %   my $heat_set = {mild => 0,medium => 1, hot => 2};
                      %   my @available;
                      %   while (my $spiceyness = $menu_spiceynesses->next) {
-                     %      my $heat = $spiceyness->name;
+                     %      my $heat = $spiceyness->spiceyness->name;
                      %      if ( current_user and $event and $event->orders_open){
                                 <a href="<%=
                                 url_for(
