@@ -35,6 +35,7 @@
                                 </td>
                                 <td></td>
                             </tr>
+                            % app->log->info("Querying ingredients");
             % my $base_ingredients = $category->base_ingredients(
             %    undef, { prefetch =>'curry_menus' }
             %    );
@@ -79,6 +80,7 @@
                 % }
                             </tr>
             % }
+            % app->log->info("Done querying ingredients");
                         </tbody>
                     </table>
             </div>
