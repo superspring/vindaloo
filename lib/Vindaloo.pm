@@ -72,12 +72,12 @@ sub startup {
     # This is the landing page
     $authenticated_route->route('/menu')->name('menu')->to('curry#index');
 
-    $authenticated_route->get('')->to('curry#index');
+    #$authenticated_route->get('')->to('curry#index');
     $r->get('/login')->to('login#index');
     $r->post('/login')->to('login#validate');
     $r->get('/signup')->name('signup')->to('users#signup');
     $r->post('/signup')->to('users#signup_validated');
-    $authenticated_route->route('/logout')->to('logout#index');
+    $r->route('/logout')->to('logout#index');
 
     # Main user list
     $authenticated_route->route('/users')->over( is => 'admin' )
@@ -214,12 +214,14 @@ sub validate_user {
 
 sub has_priv {
     my ( $app, $privilege, $extradata ) = @_;
+    $app->app->app->log("Checking privileges.");
     return 1;
 
 }
 
 sub is_role {
     my ( $app, $role, $extradata ) = @_;
+    $app->app->log->info("Calling is_role");
     my $user = $app->current_user;
     if ( not $user ) {
         $app->redirect_to(
@@ -235,11 +237,14 @@ sub is_role {
 }
 
 sub user_privs {
+    my ($app,) = @_;
+    $app->app->log->info("Called user roles");
     return 1;
 }
 
 sub user_roles {
     my ( $app, $extradata ) = @_;
+    $app->log->info("Called user roles");
     return $app->current_user->roles->first->name;
 
 }
