@@ -188,6 +188,7 @@ sub load_user {
     $app->app->log->info("$ref_app loading user $uid");
     my $schema = $app->db;
     my $user   = $schema->resultset('User')->find($uid);
+    $app->app->log->info("$ref_app loaded user $uid");
     return $user;
 }
 
