@@ -195,7 +195,7 @@ sub validate_user {
     my ( $app, $username, $password, $extradata ) = @_;
     my $logger = $app->app->log;
 
-    #$logger->info( "Validating user " . "$username with pw $password" );
+    $logger->info( "Validating user " . $username );
     my $user =
       $app->db->resultset('User')->find( { email => $username } );
     if ( not $user ) {
