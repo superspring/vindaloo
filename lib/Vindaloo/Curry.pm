@@ -14,7 +14,7 @@ use Vindaloo::Forms::MenuItem;
 sub index {
     my $self          = shift;
     $self->app->log->info("Begin processing index.");
-    if (not $self->app->is('user')) {
+    if (not $self->is('user')) {
         $self->render_not_found;
         return;
     }
