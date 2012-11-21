@@ -46,7 +46,7 @@
                 %      active => 1,
                 %      curry_type => $curry_type->id
                 %     },
-                % #  { prefetch => {dish_spiceynesses =>'spiceyness' }  }
+                %   { prefetch => {dish_spiceynesses =>'spiceyness' }  }
                 %   )->first;
                 %   next unless $menu;
                         <tr>
