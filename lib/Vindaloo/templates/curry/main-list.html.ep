@@ -1,5 +1,5 @@
-
-% app->log->info("Processed template at ".time);
+% my $start_time = time;
+% app->log->info("Processed template.");
         <div class="row tab-content">
             % my $active = 'active';
             % while (my $category = $categories->next) {
@@ -36,9 +36,8 @@
                                 </td>
                                 <td></td>
                             </tr>
-                            % app->log->info("Querying ingredients");
             % my $base_ingredients = $category->base_ingredients(
-            %    undef,
+            %    {},
             %       {
             %           prefetch =>{
             %               curry_menus => [
@@ -48,25 +47,23 @@
             %       }
             %    );
             % while (my $ingredient = $base_ingredients->next) {
-            %  my $ingredient_link = $ingredient->link;
-            % my $ingredient_name = $ingredient->name;
-            % my $curry_menus = $ingredient->curry_menus({active => 1}  );
+            %   my $ingredient_link = $ingredient->link;
+            %   my $ingredient_name = $ingredient->name;
+            %   my $curry_menus = $ingredient->curry_menus({active => 1}  );
                 % while (my $menu = $curry_menus->next){
                      % my $curry_type = $menu->curry_type;
                      % my $curry_type_link = $curry_type->get_column('link');
                      % my $curry_name = $curry_type->get_column('name');
             <tr>
                       <td>
-                          <%=
-                          ucfirst $ingredient_name
-                          %> <%= ucfirst $curry_name %>
+                          <%= ucfirst $ingredient_name %> <%= ucfirst $curry_name %>
                       </td>
                       <td>
-                     %   my %available;
+                     %  my %available;
                      %  my $menu_spiceynesses = $menu->dish_spiceynesses;
-                     %   while (my $spiceyness = $menu_spiceynesses->next){
-                     %   $available{$spiceyness->get_column('spiceyness')}
-                     %      = 1;
+                     %  while (my $spiceyness = $menu_spiceynesses->next){
+                     %      $available{$spiceyness->get_column('spiceyness')}
+                     %          = 1;
                      %  }
                      %   foreach my $id (sort {$a <=> $b} keys %{$spiceynesses}){
                      %      my $heat = $spiceynesses->{$id};
@@ -80,9 +77,9 @@
                                     spice      => $heat
                                 )->to_abs->scheme('https')
                                                 %>">
-                                    <span class="btn btn-mini <%=
+                               <span class="btn btn-mini <%=
                                         $spiceyness_btns->{$heat}
-                                        %>"><%= $heat %></span>
+                                   %>"><%= $heat %></span>
                                 </a>
                             % }
                             % else {
@@ -97,7 +94,6 @@
                 % }
 
             % }
-            % app->log->info("Done querying ingredients");
                         </tbody>
                     </table>
             </div>
@@ -119,4 +115,6 @@
                 </table>
             </div>
         </div>
-        % app->log->info("End processing template");
+% my $end_time = time;
+% my $elapsed = $end_time - $start_time;
+% app->log->info("End processing template; elapsed time: ".$elapsed);

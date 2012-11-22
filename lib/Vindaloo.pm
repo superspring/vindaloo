@@ -203,7 +203,7 @@ sub validate_user {
     my $user_password = $user->password;
     my $result = $app->bcrypt_validate( $password, $user_password );
     $logger->info( "User validated with result: " . $result );
-    return unless $result;
+    return  unless $result;
     return $user->id;
 }
 
@@ -211,7 +211,6 @@ sub has_priv {
     my ( $app, $privilege, $extradata ) = @_;
     $app->app->app->log("Checking privileges.");
     return 1;
-
 }
 
 sub is_role {
