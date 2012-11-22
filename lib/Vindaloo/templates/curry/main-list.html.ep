@@ -53,12 +53,13 @@
             % my $curry_menus = $ingredient->curry_menus({active => 1}  );
                 % while (my $menu = $curry_menus->next){
                      % my $curry_type = $menu->curry_type;
-                     % my $curry_type_link = $curry_type->link;
+                     % my $curry_type_link = $curry_type->get_column('link');
+                     % my $curry_name = $curry_type->get_column('name');
             <tr>
                       <td>
                           <%=
                           ucfirst $ingredient_name
-                          %> <%= ucfirst $curry_type->name %>
+                          %> <%= ucfirst $curry_name %>
                       </td>
                       <td>
                      %   my %available;
