@@ -59,24 +59,34 @@ sub order_dish {
 
     my $user  = $self->current_user;
     my $model = $self->db;
-    my $ingred_obj =
-      $model->resultset('BaseIngredient')->find( { link => $ingredient } );
-    my $curry_obj = $model->resultset('CurryType')->find( { link => $curry } );
+    #my $ingred_obj =
+      #$model->resultset('BaseIngredient')->find( { link => $ingredient } );
+    #my $curry_obj = $model->resultset('CurryType')->find( { link => $curry } );
     my $spice_obj = $model->resultset('Spiceyness')->find( { name => $spice } );
     my $menu = $model->resultset('CurryMenu')->search(
         {
-            base_ingredient => $ingred_obj->id,
-            curry_type      => $curry_obj->id
+            'base_ingredient.link' => $ingredient,
+            'spiceyness.name'      => $spice,
+            'curry_type.link'      => $curry,
+            'me.active'            => 1
+        },
+        {
+            join => [
+                'curry_type', 'base_ingredient',
+                { dish_spiceynesses => 'spiceyness' }
+            ]
         }
+
     )->first;
 
-    if ( any { not defined $_ } $ingred_obj, $curry_obj, $spice_obj,$menu ) {
+    if ( any { not defined $_ } $menu ) {
         $self->app->log->error(
             "User tried to order a curry that did not exist!");
         $self->app->log->error( join " " => $ingredient, $curry, $spice );
-        $self->redirect_to(
-            $self->url_for('menu')->to_abs->scheme('https') );
-        return 0;
+        $self->render_not_found;
+        #$self->redirect_to(
+            #$self->url_for('menu')->to_abs->scheme('https') );
+        return ;
     }
     $self->create_curry_order($menu,$spice_obj);
 
