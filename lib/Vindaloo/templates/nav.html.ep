@@ -12,7 +12,7 @@
                 <ul class="nav">
                     <li class="divider-vertical"> </li>
                 </ul>
-                % if ( user_exists ){
+                % if ( is_user_authenticated){
                     <ul class="nav">
                         <li><a href="<%=
                             url_for('menu')->to_abs->scheme('https')
