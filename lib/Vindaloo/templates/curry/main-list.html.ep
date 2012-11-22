@@ -1,4 +1,5 @@
 
+%= memorize begin
 % app->log->info("Begin processing template");
         <div class="row tab-content">
             % my $active = 'active';
@@ -120,3 +121,4 @@
             </div>
         </div>
         % app->log->info("End processing template");
+% end
