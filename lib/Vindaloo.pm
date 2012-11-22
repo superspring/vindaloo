@@ -69,7 +69,7 @@ sub startup {
 
     # This is the landing page
     $r->route('/')->to('curry#index');
-    $r->route('/menu')->over(is => 'user')->name('menu')->to('curry#index');
+    $r->route('/menu')->name('menu')->to('curry#index');
 
     $r->get('/login')->to('login#index');
     $r->post('/login')->to('login#validate');
