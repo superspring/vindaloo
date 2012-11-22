@@ -1,5 +1,4 @@
 
-%= memorize { expires => time + 7200} => begin
 % app->log->info("Processed template at ".time);
         <div class="row tab-content">
             % my $active = 'active';
@@ -121,4 +120,3 @@
             </div>
         </div>
         % app->log->info("End processing template");
-% end

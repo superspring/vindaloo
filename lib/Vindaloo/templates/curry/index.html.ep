@@ -24,7 +24,9 @@
                 %  }
                 <li><a data-toggle="tab" href="#extras">Extras</a></li>
             </ul>
+            %= memorize  {expires => time + 3600 } => begin
                 %= include 'curry/main-list';
+            % end
             </div>
         </div>
         </div>
