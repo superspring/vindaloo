@@ -67,7 +67,6 @@
                      %   while (my $spiceyness = $menu_spiceynesses->next){
                      %   $available{$spiceyness->get_column('spiceyness')}
                      %      = 1;
-                     %   app->log->info("Got spiceyness");
                      %  }
                      %   foreach my $id (sort {$a <=> $b} keys %{$spiceynesses}){
                      %      my $heat = $spiceynesses->{$id};
