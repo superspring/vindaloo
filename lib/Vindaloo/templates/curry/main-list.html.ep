@@ -41,7 +41,9 @@
             %       {
             %           prefetch =>{
             %               curry_menus => [
-            %            'curry_type','base_ingredient','dish_spiceynesses',
+            %            'curry_type',
+            %          #'dish_spiceynesses'
+            %         {dish_spiceynesses => 'spiceyness'}
             %            ]
             %           },
             %       }
@@ -54,6 +56,7 @@
                      % my $curry_type = $menu->curry_type;
                      % my $curry_type_link = $curry_type->get_column('link');
                      % my $curry_name = $curry_type->get_column('name');
+                    %   my $spiceyness = $menu->spiceynesses; #testing
             <tr>
                       <td>
                           <%= ucfirst $ingredient_name %> <%= ucfirst $curry_name %>
