@@ -50,6 +50,7 @@ sub startup {
             validate_user => \&validate_user,
         }
     );
+    $self->app->sessions->default_expiration(86400);
     $self->plugin(
         Authorization => {
             has_priv   => \&has_priv,
