@@ -33,6 +33,7 @@ sub startup {
             size       => 30,
             https      => 1,
             mojo_cache => 1,
+            default => 'mm'
         }
     );
 
