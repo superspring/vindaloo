@@ -84,7 +84,6 @@ sub index {
 
     $self->stash(
         categories       => $categories,
-        curry_types      => [ $curry_types->all ],
         spiceyness_btns  => $spiceyness_btn_map,
         event            => $event,
         user_orders      => $user_orders,
