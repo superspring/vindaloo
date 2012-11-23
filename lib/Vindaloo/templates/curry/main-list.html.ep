@@ -19,29 +19,29 @@
                         <tbody>
                             <tr>
                                 <td>Random <%= ucfirst $category_name %> Curry</td>
-                                <td>
         % foreach my $id (sort { $a <=> $b} keys %{$spiceynesses}) {
             % my $heat = $spiceynesses->{$id};
-                % if ( current_user and $event and $event->orders_open){
-                    <a href="<%=
-                    url_for(
-                        'randomcategoryorder',
-                        category => lc $category->name,
-                        spice      => $heat
-                    )->to_abs->scheme('https')
-                                    %>">
-                        <span class="btn btn-mini <%=
-                            $spiceyness_btns->{$heat}
-                            %>"><%= $heat %></span>
-                    </a>
-                % }
-                % else {
-                <span class="btn disabled btn-mini btn-inverted"><%=
-                    $heat
-                    %></span>
-                %}
+                <td>
+                    % if ( current_user and $event and $event->orders_open){
+                        <a href="<%=
+                        url_for(
+                            'randomcategoryorder',
+                            category => lc $category->name,
+                            spice      => $heat
+                        )->to_abs->scheme('https')
+                                        %>">
+                            <span class="btn btn-mini <%=
+                                $spiceyness_btns->{$heat}
+                                %>"><%= $heat %></span>
+                        </a>
+                    % }
+                    % else {
+                    <span class="btn disabled btn-mini btn-inverted"><%=
+                        $heat
+                        %></span>
+                    %}
+                </td>
             % }
-                                </td>
                                 <td></td>
                             </tr>
             % my $base_ingredients = $category->base_ingredients(
@@ -63,31 +63,31 @@
                       <td>
                           <%= ucfirst $ingredient_name %> <%= ucfirst $curry_name %>
                       </td>
-                      <td>
                      %   foreach my $id (sort {$a <=> $b} keys %{$spiceynesses}){
-                     %      my $heat = $spiceynesses->{$id};
-                     %      if ( $dish_spiceynesses->{$menu->id}->{$id} and
-                     %             current_user and $event and $event->orders_open){
-                                <a href="<%=
-                                url_for(
-                                    'orderdish',
-                                    ingredient => $ingredient_link,
-                                    curry      => $curry_type_link,
-                                    spice      => $heat
-                                )->to_abs->scheme('https')
-                                                %>">
-                               <span class="btn btn-mini <%=
-                                        $spiceyness_btns->{$heat}
-                                   %>"><%= $heat %></span>
-                                </a>
-                            % }
-                            % else {
-                            <span class="btn disabled btn-mini btn-inverted"><%=
-                                $heat
-                                %></span>
-                            %}
+                     <td>
+                         %      my $heat = $spiceynesses->{$id};
+                         %      if ( $dish_spiceynesses->{$menu->id}->{$id} and
+                         %             current_user and $event and $event->orders_open){
+                                        <a href="<%=
+                                        url_for(
+                                            'orderdish',
+                                            ingredient => $ingredient_link,
+                                            curry      => $curry_type_link,
+                                            spice      => $heat
+                                        )->to_abs->scheme('https')
+                                                        %>">
+                                       <span class="btn btn-mini <%=
+                                                $spiceyness_btns->{$heat}
+                                           %>"><%= $heat %></span>
+                                        </a>
+                                % }
+                                % else {
+                                <span class="btn disabled btn-mini btn-inverted"><%=
+                                    $heat
+                                    %></span>
+                                %}
+                     </td>
                      % }
-                            </td>
                      <td>$<%= $menu->price %></td>
             </tr>
                 % }
