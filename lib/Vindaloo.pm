@@ -33,7 +33,7 @@ sub startup {
             size       => 30,
             https      => 1,
             mojo_cache => 1,
-            default => 'mm'
+            default    => 'mm'
         }
     );
 
@@ -77,7 +77,7 @@ sub startup {
 
     # This is the landing page
     $r->route('/')->to('curry#index');
-    $r->route('/menu')->over(is => 'user')->name('menu')->to('curry#index');
+    $r->route('/menu')->over( is => 'user' )->name('menu')->to('curry#index');
 
     $r->get('/login')->to('login#index');
     $r->post('/login')->to('login#validate');
@@ -86,13 +86,14 @@ sub startup {
     $r->route('/logout')->to('logout#index');
 
     # Main user list
-    $r->route('/users')->over( is => 'admin' )->name('userlist')->to('users#index');
-    $r->route('/users/outstanding') ->name('outstanding')->to('users#outstanding');
+    $r->route('/users')->over( is => 'admin' )->name('userlist')
+      ->to('users#index');
+    $r->route('/users/outstanding')->name('outstanding')
+      ->to('users#outstanding');
 
     # User admin route. Takes :id param from path
     my $user_admin =
-      $r->bridge('/user/admin/:id')->over( is => 'admin' )
-      ->to('users#admin');
+      $r->bridge('/user/admin/:id')->over( is => 'admin' )->to('users#admin');
     $user_admin->get('/edit')->name('edituser')->to('users#edit');
     $user_admin->post('/edit')->to('users#post_edit');
     $user_admin->route('/payment/:payment')->name('payment')
@@ -117,13 +118,11 @@ sub startup {
       ->to('curry#side_dishes');
 
     # Event management
-    $r->route('/events')->over( is => 'admin' )
-      ->to('events#index');
+    $r->route('/events')->over( is => 'admin' )->to('events#index');
     $r->route('/event/create')->name('createevent')
       ->over( is => 'admin' )->to('events#create');
     my $event_admin =
-      $r->bridge('/event/admin/:id')->over( is => 'admin' )
-      ->to('events#admin');
+      $r->bridge('/event/admin/:id')->over( is => 'admin' )->to('events#admin');
     $event_admin->route('/close')->name('closeevent')->to('events#close');
     $event_admin->route('/open')->name('openevent')->to('events#open');
 
@@ -132,8 +131,7 @@ sub startup {
     # Edit a type of curry (type means "base ingredient", "curry type", or
     # "side dish", not necessarily a type of curry
     my $curry_manager =
-      $r->bridge('/curry/type/:type')->over( is => 'admin' )
-      ->to('curry#type');
+      $r->bridge('/curry/type/:type')->over( is => 'admin' )->to('curry#type');
     $curry_manager->route('/create')->name('createmenuitem')
       ->to('curry#create');
     my $admin_curry = $curry_manager->bridge('/admin/:id')->to('curry#admin');
@@ -144,7 +142,7 @@ sub startup {
     # Profile management (user stuff like change profile, edit pw, name,
     # etc.
     my $profile_admin =
-      $r->bridge('/user/profile')->over(is => 'user')->to('users#profile');
+      $r->bridge('/user/profile')->over( is => 'user' )->to('users#profile');
     $profile_admin->get('/edit')->name('editprofile')->to('users#edit');
     $profile_admin->post('/edit')->to('users#post_edit');
     my $password_admin =
@@ -152,7 +150,7 @@ sub startup {
     $password_admin->get('/edit')->name('changepassword')->to('users#edit');
     $password_admin->post('/edit')->to('users#post_edit');
 
-    $r->route('/user/order-history')->over(is => 'user')->name('orderhistory')
+    $r->route('/user/order-history')->over( is => 'user' )->name('orderhistory')
       ->to('orders#order_history');
 
     # User routes for ordering dishes and sides.
@@ -200,8 +198,7 @@ sub validate_user {
     my $logger = $app->app->log;
 
     $logger->info( "Validating user " . $username );
-    my $user =
-      $app->db->resultset('User')->find( { email => $username } );
+    my $user = $app->db->resultset('User')->find( { email => $username } );
     if ( not $user ) {
         $app->redirect_to( $app->url_for('/login')->to_abs->scheme('https') );
         return;
@@ -211,7 +208,7 @@ sub validate_user {
     my $user_password = $user->password;
     my $result = $app->bcrypt_validate( $password, $user_password );
     $logger->info( "User validated with result: " . $result );
-    return  unless $result;
+    return unless $result;
     return $user->id;
 }
 
@@ -235,17 +232,21 @@ sub is_role {
         "Checking if " . $user->email . " has role " . $role );
     my $model = $app->app->db;
 
-    my $role_obj  = $model->resultset('Role')->find({name => $role});
-    my $user_role = $model->resultset('UserRole')->find({curry_user =>
-            $user->id, user_role => $role_obj->id});
+    my $role_obj = $model->resultset('Role')->find( { name => $role } );
+    my $user_role = $model->resultset('UserRole')->find(
+        {
+            curry_user => $user->id,
+            user_role  => $role_obj->id
+        }
+    );
     return 0 unless $user_role;
-    $app->app->log->info("whoot..he does") ;
+    $app->app->log->info("whoot..he does");
     return 1;
 
 }
 
 sub user_privs {
-    my ($app,) = @_;
+    my ( $app, ) = @_;
     $app->app->log->info("Called user roles");
     return 1;
 }
@@ -261,41 +262,39 @@ sub dishes_by_category {
     my $self       = shift;
     my $model      = $self->db;
     my $categories = $model->resultset('IngredientCategory');
+    my $dish_spiceyness_set = $model->resultset('DishSpiceyness')
+      ->search( {}, { prefetch => [qw/dish spiceyness/] } );
+    my $dish_spiceyness_hash = {};
+    push @{ $dish_spiceyness_hash->{ $_->dish } }, $_->spiceyness->name
+      foreach $dish_spiceyness_set->all;
 
     my $dishes_by_category = [];
     while ( my $category = $categories->next ) {
-        my $category_name    = $category->name;
-        my $base_ingredients = $category->base_ingredients(
-            {},
-            {
-                prefetch => {
-                    curry_menus =>
-                      [ 'curry_type', { dish_spiceynesses => 'spiceyness' } ]
-                },
-            }
+        my $category_name = $category->name;
+        my $base_ingredients =
+          $category->base_ingredients(
+              undef,
+            { prefetch =>  'curry_menus'  , }
         );
         my $menu_set = [];
         while ( my $ingredient = $base_ingredients->next ) {
             my $ingredient_link = $ingredient->link;
             my $ingredient_name = $ingredient->name;
-            my $curry_menus     = $ingredient->curry_menus( { active => 1 } );
-            my $dishes          = [];
+            my $curry_menus = $ingredient->curry_menus( { 'me.active' => 1 },
+                { prefetch => 'curry_type' } );
+            my $dishes = [];
             while ( my $menu = $curry_menus->next ) {
+                my $menu_id         = $menu->id;
                 my $curry_type      = $menu->curry_type;
                 my $curry_type_link = $curry_type->link;
                 my $curry_name      = $curry_type->name;
-                my $spiceyness      = $menu->spiceynesses;    #testing
-                my %available;
-                my $menu_spiceynesses = $menu->dish_spiceynesses;
-                foreach my $spiceyness ( $menu_spiceynesses->all ) {
-                    $available{ $spiceyness->get_column('spiceyness') } = 1;
-                }
+
                 push @{$dishes},
                   {
                     name         => $curry_name,
                     link         => $curry_type_link,
-                    price       => $menu->price,
-                    spiceynesses => \%available
+                    price        => $menu->price,
+                    spiceynesses => $dish_spiceyness_set->{$menu_id}
                   };
             }
             push @{$menu_set},
