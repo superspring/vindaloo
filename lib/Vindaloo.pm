@@ -43,12 +43,6 @@ sub startup {
             $self->app->schema;
         }
     );
-    #my $dishes_by_category = $self->dishes_by_category;
-    #$self->helper(
-        #category_set => sub {
-            #return $dishes_by_category;
-        #}
-    #);
     $self->plugin(
         authentication => {
             autoload_user => 1,
@@ -258,61 +252,6 @@ sub user_roles {
 
 }
 
-sub dishes_by_category {
-    my $self       = shift;
-    my $model      = $self->db;
-    my $categories = $model->resultset('IngredientCategory');
-    my $dish_spiceyness_set = $model->resultset('DishSpiceyness')
-      ->search( {}, { prefetch => [qw/dish spiceyness/] } );
-    my $dish_spiceyness_hash = {};
-    push @{ $dish_spiceyness_hash->{ $_->dish } }, $_->spiceyness->name
-      foreach $dish_spiceyness_set->all;
-
-    my $dishes_by_category = [];
-    while ( my $category = $categories->next ) {
-        my $category_name = $category->name;
-        my $base_ingredients =
-          $category->base_ingredients(
-              undef,
-            { prefetch =>  'curry_menus'  , }
-        );
-        my $menu_set = [];
-        while ( my $ingredient = $base_ingredients->next ) {
-            my $ingredient_link = $ingredient->link;
-            my $ingredient_name = $ingredient->name;
-            my $curry_menus = $ingredient->curry_menus( { 'me.active' => 1 },
-                { prefetch => 'curry_type' } );
-            my $dishes = [];
-            while ( my $menu = $curry_menus->next ) {
-                my $menu_id         = $menu->id;
-                my $curry_type      = $menu->curry_type;
-                my $curry_type_link = $curry_type->link;
-                my $curry_name      = $curry_type->name;
-
-                push @{$dishes},
-                  {
-                    name         => $curry_name,
-                    link         => $curry_type_link,
-                    price        => $menu->price,
-                    spiceynesses => $dish_spiceyness_set->{$menu_id}
-                  };
-            }
-            push @{$menu_set},
-              {
-                link   => $ingredient_link,
-                name   => $ingredient_name,
-                dishes => $dishes,
-              };
-        }
-
-        push @{$dishes_by_category},
-          {
-            name      => $category_name,
-            menu_sets => $menu_set
-          };
-    }
-    return $dishes_by_category;
-}
 
 1;
 
