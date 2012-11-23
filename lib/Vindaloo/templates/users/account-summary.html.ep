@@ -1,5 +1,4 @@
 
-    <div class="span4 well">
         <h4>Your Account</h4>
         <table class="table table-striped">
             % if ($user_orders) {
@@ -98,4 +97,3 @@
         <h6><a href="<%=
         url_for('orderhistory')->to_abs->scheme('https')
         %>">Order History</a></h6>
-    </div>
