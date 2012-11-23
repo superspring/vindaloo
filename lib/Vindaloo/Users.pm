@@ -21,15 +21,23 @@ sub index {
     my $self = shift;
     my $users =
       $self->db->resultset('User')
-      ->search( undef, { order_by => { -asc => [qw/id/] } } );
+      ->search( undef, { order_by => { -asc => [qw/surname/] } } );
     $self->stash( allclass => 'active', outstanding => '',users => $users, );
 }
 
 sub outstanding {
     my $self = shift;
     $self->index;
-    my $users = $self->stash->{users}->search({balance => {'>' => 0}});
-    $self->stash(outstanding => 'active',allclass=> '',users => $users);
+    my $users = $self->stash->{users}->search(
+        {
+            -and => [
+                { balance => { '>'      => 0 } },
+                { balance => { 'is not' => undef } }
+            ]
+        },
+        {order_by => {-asc => [qw/surname/]}}
+    );
+    $self->stash( outstanding => 'active', allclass => '', users => $users );
     $self->render('users/index');
 }
 
