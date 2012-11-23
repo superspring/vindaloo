@@ -43,12 +43,12 @@ sub startup {
             $self->app->schema;
         }
     );
-    my $dishes_by_category = $self->dishes_by_category;
-    $self->helper(
-        category_set => sub {
-            return $dishes_by_category;
-        }
-    );
+    #my $dishes_by_category = $self->dishes_by_category;
+    #$self->helper(
+        #category_set => sub {
+            #return $dishes_by_category;
+        #}
+    #);
     $self->plugin(
         authentication => {
             autoload_user => 1,

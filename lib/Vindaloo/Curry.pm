@@ -18,12 +18,18 @@ sub index {
     my $categories    = $model->resultset('IngredientCategory');
     my $curry_types   = $model->resultset('CurryType');
     my $spiceyness_rs = $model->resultset('Spiceyness');
+    my $dish_spiceyness_set = $model->resultset('DishSpiceyness')
+      ->search( {}, { prefetch => [qw/dish spiceyness/] } );
+    my $dish_spiceyness_hash = {};
+
+     $dish_spiceyness_hash->{ $_->dish->id }->{$_->spiceyness->id} =  $_->spiceyness->name
+      foreach $dish_spiceyness_set->all;
     my $spiceynesses  = {};
     while ( my $heat = $spiceyness_rs->next ) {
         $spiceynesses->{ $heat->id } = $heat->name;
     }
-    my $side_dishes = $model->resultset('SideDish')->search( { active => 1 } );
 
+    my $side_dishes = $model->resultset('SideDish')->search( { active => 1 } );
     my $event_resultset = $model->resultset('OrderEvent');
     my $event;
     if ( $event_resultset->count ) {
@@ -92,6 +98,7 @@ sub index {
         side_dishes      => $side_dishes,
         latest_payment   => $payment_amount,
         spiceynesses     => $spiceynesses,
+        dish_spiceynesses => $dish_spiceyness_hash,
         previous_event   => $previous_event,
     );
 
