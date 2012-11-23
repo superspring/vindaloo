@@ -398,7 +398,7 @@ sub payment {
     $user->balance($balance);
     $user->update;
     $user->add_to_payments( { payment => $reduce_by } );
-    $self->redirect_to( $self->url_for('outstanding')->to_abs->scheme('https') );
+    $self->redirect_to( $self->url_for('userlist')->to_abs->scheme('https') );
     return;
 
 }
