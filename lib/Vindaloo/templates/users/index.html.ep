@@ -5,7 +5,7 @@
 <div class="row">
     <div class="span12">
         <ul class="nav nav-tabs" id="myTab" >
-            <li >
+            <li class="active" >
                 <a href="#outstanding-list" data-toggle="tab" >Outstanding</a>
             </li>
             <li >
