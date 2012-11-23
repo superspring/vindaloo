@@ -597,6 +597,14 @@ ALTER TABLE ONLY curry_types
 
 
 --
+-- Name: dish_spiceyness_unique; Type: CONSTRAINT; Schema: public; Owner: hotteenvindaloos; Tablespace: 
+--
+
+ALTER TABLE ONLY dish_spiceyness
+    ADD CONSTRAINT dish_spiceyness_unique UNIQUE (dish, spiceyness);
+
+
+--
 -- Name: ingredient_category_name_key; Type: CONSTRAINT; Schema: public; Owner: hotteenvindaloos; Tablespace: 
 --
 
@@ -634,6 +642,14 @@ ALTER TABLE ONLY base_ingredients
 
 ALTER TABLE ONLY side_dishes
     ADD CONSTRAINT link_unique_side_dish UNIQUE (link);
+
+
+--
+-- Name: one_open; Type: CONSTRAINT; Schema: public; Owner: hotteenvindaloos; Tablespace: 
+--
+
+ALTER TABLE ONLY order_events
+    ADD CONSTRAINT one_open UNIQUE (orders_open);
 
 
 --
@@ -698,6 +714,14 @@ ALTER TABLE ONLY side_dishes
 
 ALTER TABLE ONLY spiceyness
     ADD CONSTRAINT spiceyness_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: unique_dish; Type: CONSTRAINT; Schema: public; Owner: hotteenvindaloos; Tablespace: 
+--
+
+ALTER TABLE ONLY curry_menus
+    ADD CONSTRAINT unique_dish UNIQUE (base_ingredient, curry_type, active);
 
 
 --
