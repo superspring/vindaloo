@@ -2,17 +2,15 @@
 % app->log->info("Processed template.");
         <div class="row tab-content">
             % my $active = 'active';
-            % my $category_set = category_set;
-            % foreach my $category (@{$category_set}) {
-                % my $category_name = $category->{name};
+            % while (my $category = $categories->next) {
             <div class="span6 well tab-pane <%= $active %> " id="<%=
-            lc $category_name
+            lc $category->name
             %>">
-                    <h4><%= ucfirst(lc $category_name )%></h4>
+                    <h4><%= ucfirst(lc $category->name )%></h4>
                     <table class="table table-condensed table-striped">
                         <tbody>
                             <tr>
-                                <td>Random <%= ucfirst $category_name%> Curry</td>
+                                <td>Random <%= ucfirst $category->name %> Curry</td>
                                 <td>
         % foreach my $id (sort { $a <=> $b} keys %{$spiceynesses}) {
             % my $heat = $spiceynesses->{$id};
@@ -20,7 +18,7 @@
                     <a href="<%=
                     url_for(
                         'randomcategoryorder',
-                        category => lc $category_name,
+                        category => lc $category->name,
                         spice      => $heat
                     )->to_abs->scheme('https')
                                     %>">
@@ -38,22 +36,41 @@
                                 </td>
                                 <td></td>
                             </tr>
-            % foreach my $ingredient ( @{$category->{menu_sets}}) {
-            %   my $ingredient_link = $ingredient->{link};
-            %   my $ingredient_name = $ingredient->{name};
-            %   my $curry_menus = $ingredient->{dishes};
-                % foreach my $menu (@{$curry_menus}){
-                    % my $curry_type_link = $menu->{link};
-                    % my $curry_name = $menu->{name};
+            % my $base_ingredients = $category->base_ingredients(
+            %    {},
+            %       {
+            %           prefetch =>{
+            %               curry_menus => [
+            %            'curry_type',
+            %          #'dish_spiceynesses'
+            %         {dish_spiceynesses => 'spiceyness'}
+            %            ]
+            %           },
+            %       }
+            %    );
+            % while (my $ingredient = $base_ingredients->next) {
+            %   my $ingredient_link = $ingredient->link;
+            %   my $ingredient_name = $ingredient->name;
+            %   my $curry_menus = $ingredient->curry_menus({active => 1}  );
+                % while (my $menu = $curry_menus->next){
+                     % my $curry_type = $menu->curry_type;
+                     % my $curry_type_link = $curry_type->get_column('link');
+                     % my $curry_name = $curry_type->get_column('name');
+                    %   my $spiceyness = $menu->spiceynesses; #testing
             <tr>
                       <td>
                           <%= ucfirst $ingredient_name %> <%= ucfirst $curry_name %>
                       </td>
                       <td>
-                     %  my $available =$menu->{spiceynesses};
+                     %  my %available;
+                     %  my $menu_spiceynesses = $menu->dish_spiceynesses;
+                     %  while (my $spiceyness = $menu_spiceynesses->next){
+                     %      $available{$spiceyness->get_column('spiceyness')}
+                     %          = 1;
+                     %  }
                      %   foreach my $id (sort {$a <=> $b} keys %{$spiceynesses}){
                      %      my $heat = $spiceynesses->{$id};
-                     %      if ( $available->{$id} and
+                     %      if ( $available{$id} and
                      %             current_user and $event and $event->orders_open){
                                 <a href="<%=
                                 url_for(
@@ -75,7 +92,7 @@
                             %}
                      % }
                             </td>
-                     <td>$<%= $menu->{price} %></td>
+                     <td>$<%= $menu->price %></td>
             </tr>
                 % }
 
