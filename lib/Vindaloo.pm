@@ -82,8 +82,6 @@ sub startup {
     # Main user list
     $r->route('/users')->over( is => 'admin' )->name('userlist')
       ->to('users#index');
-    $r->route('/users/outstanding')->name('outstanding')
-      ->to('users#outstanding');
 
     # User admin route. Takes :id param from path
     my $user_admin =

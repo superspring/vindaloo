@@ -7,7 +7,8 @@
         <span class="icon-bar"></span>
     </a>
     <a class="brand" href="<%=
-    url_for('menu')->to_abs->scheme('https') %>">HotTeenVindaloos</a>
+        url_for('menu')->to_abs->scheme('https') 
+    %>">HotTeenVindaloos</a>
             <div class="nav-collapse">
                 <ul class="nav">
                     <li class="divider-vertical"> </li>
@@ -39,7 +40,8 @@
                         %>">Recent order</a></li>
                         % }
                         <li><a href="<%=
-                        url_for('outstanding')->to_abs->scheme('https') %>">Accounts</a></li>
+                        url_for('userlist')->to_abs->scheme('https') 
+                        %>">Accounts</a></li>
                     </ul>
                     <ul class="nav">
                         <li class="dropdown">
