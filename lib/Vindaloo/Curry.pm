@@ -14,8 +14,13 @@ use Vindaloo::Forms::MenuItem;
 sub index {
     my $self = shift;
     $self->app->log->info("Begin processing index.");
-    my $model         = $self->db;
-    my $categories    = $model->resultset('IngredientCategory');
+    my $model = $self->db;
+    my $categories =
+      $model->resultset('IngredientCategory') ->search(
+          {},
+          {prefetch => 'base_ingredients' }
+      ) ;
+
     my $curry_types   = $model->resultset('CurryType');
     my $spiceyness_rs = $model->resultset('Spiceyness');
     my $dish_spiceyness_set =
@@ -55,21 +60,17 @@ sub index {
         my $event_date = $event->event_date;
         $latest_payment =
           $user->payments->search( { payment_date => $event_date } );
-        $user_orders = $user->orders( { order_event => $event->id },
-              {
-                  join => 'dish',
-                  prefetch => [
-                      'spiceyness',
-                      {
-                          dish => [
-                              qw/base_ingredient curry_type/
-                          ]
-                      }
-                  ]
-              }
-          );
+        $user_orders = $user->orders(
+            { order_event => $event->id },
+            {
+                join     => 'dish',
+                prefetch => [
+                    'spiceyness', { dish => [ qw/base_ingredient curry_type/ ] }
+                ]
+            }
+        );
         $user_side_orders = $user->side_orders( { order_event => $event->id },
-            { prefetch => 'side_dish',join => 'side_dish' } );
+            { prefetch => 'side_dish', join => 'side_dish' } );
 
         my $event_sum = $user_orders->get_column('dish.price')->sum // 0;
         my $side_dish_event_sum =
