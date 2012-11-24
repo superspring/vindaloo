@@ -180,7 +180,9 @@ sub load_user {
     my $ref_app = ref $app;
     $app->app->log->info("$ref_app loading user $uid");
     my $schema = $app->db;
-    my $user   = $schema->resultset('User')->find($uid);
+    my $user =
+      $schema->resultset('User')
+      ->search( {}, { prefetch =>  'user_roles'   } )->find($uid);
     $app->app->log->info("$ref_app loaded user $uid");
     return $user;
 }
@@ -223,14 +225,9 @@ sub is_role {
     $app->app->log->info(
         "Checking if " . $user->email . " has role " . $role );
     my $model = $app->app->db;
+    my $user_role = $user->user_roles({'role.name' => $role},{join => 'role'});
 
-    my $role_obj = $model->resultset('Role')->find( { name => $role } );
-    my $user_role = $model->resultset('UserRole')->find(
-        {
-            curry_user => $user->id,
-            user_role  => $role_obj->id
-        }
-    );
+
     return 0 unless $user_role;
     $app->app->log->info("whoot..he does");
     return 1;

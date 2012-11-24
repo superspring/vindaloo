@@ -22,7 +22,6 @@ __PACKAGE__->inflate_column(
         inflate => sub {
             return sprintf "%.2f", shift;
           }
-
     }
 );
 
