@@ -16,6 +16,7 @@ __PACKAGE__->has_many(user_roles => UserRole => {'foreign.user_role' =>
 __PACKAGE__->many_to_many(users => user_roles => 'user');
 
 
+__PACKAGE__->meta->make_immutable(inline_constructor => 0);
 
 
 

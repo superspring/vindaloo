@@ -14,5 +14,6 @@ __PACKAGE__->belongs_to( role => 'Vindaloo::Schema::Result::Role' =>
       { 'foreign.id' => 'self.user_role' } );
 
 1;
+__PACKAGE__->meta->make_immutable(inline_constructor => 0);
 
 __END__

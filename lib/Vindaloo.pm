@@ -14,7 +14,8 @@ has schema => sub {
     my $connect_info  = $schema_config->{connect_info};
     ### connect info: $connect_info
     my ( $dsn, $user, $password ) = @{$connect_info}{qw/dsn user password/};
-    return Vindaloo::Schema->connect( $dsn, $user, $password );
+    my $dbh = Vindaloo::Schema->connect( $dsn, $user, $password );
+    return $dbh;
 };
 
 sub startup {
@@ -23,8 +24,8 @@ sub startup {
     $self->home->parse( catdir( dirname(__FILE__), 'Vindaloo' ) );
     $self->static->paths->[0]   = $self->home->rel_dir('public');
     $self->renderer->paths->[0] = $self->home->rel_dir('templates');
-    if ($self->mode eq 'production') {
-        $self->log->path('/home/hotteenvindaloos/log/vindaloo.log')
+    if ( $self->mode eq 'production' ) {
+        $self->log->path('/home/hotteenvindaloos/log/vindaloo.log');
     }
 
     my $config = $self->plugin('Config');
@@ -185,7 +186,7 @@ sub load_user {
     my $schema = $app->db;
     my $user =
       $schema->resultset('User')
-      ->search( {}, { prefetch =>  'user_roles'   } )->find($uid);
+      ->search( {}, { prefetch => 'user_roles' } )->find($uid);
     $app->app->log->info("$ref_app loaded user $uid");
     return $user;
 }
@@ -228,8 +229,8 @@ sub is_role {
     $app->app->log->info(
         "Checking if " . $user->email . " has role " . $role );
     my $model = $app->app->db;
-    my $user_role = $user->user_roles({'role.name' => $role},{join => 'role'});
-
+    my $user_role =
+      $user->user_roles( { 'role.name' => $role }, { join => 'role' } );
 
     return 0 unless $user_role;
     $app->app->log->info("whoot..he does");
@@ -249,7 +250,6 @@ sub user_roles {
     return $app->current_user->roles->first->name;
 
 }
-
 
 1;
 

@@ -90,26 +90,6 @@ sub order_dish {
     }
     $self->create_curry_order($menu,$spice_obj);
 
-    #my $event = $self->stash->{event};
-    #local $@;
-    #eval {
-        #$model->resultset('Order')->create(
-            #{
-                #dish        => $menu->id,
-                #order_event => $event->id,
-                #curry_user  => $user->id,
-                #spiceyness  => $spice_obj->id,
-            #}
-        #);
-        #my $balance = $user->balance // 0;
-        #$balance += $menu->price;
-        #$user->balance($balance);
-        #$user->update;
-
-    #};
-    #if ( my $e = $@ ) {
-        #$self->app->log->error( "Error inserting order: " . $e );
-    #}
     $self->redirect_to( $self->url_for('menu')->to_abs->scheme('https') );
 
     return;

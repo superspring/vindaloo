@@ -20,6 +20,7 @@ __PACKAGE__->add_unique_constraint( [qw/link/] );
 __PACKAGE__->has_many( orders => 'Vindaloo::Schema::Result::SideOrder' =>
       { 'foreign.side_dish' => 'self.id' } );
 
+__PACKAGE__->meta->make_immutable(inline_constructor => 0);
 1;
 
 __END__

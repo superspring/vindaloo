@@ -21,6 +21,7 @@ __PACKAGE__->has_many(
       { 'foreign.spiceyness' => 'self.id' } );
 
 __PACKAGE__->many_to_many( dishes => dish_spiceynesses => 'dish' );
+__PACKAGE__->meta->make_immutable(inline_constructor => 0);
 
 1;
 

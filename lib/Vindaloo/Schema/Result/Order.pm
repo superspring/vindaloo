@@ -16,6 +16,7 @@ __PACKAGE__->belongs_to(
 
 __PACKAGE__->belongs_to(
     spiceyness => Spiceyness => { 'foreign.id' => 'self.spiceyness' } );
+__PACKAGE__->meta->make_immutable(inline_constructor => 0);
 
 1;
 
