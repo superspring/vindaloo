@@ -23,6 +23,9 @@ sub startup {
     $self->home->parse( catdir( dirname(__FILE__), 'Vindaloo' ) );
     $self->static->paths->[0]   = $self->home->rel_dir('public');
     $self->renderer->paths->[0] = $self->home->rel_dir('templates');
+    if ($self->mode eq 'production') {
+        $self->log->path('production.log')
+    }
 
     my $config = $self->plugin('Config');
     $self->app->config( %{$config} );

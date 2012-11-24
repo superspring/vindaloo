@@ -17,8 +17,6 @@ sub index {
     my $model = $self->db;
     my $categories =
       $model->resultset('IngredientCategory') ->search(
-          {},
-          {prefetch => 'base_ingredients' }
       ) ;
 
     my $curry_types   = $model->resultset('CurryType');
