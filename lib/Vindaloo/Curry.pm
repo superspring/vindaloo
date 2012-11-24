@@ -15,11 +15,7 @@ sub index {
     my $self = shift;
     $self->app->log->info("Begin processing index.");
     my $model = $self->db;
-    my $categories =
-      $model->resultset('IngredientCategory') ->search(
-      ) ;
-
-    my $curry_types   = $model->resultset('CurryType');
+    my $categories = $model->resultset('IngredientCategory');
     my $spiceyness_rs = $model->resultset('Spiceyness');
     my $dish_spiceyness_set =
       $model->resultset('DishSpiceyness')
@@ -94,7 +90,6 @@ sub index {
             {
                 'join'   => 'orders',
                 order_by => { -desc => ['id'] }
-
             }
         )->first;
     }

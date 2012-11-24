@@ -24,7 +24,7 @@ sub startup {
     $self->static->paths->[0]   = $self->home->rel_dir('public');
     $self->renderer->paths->[0] = $self->home->rel_dir('templates');
     if ($self->mode eq 'production') {
-        $self->log->path('production.log')
+        $self->log->path('~/vindaloo.log')
     }
 
     my $config = $self->plugin('Config');
