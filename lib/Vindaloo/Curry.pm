@@ -31,6 +31,7 @@ sub index {
           ->{ $dish_spiceyness->spiceyness->id } =
           $dish_spiceyness->spiceyness->name;
     }
+    $self->app->log->info("Filled spiceyness data.");
 
 
     my $side_dishes = $model->resultset('SideDish')->search( { active => 1 } );
