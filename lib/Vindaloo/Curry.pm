@@ -14,31 +14,34 @@ use Vindaloo::Forms::MenuItem;
 sub index {
     my $self = shift;
     $self->app->log->info("Begin processing index.");
-    my $model = $self->db;
-    my $categories = $model->resultset('IngredientCategory');
-    my $spiceyness_rs = $model->resultset('Spiceyness');
-    my $dish_spiceyness_set =
-      $model->resultset('DishSpiceyness')
-      ->search( {}, { prefetch => [qw/dish spiceyness/] } );
-    my $dish_spiceyness_hash = {};
+    my $model         = $self->db;
 
-    $dish_spiceyness_hash->{ $_->dish->id }->{ $_->spiceyness->id } =
-      $_->spiceyness->name
-      foreach $dish_spiceyness_set->all;
+    my $spiceyness_rs = $model->resultset('Spiceyness');
     my $spiceynesses = {};
     while ( my $heat = $spiceyness_rs->next ) {
         $spiceynesses->{ $heat->id } = $heat->name;
     }
 
+    my $dish_spiceyness_set =
+      $model->resultset('DishSpiceyness')
+      ->search( {}, { prefetch => [qw/dish spiceyness/] } );
+    my $dish_spiceyness_hash = {};
+    while ( my $dish_spiceyness = $dish_spiceyness_set->next ) {
+        $dish_spiceyness_hash->{ $dish_spiceyness->dish->id }
+          ->{ $dish_spiceyness->spiceyness->id } =
+          $dish_spiceyness->spiceyness->name;
+    }
+
+
     my $side_dishes = $model->resultset('SideDish')->search( { active => 1 } );
-    my $event_resultset = $model->resultset('OrderEvent')->search(
-        {},
-        { order_by => {-desc => [qw/id/]} }
-    );
+    my $event_resultset =
+      $model->resultset('OrderEvent')
+      ->search( {}, { order_by => { -desc => [qw/id/] } } );
     my $event = $event_resultset->next;
+
     #if ( $event_resultset->count ) {
-        #my $latest_event_id = $event_resultset->get_column('id')->max;
-        #$event = $event_resultset->find($latest_event_id);
+    #my $latest_event_id = $event_resultset->get_column('id')->max;
+    #$event = $event_resultset->find($latest_event_id);
     #}
 
     my $spiceyness_btn_map = {
@@ -62,7 +65,7 @@ sub index {
             {
                 join     => 'dish',
                 prefetch => [
-                    'spiceyness', { dish => [ qw/base_ingredient curry_type/ ] }
+                    'spiceyness', { dish => [qw/base_ingredient curry_type/] }
                 ]
             }
         );
@@ -85,19 +88,21 @@ sub index {
 
         $self->app->log->debug( 'Event sum ' . $event_sum );
         $previous_event = $event_resultset->next;
-        #$previous_event = $event_resultset->search(
-            #{
-                #'orders.curry_user' => $user->id,
-                #'me.id'             => { '<' => $event->id },
 
-            #},
-            #{
-                #'join'   => 'orders',
-                #order_by => { -desc => ['id'] }
-            #}
+        #$previous_event = $event_resultset->search(
+        #{
+        #'orders.curry_user' => $user->id,
+        #'me.id'             => { '<' => $event->id },
+
+        #},
+        #{
+        #'join'   => 'orders',
+        #order_by => { -desc => ['id'] }
+        #}
         #)->first;
     }
     $self->app->log->info("Finished with account stuff.");
+    my $categories    = $model->resultset('IngredientCategory');
 
     $self->stash(
         categories        => $categories,
