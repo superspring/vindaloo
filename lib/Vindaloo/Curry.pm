@@ -31,12 +31,15 @@ sub index {
     }
 
     my $side_dishes = $model->resultset('SideDish')->search( { active => 1 } );
-    my $event_resultset = $model->resultset('OrderEvent');
-    my $event;
-    if ( $event_resultset->count ) {
-        my $latest_event_id = $event_resultset->get_column('id')->max;
-        $event = $event_resultset->find($latest_event_id);
-    }
+    my $event_resultset = $model->resultset('OrderEvent')->search(
+        {},
+        { order_by => {-desc => [qw/id/]} }
+    );
+    my $event = $event_resultset->next;
+    #if ( $event_resultset->count ) {
+        #my $latest_event_id = $event_resultset->get_column('id')->max;
+        #$event = $event_resultset->find($latest_event_id);
+    #}
 
     my $spiceyness_btn_map = {
         mild   => 'btn-success',
@@ -81,17 +84,18 @@ sub index {
         $previous_balance = sprintf "%.2f", $previous_balance;
 
         $self->app->log->debug( 'Event sum ' . $event_sum );
-        $previous_event = $event_resultset->search(
-            {
-                'orders.curry_user' => $user->id,
-                'me.id'             => { '<' => $event->id },
+        $previous_event = $event_resultset->next;
+        #$previous_event = $event_resultset->search(
+            #{
+                #'orders.curry_user' => $user->id,
+                #'me.id'             => { '<' => $event->id },
 
-            },
-            {
-                'join'   => 'orders',
-                order_by => { -desc => ['id'] }
-            }
-        )->first;
+            #},
+            #{
+                #'join'   => 'orders',
+                #order_by => { -desc => ['id'] }
+            #}
+        #)->first;
     }
     $self->app->log->info("Finished with account stuff.");
 
