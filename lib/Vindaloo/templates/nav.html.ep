@@ -7,7 +7,7 @@
         <span class="icon-bar"></span>
     </a>
     <a class="brand" href="<%=
-        url_for('menu')->to_abs->scheme('https') 
+        url_for('menu')->to_abs->scheme('https')
     %>">HotTeenVindaloos</a>
             <div class="nav-collapse">
                 <ul class="nav">
@@ -40,7 +40,7 @@
                         %>">Recent order</a></li>
                         % }
                         <li><a href="<%=
-                        url_for('userlist')->to_abs->scheme('https') 
+                        url_for('userlist')->to_abs->scheme('https')
                         %>">Accounts</a></li>
                     </ul>
                     <ul class="nav">
@@ -65,9 +65,10 @@
                     </ul>
 
                     % }
-                % my $user_name = join " " => current_user->first_name,
-                %  current_user->surname;
-                % my $user_id = current_user->id;
+                % my $current_user = current_user;
+                % my $user_name = join " " => $current_user->first_name,
+                %  $current_user->surname;
+                % my $user_id = $current_user->id;
                     <ul class="nav pull-right">
                         <li class="dropdown">
                             <a href="#"
@@ -75,9 +76,9 @@
                                 data-toggle="dropdown"
                                 >
                                 <img src="<%=
-                                libravatar_url current_user->email %>" alt="" />
-                                <%= join " " => current_user->first_name,
-                                current_user->surname %>
+                                libravatar_url $current_user->email %>" alt="" />
+                                <%= join " " => $current_user->first_name,
+                                $current_user->surname %>
                                 <b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
