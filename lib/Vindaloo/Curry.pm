@@ -5,6 +5,7 @@ use Mojo::Base 'Mojolicious::Controller';
 use feature 'switch';
 
 use TryCatch;
+use Time::HiRes;
 
 use Vindaloo::Forms::Ingredient;
 use Vindaloo::Forms::CurryType;
@@ -13,7 +14,8 @@ use Vindaloo::Forms::MenuItem;
 
 sub index {
     my $self = shift;
-    $self->app->log->info("Begin processing index.");
+    my $start_time = time;
+    $self->app->log->info("Begin processing index: ".$start_time);
     my $model         = $self->db;
 
     my $spiceyness_rs = $model->resultset('Spiceyness');
@@ -21,7 +23,8 @@ sub index {
     while ( my $heat = $spiceyness_rs->next ) {
         $spiceynesses->{ $heat->id } = $heat->name;
     }
-    $self->app->log->info("Filled  spiceyness data.");
+    my $new_time = time;
+    $self->app->log->info("Filled  spiceyness data: ".($new_time - $start_time));
 
     my $dish_spiceyness_set =
       $model->resultset('DishSpiceyness')
@@ -32,7 +35,8 @@ sub index {
           ->{ $dish_spiceyness->spiceyness->id } =
           $dish_spiceyness->spiceyness->name;
     }
-    $self->app->log->info("Filled dish spiceyness data.");
+    my $new_time2 = time;
+    $self->app->log->info("Filled dish spiceyness data: ".($new_time2 - $new_time));
 
 
     my $side_dishes = $model->resultset('SideDish')->search( { active => 1 } );
