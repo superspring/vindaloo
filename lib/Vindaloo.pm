@@ -199,7 +199,7 @@ sub load_user {
     $user =
       $schema->resultset('User')->search( {}, { prefetch => 'user_roles' } )
       ->find($uid);
-    $app->app->log->info("$ref_app loaded user $uid");
+    $app->app->log->info("$ref_app cached user $uid");
     $app->cache_user->set( $uid => $user );
     return $user;
 }
