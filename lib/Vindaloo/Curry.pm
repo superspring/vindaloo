@@ -13,39 +13,38 @@ use Vindaloo::Forms::SideDish;
 use Vindaloo::Forms::MenuItem;
 
 sub index {
-    my $self = shift;
+    my $self       = shift;
     my $start_time = time;
-    $self->app->log->info("Begin processing index: ".$start_time);
-    my $model         = $self->db;
+    $self->app->log->info( "Begin processing index: " . $start_time );
+    my $model = $self->db;
 
     my $spiceyness_rs = $model->resultset('Spiceyness');
-    my $spiceynesses = {};
+    my $spiceynesses  = {};
     while ( my $heat = $spiceyness_rs->next ) {
         $spiceynesses->{ $heat->id } = $heat->name;
     }
     my $new_time = time;
-    $self->app->log->info("Process query 1: ".($new_time - $start_time));
+    $self->app->log->info( "Process query 1: " . ( $new_time - $start_time ) );
 
     my $dish_spiceyness_set =
       $model->resultset('DishSpiceyness')
-      ->search( {}, { prefetch => [qw/dish spiceyness/] } );
+      ->search( {}, { prefetch => [qw/dish/] } );
     my $dish_spiceyness_hash = {};
-    foreach my $dish_spiceyness ($dish_spiceyness_set->all) {
-        $dish_spiceyness_hash->{ $dish_spiceyness->dish->id }
-          ->{ $dish_spiceyness->spiceyness->id } =
-          $dish_spiceyness->spiceyness->name;
+    foreach my $dish_spiceyness ( $dish_spiceyness_set->all ) {
+        my $spiceyness_id = $dish_spiceyness->get_column('spiceyness');
+        $dish_spiceyness_hash->{ $dish_spiceyness->dish->id }->{$spiceyness_id}
+          = $spiceynesses->{$spiceyness_id};
     }
     my $new_time2 = time;
-    $self->app->log->info("Process query 2: ".($new_time2 - $new_time));
-
+    $self->app->log->info( "Process query 2: " . ( $new_time2 - $new_time ) );
 
     my $side_dishes = $model->resultset('SideDish');
     my $event_resultset =
       $model->resultset('OrderEvent')
       ->search( undef, { order_by => { -desc => [qw/id/] } } );
-    my $event = $event_resultset->next;
+    my $event     = $event_resultset->next;
     my $new_time3 = time;
-    $self->app->log->info("Process query 3: ".($new_time3 - $new_time2));
+    $self->app->log->info( "Process query 3: " . ( $new_time3 - $new_time2 ) );
 
     my $spiceyness_btn_map = {
         mild   => 'btn-success',
@@ -94,8 +93,9 @@ sub index {
 
     }
     my $new_time4 = time;
-    $self->app->log->info("Finished with account stuff: ".($new_time4 - $new_time3));
-    my $categories    = $model->resultset('IngredientCategory');
+    $self->app->log->info(
+        "Finished with account stuff: " . ( $new_time4 - $new_time3 ) );
+    my $categories = $model->resultset('IngredientCategory');
 
     $self->stash(
         categories        => $categories,
