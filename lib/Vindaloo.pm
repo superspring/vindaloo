@@ -49,7 +49,7 @@ sub startup {
     );
     $self->plugin(
         authentication => {
-            autoload_user => 1,
+            #autoload_user => 1,
             session_key   => 'hotteenvindaloo',
             load_user     => \&load_user,
             validate_user => \&validate_user,
