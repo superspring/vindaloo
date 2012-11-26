@@ -4,6 +4,7 @@ use Mojo::Base 'Mojolicious';
 use Mojo::Cache;
 use File::Basename 'dirname';
 use File::Spec::Functions 'catdir';
+use Time::HiRes qw/time/;
 
 use Vindaloo::Schema;
 
@@ -189,36 +190,48 @@ sub startup {
 }
 
 sub load_user {
+    my $start = time;
     my ( $app, $uid ) = @_;
     my $ref_app = ref $app;
 
     $app->app->log->info("$ref_app loading user $uid");
     my $schema = $app->db;
     my $user   = $app->cache_user->get($uid);
+    my $checktime = time;
+    my $cache_diff = $checktime - $start;
+    $app->app->log->info("Checking cache took: ".$cache_diff);
     return $user if $user;
     $user =
       $schema->resultset('User')->search( {}, { prefetch => 'user_roles' } )
       ->find($uid);
     $app->app->log->info("$ref_app cached user $uid");
     $app->cache_user->set( $uid => $user );
+    my $end = time;
+    my $diff2 = ($end - $checktime);
+    $app->app->log->info("Querying user took: ".$diff2);
     return $user;
 }
 
 sub validate_user {
+    my $start = time;
     my ( $app, $username, $password, $extradata ) = @_;
     my $logger = $app->app->log;
 
     $logger->info( "Validating user " . $username );
     my $user = $app->db->resultset('User')->find( { email => $username } );
+    my $validate_time = time;
     if ( not $user ) {
         $app->redirect_to( $app->url_for('/login')->to_abs->scheme('https') );
         return;
     }
     $logger->info( "Queried user with id: " . $user->id );
-    $logger->info("User available");
+    my $post_query_time = time;
+    $logger->info("Query took: ".($post_query_time - $start));
     my $user_password = $user->password;
     my $result = $app->bcrypt_validate( $password, $user_password );
+    my $validation_time = time;
     $logger->info( "User validated with result: " . $result );
+    $logger->info( "Validation took: " . ($validation_time - $post_query_time) );
     return unless $result;
     return $user->id;
 }
@@ -284,10 +297,6 @@ Nothing special
 
 =head1 INTERFACE
 
-
-=head2 load_user
-
-Authentication method.
 
 =head2 startup
 

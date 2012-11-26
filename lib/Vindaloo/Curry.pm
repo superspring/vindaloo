@@ -5,7 +5,7 @@ use Mojo::Base 'Mojolicious::Controller';
 use feature 'switch';
 
 use TryCatch;
-use Time::HiRes;
+use Time::HiRes qw/time/;
 
 use Vindaloo::Forms::Ingredient;
 use Vindaloo::Forms::CurryType;
@@ -24,31 +24,28 @@ sub index {
         $spiceynesses->{ $heat->id } = $heat->name;
     }
     my $new_time = time;
-    $self->app->log->info("Filled  spiceyness data: ".($new_time - $start_time));
+    $self->app->log->info("Process query 1: ".($new_time - $start_time));
 
     my $dish_spiceyness_set =
       $model->resultset('DishSpiceyness')
       ->search( {}, { prefetch => [qw/dish spiceyness/] } );
     my $dish_spiceyness_hash = {};
-    while ( my $dish_spiceyness = $dish_spiceyness_set->next ) {
+    foreach my $dish_spiceyness ($dish_spiceyness_set->all) {
         $dish_spiceyness_hash->{ $dish_spiceyness->dish->id }
           ->{ $dish_spiceyness->spiceyness->id } =
           $dish_spiceyness->spiceyness->name;
     }
     my $new_time2 = time;
-    $self->app->log->info("Filled dish spiceyness data: ".($new_time2 - $new_time));
+    $self->app->log->info("Process query 2: ".($new_time2 - $new_time));
 
 
-    my $side_dishes = $model->resultset('SideDish')->search( { active => 1 } );
+    my $side_dishes = $model->resultset('SideDish');
     my $event_resultset =
       $model->resultset('OrderEvent')
-      ->search( {}, { order_by => { -desc => [qw/id/] } } );
+      ->search( undef, { order_by => { -desc => [qw/id/] } } );
     my $event = $event_resultset->next;
-
-    #if ( $event_resultset->count ) {
-    #my $latest_event_id = $event_resultset->get_column('id')->max;
-    #$event = $event_resultset->find($latest_event_id);
-    #}
+    my $new_time3 = time;
+    $self->app->log->info("Process query 3: ".($new_time3 - $new_time2));
 
     my $spiceyness_btn_map = {
         mild   => 'btn-success',
@@ -95,19 +92,9 @@ sub index {
         $self->app->log->debug( 'Event sum ' . $event_sum );
         $previous_event = $event_resultset->next;
 
-        #$previous_event = $event_resultset->search(
-        #{
-        #'orders.curry_user' => $user->id,
-        #'me.id'             => { '<' => $event->id },
-
-        #},
-        #{
-        #'join'   => 'orders',
-        #order_by => { -desc => ['id'] }
-        #}
-        #)->first;
     }
-    $self->app->log->info("Finished with account stuff.");
+    my $new_time4 = time;
+    $self->app->log->info("Finished with account stuff: ".($new_time4 - $new_time3));
     my $categories    = $model->resultset('IngredientCategory');
 
     $self->stash(
