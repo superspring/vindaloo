@@ -21,6 +21,7 @@ sub index {
     while ( my $heat = $spiceyness_rs->next ) {
         $spiceynesses->{ $heat->id } = $heat->name;
     }
+    $self->app->log->info("Filled  spiceyness data.");
 
     my $dish_spiceyness_set =
       $model->resultset('DishSpiceyness')
@@ -31,7 +32,7 @@ sub index {
           ->{ $dish_spiceyness->spiceyness->id } =
           $dish_spiceyness->spiceyness->name;
     }
-    $self->app->log->info("Filled spiceyness data.");
+    $self->app->log->info("Filled dish spiceyness data.");
 
 
     my $side_dishes = $model->resultset('SideDish')->search( { active => 1 } );
