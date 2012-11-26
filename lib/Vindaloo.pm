@@ -1,10 +1,12 @@
 package Vindaloo;
 use Mojo::Base 'Mojolicious';
 
+use Mojo::Cache;
 use File::Basename 'dirname';
 use File::Spec::Functions 'catdir';
 
 use Vindaloo::Schema;
+
 
 has schema => sub {
     my $self   = shift;
@@ -38,6 +40,13 @@ sub startup {
             https      => 1,
             mojo_cache => 1,
             default    => 'mm'
+        }
+    );
+    my $user_cache = Mojo::Cache->new();
+
+    $self->helper(
+        cache_user => sub {
+             return $user_cache;
         }
     );
 
@@ -182,12 +191,16 @@ sub startup {
 sub load_user {
     my ( $app, $uid ) = @_;
     my $ref_app = ref $app;
+
     $app->app->log->info("$ref_app loading user $uid");
     my $schema = $app->db;
-    my $user =
-      $schema->resultset('User')
-      ->search( {}, { prefetch => 'user_roles' } )->find($uid);
+    my $user   = $app->cache_user->get($uid);
+    return $user if $user;
+    $user =
+      $schema->resultset('User')->search( {}, { prefetch => 'user_roles' } )
+      ->find($uid);
     $app->app->log->info("$ref_app loaded user $uid");
+    $app->cache_user->set( $uid => $user );
     return $user;
 }
 
