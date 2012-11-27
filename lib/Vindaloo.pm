@@ -258,7 +258,7 @@ sub is_role {
     my $user_role =
       $user->user_roles( { 'role.name' => $role }, { join => 'role' } );
 
-    return 0 unless $user_role;
+    return undef unless $user_role;
     $app->app->log->info("whoot..he does");
     return 1;
 
