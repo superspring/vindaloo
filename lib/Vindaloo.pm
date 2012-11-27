@@ -256,9 +256,9 @@ sub is_role {
         "Checking if " . $user->email . " has role " . $role );
     my $model = $app->app->db;
     my $user_role =
-      $user->user_roles( { 'role.name' => $role }, { join => 'role' } );
+      $user->user_roles( { 'role.name' => $role }, { join => 'role' } )->first;
 
-    return undef unless $user_role;
+    return 0 unless $user_role;
     $app->app->log->info("whoot..he does");
     return 1;
 
