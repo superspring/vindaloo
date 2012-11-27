@@ -205,7 +205,7 @@ sub load_user {
       $schema->resultset('User')->search( {}, { prefetch => 'user_roles' } )
       ->find($uid);
     $app->app->log->info("$ref_app cached user $uid");
-    $app->cache_user->set( $uid => $user );
+    #$app->cache_user->set( $uid => $user );
     my $end = time;
     my $diff2 = ($end - $checktime);
     $app->app->log->info("Querying user took: ".$diff2);
