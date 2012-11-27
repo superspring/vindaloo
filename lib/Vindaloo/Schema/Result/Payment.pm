@@ -22,6 +22,7 @@ __PACKAGE__->inflate_column(
     }
 );
 
+__PACKAGE__->meta->make_immutable(inline_constructor => 0);
 1;
 
 __END__

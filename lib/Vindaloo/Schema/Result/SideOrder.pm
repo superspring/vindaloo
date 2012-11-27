@@ -17,6 +17,7 @@ __PACKAGE__->belongs_to(
 
 __PACKAGE__->belongs_to( side_dish => 'Vindaloo::Schema::Result::SideDish' =>
       { 'foreign.id' => 'self.side_dish' } );
+__PACKAGE__->meta->make_immutable(inline_constructor => 0);
 
 1;
 

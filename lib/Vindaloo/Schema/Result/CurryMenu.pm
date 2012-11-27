@@ -22,7 +22,6 @@ __PACKAGE__->inflate_column(
         inflate => sub {
             return sprintf "%.2f", shift;
           }
-
     }
 );
 
@@ -40,6 +39,7 @@ __PACKAGE__->has_many(
 
 __PACKAGE__->many_to_many( spiceynesses => dish_spiceynesses => 'spiceyness' );
 
+__PACKAGE__->meta->make_immutable(inline_constructor => 0);
 1;
 
 __END__

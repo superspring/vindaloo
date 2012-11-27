@@ -1,10 +1,13 @@
 package Vindaloo;
 use Mojo::Base 'Mojolicious';
 
+use Mojo::Cache;
 use File::Basename 'dirname';
 use File::Spec::Functions 'catdir';
+use Time::HiRes qw/time/;
 
 use Vindaloo::Schema;
+
 
 has schema => sub {
     my $self   = shift;
@@ -14,7 +17,8 @@ has schema => sub {
     my $connect_info  = $schema_config->{connect_info};
     ### connect info: $connect_info
     my ( $dsn, $user, $password ) = @{$connect_info}{qw/dsn user password/};
-    return Vindaloo::Schema->connect( $dsn, $user, $password );
+    my $dbh = Vindaloo::Schema->connect( $dsn, $user, $password );
+    return $dbh;
 };
 
 sub startup {
@@ -23,6 +27,9 @@ sub startup {
     $self->home->parse( catdir( dirname(__FILE__), 'Vindaloo' ) );
     $self->static->paths->[0]   = $self->home->rel_dir('public');
     $self->renderer->paths->[0] = $self->home->rel_dir('templates');
+    if ( $self->mode eq 'production' ) {
+        $self->log->path('/home/hotteenvindaloos/log/vindaloo.log');
+    }
 
     my $config = $self->plugin('Config');
     $self->app->config( %{$config} );
@@ -34,6 +41,13 @@ sub startup {
             https      => 1,
             mojo_cache => 1,
             default    => 'mm'
+        }
+    );
+    my $user_cache = Mojo::Cache->new();
+
+    $self->helper(
+        cache_user => sub {
+             return $user_cache;
         }
     );
 
@@ -176,30 +190,48 @@ sub startup {
 }
 
 sub load_user {
+    my $start = time;
     my ( $app, $uid ) = @_;
     my $ref_app = ref $app;
+
     $app->app->log->info("$ref_app loading user $uid");
     my $schema = $app->db;
-    my $user   = $schema->resultset('User')->find($uid);
-    $app->app->log->info("$ref_app loaded user $uid");
+    my $user   = $app->cache_user->get($uid);
+    my $checktime = time;
+    my $cache_diff = $checktime - $start;
+    $app->app->log->info("Checking cache took: ".$cache_diff);
+    return $user if $user;
+    $user =
+      $schema->resultset('User')->search( {}, { prefetch => 'user_roles' } )
+      ->find($uid);
+    $app->app->log->info("$ref_app cached user $uid");
+    $app->cache_user->set( $uid => $user );
+    my $end = time;
+    my $diff2 = ($end - $checktime);
+    $app->app->log->info("Querying user took: ".$diff2);
     return $user;
 }
 
 sub validate_user {
+    my $start = time;
     my ( $app, $username, $password, $extradata ) = @_;
     my $logger = $app->app->log;
 
     $logger->info( "Validating user " . $username );
     my $user = $app->db->resultset('User')->find( { email => $username } );
+    my $validate_time = time;
     if ( not $user ) {
         $app->redirect_to( $app->url_for('/login')->to_abs->scheme('https') );
         return;
     }
     $logger->info( "Queried user with id: " . $user->id );
-    $logger->info("User available");
+    my $post_query_time = time;
+    $logger->info("Query took: ".($post_query_time - $start));
     my $user_password = $user->password;
     my $result = $app->bcrypt_validate( $password, $user_password );
+    my $validation_time = time;
     $logger->info( "User validated with result: " . $result );
+    $logger->info( "Validation took: " . ($validation_time - $post_query_time) );
     return unless $result;
     return $user->id;
 }
@@ -223,14 +255,9 @@ sub is_role {
     $app->app->log->info(
         "Checking if " . $user->email . " has role " . $role );
     my $model = $app->app->db;
+    my $user_role =
+      $user->user_roles( { 'role.name' => $role }, { join => 'role' } );
 
-    my $role_obj = $model->resultset('Role')->find( { name => $role } );
-    my $user_role = $model->resultset('UserRole')->find(
-        {
-            curry_user => $user->id,
-            user_role  => $role_obj->id
-        }
-    );
     return 0 unless $user_role;
     $app->app->log->info("whoot..he does");
     return 1;
@@ -249,7 +276,6 @@ sub user_roles {
     return $app->current_user->roles->first->name;
 
 }
-
 
 1;
 
@@ -271,10 +297,6 @@ Nothing special
 
 =head1 INTERFACE
 
-
-=head2 load_user
-
-Authentication method.
 
 =head2 startup
 

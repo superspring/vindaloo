@@ -13,6 +13,7 @@ __PACKAGE__->has_many(
 
 __PACKAGE__->has_many(
     side_orders => SideOrder => { 'foreign.order_event' => 'self.id' } );
+__PACKAGE__->meta->make_immutable(inline_constructor => 0);
 
 1;
 
