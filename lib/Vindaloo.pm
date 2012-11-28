@@ -205,7 +205,7 @@ sub load_user {
       $schema->resultset('User')->search( {}, { prefetch => 'user_roles' } )
       ->find($uid);
     $app->app->log->info("$ref_app cached user $uid");
-    $app->cache_user->set( $uid => $user );
+    #$app->cache_user->set( $uid => $user );
     my $end = time;
     my $diff2 = ($end - $checktime);
     $app->app->log->info("Querying user took: ".$diff2);
@@ -256,7 +256,7 @@ sub is_role {
         "Checking if " . $user->email . " has role " . $role );
     my $model = $app->app->db;
     my $user_role =
-      $user->user_roles( { 'role.name' => $role }, { join => 'role' } );
+      $user->user_roles( { 'role.name' => $role }, { join => 'role' } )->first;
 
     return 0 unless $user_role;
     $app->app->log->info("whoot..he does");
