@@ -1,0 +1,13 @@
+
+    <head>
+        %= javascript url_for('/js/jquery.min.js');
+        %= javascript url_for('/css/bootswatch/js/bootswatch.js');
+        %= javascript url_for('/js/bootstrap-collapse.js');
+        %= javascript url_for('/js/bootstrap-dropdown.js');
+        %= javascript url_for('/js/bootstrap-tab.js');
+        %= stylesheet url_for('/css/bootswatch/cerulean/bootstrap.min.css');
+        %= stylesheet url_for('/css/vindaloo.css');
+        %= stylesheet url_for('/css/bootswatch/default/bootstrap-responsive.min.css');
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title><%= title %></title>
+    </head>
