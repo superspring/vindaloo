@@ -198,6 +198,7 @@ sub cancel_order {
     my $dish    = $order->dish;
     my $price   = $dish->price;
     my $balance = $current_user->balance;
+    $self->app->log->info("Reducing $balance by $price");
     $balance -= $price;
     $current_user->balance($balance);
     $current_user->update;

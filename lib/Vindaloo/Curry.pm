@@ -55,6 +55,7 @@ sub index {
     my ( $current_balance, $previous_balance, $user_orders );
     my ( $user_side_orders, $latest_payment );
     $current_balance = $user->balance // 0 if $user;
+    $self->app->log->info("Users current balance $current_balance");
 
     my ( $previous_event, $payment_amount );
     $self->app->log->info("Work out user balance ");
