@@ -2,8 +2,8 @@
 <html>
 
     <head>
-        %= javascript url_for('/css/bootswatch/js/bootswatch.js');
         %= javascript url_for('/js/jquery.min.js');
+        %= javascript url_for('/css/bootswatch/js/bootswatch.js');
         %= javascript url_for('/js/bootstrap-collapse.js');
         %= javascript url_for('/js/bootstrap-dropdown.js');
         %= javascript url_for('/js/bootstrap-tab.js');
