@@ -14,11 +14,6 @@
                     <li class="divider-vertical"> </li>
                 </ul>
                 % if ( is_user_authenticated){
-                    <ul class="nav">
-                        <li><a href="<%=
-                            url_for('menu')->to_abs->scheme('https')
-                            %>">Menu</a></li>
-                    </ul>
                     % my $events_rs = db->resultset('OrderEvent');
                     % if (is('admin')){
                     % my $current_event = $events_rs->search({orders_open =>
