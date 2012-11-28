@@ -1,13 +1,13 @@
 % my $start_time = time;
 % app->log->info("Processed template.");
-            <div class="row">
+            <div class="row-fluid">
                 <div class="span7">
                     <h4>Orders are currently <%=
                     ($event and $event->orders_open) ? 'open' : 'closed' %>.
                     </h4>
                 </div>
             </div>
-        <div class="row tab-content">
+        <div class="row-fluid tab-content">
             % my $active = 'active';
             % my $fetched_categories = $categories->reset->search({},
             %    {prefetch=>'base_ingredients'}

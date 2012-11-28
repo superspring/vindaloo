@@ -3,20 +3,22 @@
 
 
     <div class="row-fluid">
-            <div class="span3 well">
-                %= include 'users/account-summary' if current_user;
-            </div>
-            <div class="span8">
-                <ul class="nav nav-tabs visible-phone" id="myTab" >
-                    % foreach my $category ($categories->all){
-                        <li>
-                            <a data-toggle="tab" href="#<%= lc $category->name %>" ><%=
-                            $category->name
-                            %></a>
-                        </li>
-                    %  }
-                    <li><a data-toggle="tab" href="#extras">Extras</a></li>
-                </ul>
-                %= include 'curry/main-list';
-            </div>
+        % if (current_user){
+        <div class="span3 well">
+            %= include 'users/account-summary' ;
+        </div>
+        %}
+        <div class="span8">
+            <ul class="nav nav-tabs visible-phone" id="myTab" >
+                % foreach my $category ($categories->all){
+                    <li>
+                        <a data-toggle="tab" href="#<%= lc $category->name %>" ><%=
+                        $category->name
+                        %></a>
+                    </li>
+                %  }
+                <li><a data-toggle="tab" href="#extras">Extras</a></li>
+            </ul>
+            %= include 'curry/main-list';
+        </div>
     </div>
