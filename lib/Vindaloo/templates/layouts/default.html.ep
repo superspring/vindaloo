@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-    %= inclue 'header';
+    %= include 'header';
 
     <body>
         %= include 'nav';
