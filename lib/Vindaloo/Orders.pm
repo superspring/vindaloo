@@ -288,7 +288,7 @@ sub orders {
             -or => [
                 { 'orders.order_event'      => $event->id },
                 { 'side_orders.order_event' => $event->id }
-              ]
+            ]
         },
         { join => [qw/orders side_orders/], distinct => 1 }
     );
@@ -328,8 +328,17 @@ sub orders {
         {
             columns  => [qw/dish spiceyness order_event/],
             group_by => [qw/dish spiceyness order_event /],
-           prefetch => ['spiceyness',{dish => [qw/base_ingredient
-                       curry_type/]}]
+            prefetch => [
+                'spiceyness',
+                {
+                    dish => [
+                        qw/
+                        base_ingredient
+                          curry_type
+                          /
+                    ]
+                }
+            ]
         }
     );
     my $side_order_rs = $event->side_orders;
@@ -339,12 +348,12 @@ sub orders {
         { columns => [qw/side_dish/], group_by => [qw/side_dish/] } );
 
     $self->stash(
-        orders           => $orders,
-        order_rs         => $order_rs,
-        side_orders      => $side_orders,
-        side_order_rs    => $side_order_rs,
-        users            => $event_users,
-        user_order_hash  => $user_order_hash
+        orders          => $orders,
+        order_rs        => $order_rs,
+        side_orders     => $side_orders,
+        side_order_rs   => $side_order_rs,
+        users           => $event_users,
+        user_order_hash => $user_order_hash
     );
 }
 
