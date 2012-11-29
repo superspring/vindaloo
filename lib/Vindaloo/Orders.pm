@@ -289,7 +289,6 @@ sub orders {
                 { 'orders.order_event'      => $event->id },
                 { 'side_orders.order_event' => $event->id }
               ]
-
         },
         { join => [qw/orders side_orders/], distinct => 1 }
     );
@@ -327,8 +326,10 @@ sub orders {
     my $orders = $order_rs->search(
         undef,
         {
-            columns  => [qw/dish spiceyness/],
-            group_by => [qw/dish spiceyness/],
+            columns  => [qw/dish spiceyness order_event/],
+            group_by => [qw/dish spiceyness order_event /],
+           prefetch => ['spiceyness',{dish => [qw/base_ingredient
+                       curry_type/]}]
         }
     );
     my $side_order_rs = $event->side_orders;
