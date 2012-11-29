@@ -5,7 +5,7 @@
             <thead>
                 <tr>
                     <th colspan=2>Previous <%=
-                    $previous_balance < 0 ?  'Credit' : 'Outstanding Balance'
+                    $previous_balance < 0 ?  'Credit' : 'Balance'
                     %>:</th>
                     <th>$<%= sprintf "%.2f", abs $previous_balance %></th>
                 </tr>
@@ -75,13 +75,13 @@
                 % }
                 % if ($latest_payment and $latest_payment > 0) {
                     <tr>
-                      <td colspan="2">Payment</td> <td>-$<%= $latest_payment %> </td>
+                      <td colspan="2">Payment</td> <td>&minus;$<%= $latest_payment %> </td>
                     </tr>
                  %   }
                 <tr>
                 % my $current_balance = current_user->balance;
                     <th colspan=2><%=
-                    $current_balance < 0 ? 'Credit': 'Outstanding Balance'
+                    $current_balance < 0 ? 'Credit': 'Balance'
                     %>:</th>
                     <th>$<%= sprintf "%.2f", abs $current_balance %></th>
                 </tr>
