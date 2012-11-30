@@ -10,7 +10,7 @@ WriteMakefile(
         'Mojolicious::Plugin::Authentication' => 0,
         'Mojolicious::Plugin::Authorization'  => 0,
         'Mojolicious::Plugin::Bcrypt'         => 0,
-        'Mojolicious::Plugin::Libravatar'     => 0,
+        'Mojolicious::Plugin::Libravatar'     => '1.04',
         'DBIx::Class'                         => 0,
         'DBIx::Class::Storage::Statistics'    => 0,
         'HTML::FormHandler'                   => 0,

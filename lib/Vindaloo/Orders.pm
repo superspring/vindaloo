@@ -301,8 +301,12 @@ sub orders {
         foreach my $order ( $orders->all ) {
             my %columns = $order->get_columns;
             my @fields  = @columns{
-                qw/num_of_dishes ingredient curry
-                  spiceyness /
+                qw/
+                  num_of_dishes
+                  ingredient
+                  curry
+                  spiceyness
+                  /
             };
             $total_user_price += $columns{price};
             my $dish_set = join " " => @fields;
@@ -323,24 +327,7 @@ sub orders {
           $total_user_price;
     }
 
-    my $orders = $order_rs->search(
-        undef,
-        {
-            columns  => [qw/dish spiceyness order_event/],
-            group_by => [qw/dish spiceyness order_event /],
-            prefetch => [
-                'spiceyness',
-                {
-                    dish => [
-                        qw/
-                        base_ingredient
-                          curry_type
-                          /
-                    ]
-                }
-            ]
-        }
-    );
+    my $orders        = $order_rs->grouped_order;
     my $side_order_rs = $event->side_orders;
 
     my $side_orders =

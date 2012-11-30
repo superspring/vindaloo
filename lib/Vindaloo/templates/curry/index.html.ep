@@ -4,8 +4,9 @@
 
     <div class="row-fluid">
         % if (current_user){
-        <div class="span3 well">
+        <div class="span3">
             %= include 'users/account-summary' ;
+            %= include 'orders/order-summary';
         </div>
         %}
         <div class="span8">
