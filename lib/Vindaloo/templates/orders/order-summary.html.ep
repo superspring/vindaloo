@@ -27,7 +27,8 @@
                         <td>
                        % while (my $dish_order = $dish_orders->next){
                         % my $dish_user = $dish_order->curry_user;
-                        % my $url = cached_avatar $dish_user->email;
+                        % my $url = cached_avatar $dish_user->email, default
+                        % => 'monsterid';
                             <img src="<%= $url %>" height=15 width=15 >
                        % }
                         </td>
