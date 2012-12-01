@@ -52,8 +52,9 @@ sub index {
         hot    => 'btn-danger'
     };
     my $user = $self->current_user;
-    my ( $current_balance, $previous_balance, $user_orders );
+    my (  $previous_balance, $user_orders );
     my ( $user_side_orders, $latest_payment );
+    my $current_balance = 0;
     $current_balance = $user->balance // 0 if $user;
     $self->app->log->info("Users current balance $current_balance");
 
