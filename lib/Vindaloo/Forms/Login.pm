@@ -22,7 +22,7 @@ has_block buttonset => (
 );
 
 sub build_form_element_class {
-    return [qw/well form-inline/];
+    return [qw/well form-horizontal/];
 }
 
 sub build_update_subfields {

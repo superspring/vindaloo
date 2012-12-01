@@ -1,3 +1,4 @@
+% use Vindaloo::Forms::InlineLogin;
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
@@ -9,6 +10,7 @@
     <a class="brand" href="<%=
         url_for('menu')->to_abs->scheme('https')
     %>">HotTeenVindaloos</a>
+
             <div class="nav-collapse">
                 <ul class="nav">
                     <li class="divider-vertical"> </li>
@@ -92,11 +94,12 @@
                         </li>
                     </ul>
                 %  }
-                % else {
+                % elsif (current_route ne 'login') {
+                % my $login_form = Vindaloo::Forms::InlineLogin->new;
+                % $login_form->process(action =>
+                % url_for('/login')->to_abs->scheme('https'));
                     <ul class="nav pull-right">
-                        <li ><a href="<%=
-                            url_for('/login')->to_abs->scheme('https')
-                            %>">Login</a></li>
+                        <li><%== $login_form->render %></li>
                     </ul>
 
                 % }

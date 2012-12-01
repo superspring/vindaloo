@@ -1,4 +1,4 @@
-% if (is('admin')) {
+% if (is('test-user')) {
 
     <div class="row-fluid hidden-phone">
         <div class="span12 well">
@@ -6,7 +6,7 @@
             <table class="table table-striped">
                 % app->log->info("orders by dish: ".$user_orders->count);
                 % my $orders_by_dish = $event->orders->grouped_order;
-                % 
+                %
                 % while (my $order = $orders_by_dish->next) {
                     % my $dish = $order->dish;
                     % my $ingredient = $dish->base_ingredient;
