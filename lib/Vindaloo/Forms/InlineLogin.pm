@@ -17,10 +17,10 @@ sub build_update_subfields {
     return {
         submit => {
             do_wrapper    => 0,
-            element_class => [qw/btn btn-primary/]
+            element_class => [qw/btn btn-info/]
         },
-        email    => { do_wrapper => 0, element_class => [qw/input-small/] },
-        password => { do_wrapper => 0, element_class => [qw/input-small/] }
+        email    => { do_wrapper => 0, },
+        password => { do_wrapper => 0, }
     };
 }
 
