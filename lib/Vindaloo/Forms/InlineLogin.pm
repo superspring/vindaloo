@@ -19,8 +19,8 @@ sub build_update_subfields {
             do_wrapper    => 0,
             element_class => [qw/btn btn-info/]
         },
-        email    => { do_wrapper => 0, },
-        password => { do_wrapper => 0, }
+        email    => { do_wrapper => 0,element_class=>[qw/input-medium/] },
+        password => { do_wrapper => 0,element_class=>[qw/input-medium/] }
     };
 }
 
