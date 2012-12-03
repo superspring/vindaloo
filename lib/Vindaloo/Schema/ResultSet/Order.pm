@@ -53,6 +53,30 @@ sub grouped_order {
     return $rs;
 }
 
+sub group_by_dish_user {
+    my $self = shift;
+    my $rs = $self->search(
+        undef,
+        {
+            columns => [qw/dish spiceyness  order_event curry_user/],
+            group_by => [qw/order_event dish spiceyness curry_user/],
+            prefetch => [
+                'curry_user',
+                'spiceyness',
+                {
+                    dish => [
+                        qw/
+                        base_ingredient
+                        curry_type
+                        /
+                    ]
+                }
+            ]
+        }
+    );
+   return $rs;
+}
+
 1;
 
 __END__

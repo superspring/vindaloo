@@ -4,34 +4,27 @@
         <div class="span12 well">
             <h4>Current Order</h4>
             <table class="table table-striped">
-                % app->log->info("orders by dish: ".$user_orders->count);
-                % my $orders_by_dish = $event->orders->grouped_order;
-                %
-                % while (my $order = $orders_by_dish->next) {
-                    % my $dish = $order->dish;
-                    % my $ingredient = $dish->base_ingredient;
-                    % my $curry = $dish->curry_type;
-                    % my $ingredient_name =    $ingredient->name ;
-                    % my $curry_name = $curry->name ;
-                    % my $spiceyness = $order->spiceyness;
-                    % my $spiceyness_name = ucfirst(  lc(  $spiceyness->name ) );
-                    % my $dish_orders = $event->orders->search(
-                    %  {dish => $dish->id, spiceyness =>
-                    %  $spiceyness->id},{ prefetch => 'curry_user' });
+                % foreach my $ingredient_name (keys %{$users_by_dish}) {
                     <tr>
-                        <td>
-                            <%= $ingredient_name %>
-                            <%= $curry_name %>
-                            <%= $spiceyness_name %>
-                        </td>
-                        <td>
-                       % while (my $dish_order = $dish_orders->next){
-                        % my $dish_user = $dish_order->curry_user;
-                        % my $url = cached_avatar $dish_user->email, default
-                        % => 'monsterid';
-                            <img src="<%= $url %>" height=20 width=20 >
-                       % }
-                        </td>
+                        % my $ingredient_set = $users_by_dish->{$ingredient_name};
+                        % foreach my $curry_name (keys %{$ingredient_set}){
+                           % my $curry_type_set = $ingredient_set->{$curry_name};
+                           % foreach my $spiceyness_name (keys %{$curry_type_set}){
+                                <td>
+                                    <%= $ingredient_name %>
+                                    <%= $curry_name %>
+                                    <%= $spiceyness_name %>
+                                </td>
+                              <td>
+                                  % my $users = $curry_type_set->{$spiceyness_name};
+                                  % foreach my $user (@{$users}){
+                                    % my $url = cached_avatar $user->email, default
+                                    % => 'monsterid';
+                                    <img src="<%= $url %>" height=20 width=20 >
+                                  % }
+                              </td>
+                           %}
+                        % }
                     </tr>
                 %}
             </table>
