@@ -6,7 +6,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     VERSION   => '0.86',
     PREREQ_PM => {
-        'Mojolicious'                         => '3.64',
+        'Mojolicious'                         => '0',
         'Mojolicious::Plugin::Authentication' => 0,
         'Mojolicious::Plugin::Authorization'  => 0,
         'Mojolicious::Plugin::Bcrypt'         => 0,
