@@ -5,11 +5,11 @@
             <h4>Current Order</h4>
             <table class="table table-striped">
                 % foreach my $ingredient_name (keys %{$users_by_dish}) {
-                    <tr>
                         % my $ingredient_set = $users_by_dish->{$ingredient_name};
                         % foreach my $curry_name (keys %{$ingredient_set}){
                            % my $curry_type_set = $ingredient_set->{$curry_name};
                            % foreach my $spiceyness_name (keys %{$curry_type_set}){
+                    <tr>
                                 <td>
                                     <%= $ingredient_name %>
                                     <%= $curry_name %>
@@ -23,9 +23,9 @@
                                     <img src="<%= $url %>" height=20 width=20 >
                                   % }
                               </td>
+                    </tr>
                            %}
                         % }
-                    </tr>
                 %}
             </table>
         </div>
