@@ -3,7 +3,7 @@
 
 
     <div class="row-fluid">
-        <div class="span4">
+        <div class="span3">
         % if (current_user){
             %= include 'users/account-summary' ;
             %= include 'orders/order-summary';
