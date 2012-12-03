@@ -61,6 +61,9 @@ sub index {
     my ( $previous_event, $payment_amount,$users_by_dish );
     $self->app->log->info("Work out user balance ");
     if ( $user and $event ) {
+
+        my $dish_time = time;
+        $self->app->log->info("Begin processing users-per-dish.");
         my $event_orders = $event->orders({},
             {
                 prefetch => [
@@ -83,6 +86,8 @@ sub index {
               $user;
 
         }
+        $self->app->log->info("Finished processing users-per-dish elapsed: "
+            .(time - $dish_time));
 
         my $event_date = $event->event_date;
         $latest_payment =
