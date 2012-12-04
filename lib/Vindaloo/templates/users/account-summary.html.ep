@@ -76,7 +76,7 @@
                 % if ($latest_payment and $latest_payment > 0) {
                     <tr>
                         <td colspan="2">Payment</td> 
-                        <td>&minus;$<%= $latest_payment %> </td>
+                        <td nowrap="nowrap">&minus;$<%= $latest_payment %> </td>
                     </tr>
                     %   }
                 <tr>

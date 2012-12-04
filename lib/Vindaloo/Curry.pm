@@ -62,33 +62,6 @@ sub index {
     $self->app->log->info("Work out user balance ");
     if ( $user and $event ) {
 
-        my $dish_time = time;
-        $self->app->log->info("Begin processing users-per-dish.");
-        my $event_orders = $event->orders({},
-            {
-                prefetch => [
-                    'spiceyness','curry_user',
-                        {dish => [qw/base_ingredient curry_type/]}
-                ]
-
-            });
-        while ( my $event_order = $event_orders->next ) {
-            my $dish            = $event_order->dish;
-            my $ingredient      = $dish->base_ingredient;
-            my $curry           = $dish->curry_type;
-            my $ingredient_name = $ingredient->name;
-            my $curry_name      = $curry->name;
-            my $spiceyness      = $event_order->spiceyness;
-            my $spiceyness_name = ucfirst( lc( $spiceyness->name ) );
-            my $user            = $event_order->curry_user;
-            push @{ $users_by_dish->{$ingredient_name}->{$curry_name}
-                  ->{$spiceyness_name} },
-              $user;
-
-        }
-        $self->app->log->info("Finished processing users-per-dish elapsed: "
-            .(time - $dish_time));
-
         my $event_date = $event->event_date;
         $latest_payment =
           $user->payments->search( { payment_date => $event_date } );
@@ -139,7 +112,7 @@ sub index {
         spiceynesses      => $spiceynesses,
         dish_spiceynesses => $dish_spiceyness_hash,
         previous_event    => $previous_event,
-        users_by_dish => $users_by_dish,
+        users_by_dish => $users_by_dish
     );
 
 }
