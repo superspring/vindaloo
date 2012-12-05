@@ -1,16 +1,13 @@
 % use Time::HiRes 'time';
 % my $start_time = time;
 % if (current_user and $event and $event->orders_open) {
-%= memorize {expires => (time + 3600)} => begin
+    %= memorize {expires => (time + 3600)} => begin
         <div class="row-fluid ">
             <div class="span12 tab-content">
-
                 % my $active = 'active';
                 % my $fetched_categories  = $categories;
                 % $fetched_categories->reset;
-                % my $count;
                 % while (my $category = $fetched_categories->next) {
-                    % $count++;
                     % my $category_name = $category->name;
                 <div id="<%= lc $category_name %>"
                     class="row-fluid tab-pane <%= $active %> ">
@@ -86,7 +83,6 @@
                              <td>$<%= $menu->price %></td>
                         </tr>
                         % }
-
                     % }
                                 </tbody>
                             </table>
@@ -111,8 +107,7 @@
                         </table>
                     </div>
                 </div>
-</div>
-
+            </div>
         </div>
         % end
         %}
@@ -124,9 +119,7 @@
                 % my $active = 'active';
                 % my $fetched_categories  = $categories;
                 % $fetched_categories->reset;
-                % my $count;
                 % while (my $category = $fetched_categories->next) {
-                    % $count++;
                     % my $category_name = $category->name;
                 <div id="<%= lc $category_name %>"
                     class="row-fluid tab-pane <%= $active %> ">
@@ -163,21 +156,20 @@
                              % my $curry_type_link = $curry_type->link;
                              % my $curry_name = $curry_type->name;
                     <tr>
-                              <td>
-                                  <%= ucfirst $ingredient_name %> <%= ucfirst $curry_name %>
-                              </td>
-                             %   foreach my $id (sort {$a <=> $b} keys %{$spiceynesses}){
-                             <td>
-                            % my $heat = $spiceynesses->{$id};
-                                        <span class="btn disabled btn-mini btn-inverted"><%=
-                                            $heat
-                                            %></span>
-                             </td>
-                             % }
-                             <td>$<%= $menu->price %></td>
-                        </tr>
+                        <td>
+                            <%= ucfirst $ingredient_name %> <%= ucfirst $curry_name %>
+                        </td>
+                        %   foreach my $id (sort {$a <=> $b} keys %{$spiceynesses}){
+                        <td>
+                    % my $heat = $spiceynesses->{$id};
+                            <span class="btn disabled btn-mini btn-inverted"><%=
+                                $heat
+                                %></span>
+                        </td>
                         % }
-
+                        <td>$<%= $menu->price %></td>
+                    </tr>
+                        % }
                     % }
                                 </tbody>
                             </table>
@@ -202,8 +194,7 @@
                         </table>
                     </div>
                 </div>
-</div>
-
+            </div>
         </div>
 
         % end

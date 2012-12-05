@@ -15,7 +15,6 @@ use Vindaloo::Forms::MenuItem;
 sub index {
     my $self       = shift;
     my $start_time = time;
-    $self->app->log->info( "Begin processing index: " . $start_time );
     my $model = $self->db;
 
     my $spiceyness_rs = $model->resultset('Spiceyness');
@@ -29,12 +28,6 @@ sub index {
     my $dish_spiceyness_set =
       $model->resultset('DishSpiceyness')
       ->search( {}, { prefetch => [qw/dish/] } );
-    #my $dish_spiceyness_hash = {};
-    #foreach my $dish_spiceyness ( $dish_spiceyness_set->all ) {
-        #my $spiceyness_id = $dish_spiceyness->spiceyness->id;
-        #$dish_spiceyness_hash->{ $dish_spiceyness->dish->id }->{$spiceyness_id}
-          #= $spiceynesses->{$spiceyness_id};
-    #}
     my $new_time2 = time;
     $self->app->log->info( "Process query 2: " . ( $new_time2 - $new_time ) );
 
