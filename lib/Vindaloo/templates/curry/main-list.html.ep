@@ -1,7 +1,7 @@
 % use Time::HiRes 'time';
 % my $start_time = time;
 % if (current_user and $event and $event->orders_open) {
-%= memorize {expires => (time + 60)} => begin
+%= memorize {expires => (time + 3600)} => begin
         <div class="row-fluid ">
             <div class="span12 tab-content">
 
@@ -117,7 +117,7 @@
         % end
         %}
         % else {
-            %= memorize {expires => (time + 60)} => begin
+            %= memorize {expires => (time + 3600)} => begin
         <div class="row-fluid ">
             <div class="span12 tab-content">
 

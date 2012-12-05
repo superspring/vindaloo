@@ -29,12 +29,12 @@ sub index {
     my $dish_spiceyness_set =
       $model->resultset('DishSpiceyness')
       ->search( {}, { prefetch => [qw/dish/] } );
-    my $dish_spiceyness_hash = {};
-    foreach my $dish_spiceyness ( $dish_spiceyness_set->all ) {
-        my $spiceyness_id = $dish_spiceyness->get_column('spiceyness');
-        $dish_spiceyness_hash->{ $dish_spiceyness->dish->id }->{$spiceyness_id}
-          = $spiceynesses->{$spiceyness_id};
-    }
+    #my $dish_spiceyness_hash = {};
+    #foreach my $dish_spiceyness ( $dish_spiceyness_set->all ) {
+        #my $spiceyness_id = $dish_spiceyness->spiceyness->id;
+        #$dish_spiceyness_hash->{ $dish_spiceyness->dish->id }->{$spiceyness_id}
+          #= $spiceynesses->{$spiceyness_id};
+    #}
     my $new_time2 = time;
     $self->app->log->info( "Process query 2: " . ( $new_time2 - $new_time ) );
 
@@ -113,7 +113,7 @@ sub index {
         side_dishes       => $side_dishes,
         latest_payment    => $payment_amount,
         spiceynesses      => $spiceynesses,
-        dish_spiceynesses => $dish_spiceyness_hash,
+        #dish_spiceynesses => $dish_spiceyness_hash,
         previous_event    => $previous_event,
         users_by_dish => $users_by_dish
     );
