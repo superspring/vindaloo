@@ -44,13 +44,8 @@
                     % }
                                         <td></td>
                                     </tr>
-                    % my $base_ingredients = $category->base_ingredients(
-                    %    { 'curry_menus.active' => 1 },
-                    %       {
-                    %            join => 'curry_menus',
-                    %           prefetch => {curry_menus => 'curry_type'}
-                    %       }
-                    %    );
+                    % my $base_ingredients = $category->base_ingredients
+                    %   ->active_ingredients;
                     % while (my $ingredient = $base_ingredients->next) {
                     %   my $ingredient_link = $ingredient->link;
                     %   my $ingredient_name = $ingredient->name;
@@ -140,13 +135,8 @@
                     % }
                                         <td></td>
                                     </tr>
-                    % my $base_ingredients = $category->base_ingredients(
-                    %    { 'curry_menus.active' => 1 },
-                    %       {
-                    %            join => 'curry_menus',
-                    %           prefetch => {curry_menus => 'curry_type'}
-                    %       }
-                    %    );
+                    % my $base_ingredients = $category->base_ingredients
+                    %   ->active_ingredients;
                     % while (my $ingredient = $base_ingredients->next) {
                     %   my $ingredient_link = $ingredient->link;
                     %   my $ingredient_name = $ingredient->name;
