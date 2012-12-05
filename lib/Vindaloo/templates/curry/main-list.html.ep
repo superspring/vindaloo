@@ -1,28 +1,29 @@
+% use Time::HiRes 'time';
 % my $start_time = time;
+%= memorize {expires => (time + 60)} => begin
         <div class="row-fluid ">
             <div class="span12 tab-content">
 
                 % my $active = 'active';
-                % my $fetched_categories = $categories->reset->search({},
-                %    {prefetch=>'base_ingredients'}
-                % );
+                % my $fetched_categories  = $categories;
+                % $fetched_categories->reset;
                 % my $count;
                 % while (my $category = $fetched_categories->next) {
                     % $count++;
                     % my $category_name = $category->name;
-                <div id="<%= lc $category_name %>" 
+                <div id="<%= lc $category_name %>"
                     class="row-fluid tab-pane <%= $active %> ">
                     <div class="span12 well">
                             <h4><%= ucfirst(lc $category_name )%></h4>
                             <table class="table table-condensed table-striped">
                                 <tbody>
                                     <tr>
-                                        <td>Random <%= 
+                                        <td>Random <%=
                                             ucfirst $category_name %> Curry</td>
                 % foreach my $id (sort { $a <=> $b} keys %{$spiceynesses}) {
                     <td>
                         % my $heat = $spiceynesses->{$id};
-                        % if ( current_user and 
+                        % if ( current_user and
                         %    $event and $event->orders_open){
                                 <a href="<%=
                                 url_for(
@@ -120,6 +121,7 @@
 </div>
 
         </div>
+% end
 % my $end_time = time;
 % my $elapsed = $end_time - $start_time;
-% app->log->info("End processing template; elapsed time: ".$elapsed);
+% app->log->info("End processing menu template; elapsed time: ".$elapsed);

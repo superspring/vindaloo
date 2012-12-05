@@ -98,7 +98,10 @@ sub index {
     my $new_time4 = time;
     $self->app->log->info(
         "Finished with account stuff: " . ( $new_time4 - $new_time3 ) );
-    my $categories = $model->resultset('IngredientCategory');
+    my $categories = $model->resultset('IngredientCategory')->search({},
+        {
+            prefetch => 'base_ingredients'
+        });
 
     $self->stash(
         categories        => $categories,

@@ -1,5 +1,7 @@
 % layout 'fluid';
 % title 'Available Curries';
+% use Time::HiRes 'time';
+% my $start_time = time;
 
 
     <div class="row-fluid">
@@ -7,6 +9,8 @@
         % if (current_user){
             %= include 'users/account-summary' ;
             %= include 'orders/order-summary';
+            % app->log->debug("Processed left column. elapsed: "
+            %.(time - $start_time ));
         %}
         </div>
         <div class="span8">
