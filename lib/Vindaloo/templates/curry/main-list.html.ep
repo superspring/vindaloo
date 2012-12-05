@@ -1,5 +1,6 @@
 % use Time::HiRes 'time';
 % my $start_time = time;
+% if (current_user and $event and $event->orders_open) {
 %= memorize {expires => (time + 60)} => begin
         <div class="row-fluid ">
             <div class="span12 tab-content">
@@ -67,27 +68,19 @@
                               </td>
                              %   foreach my $id (sort {$a <=> $b} keys %{$spiceynesses}){
                              <td>
-                                    % my $heat = $spiceynesses->{$id};
-                                    % if ( $dish_spiceynesses->{$menu->id}->{$id} and
-                                    %        current_user and $event and $event->orders_open){
-                                                <a href="<%=
-                                                url_for(
-                                                    'orderdish',
-                                                    ingredient => $ingredient_link,
-                                                    curry      => $curry_type_link,
-                                                    spice      => $heat
-                                                )->to_abs->scheme('https')
-                                                                %>">
-                                               <span class="btn btn-mini <%=
-                                                        $spiceyness_btns->{$heat}
-                                                   %>"><%= $heat %></span>
-                                                </a>
-                                        % }
-                                        % else {
-                                        <span class="btn disabled btn-mini btn-inverted"><%=
-                                            $heat
-                                            %></span>
-                                        %}
+                    % my $heat = $spiceynesses->{$id};
+                            <a href="<%=
+                            url_for(
+                                'orderdish',
+                                ingredient => $ingredient_link,
+                                curry      => $curry_type_link,
+                                spice      => $heat
+                            )->to_abs->scheme('https')
+                                            %>">
+                            <span class="btn btn-mini <%=
+                                    $spiceyness_btns->{$heat}
+                                %>"><%= $heat %></span>
+                            </a>
                              </td>
                              % }
                              <td>$<%= $menu->price %></td>
@@ -121,7 +114,100 @@
 </div>
 
         </div>
-% end
+        % end
+        %}
+        % else {
+            %= memorize {expires => (time + 60)} => begin
+        <div class="row-fluid ">
+            <div class="span12 tab-content">
+
+                % my $active = 'active';
+                % my $fetched_categories  = $categories;
+                % $fetched_categories->reset;
+                % my $count;
+                % while (my $category = $fetched_categories->next) {
+                    % $count++;
+                    % my $category_name = $category->name;
+                <div id="<%= lc $category_name %>"
+                    class="row-fluid tab-pane <%= $active %> ">
+                    <div class="span12 well">
+                            <h4><%= ucfirst(lc $category_name )%></h4>
+                            <table class="table table-condensed table-striped">
+                                <tbody>
+                                    <tr>
+                                        <td>Random <%=
+                                            ucfirst $category_name %> Curry</td>
+                % foreach my $id (sort { $a <=> $b} keys %{$spiceynesses}) {
+                    <td>
+                        % my $heat = $spiceynesses->{$id};
+                            <span class="btn disabled btn-mini btn-inverted"><%=
+                                $heat
+                                %></span>
+                    </td>
+                    % }
+                                        <td></td>
+                                    </tr>
+                    % my $base_ingredients = $category->base_ingredients(
+                    %    { 'curry_menus.active' => 1 },
+                    %       {
+                    %            join => 'curry_menus',
+                    %           prefetch => {curry_menus => 'curry_type'}
+                    %       }
+                    %    );
+                    % while (my $ingredient = $base_ingredients->next) {
+                    %   my $ingredient_link = $ingredient->link;
+                    %   my $ingredient_name = $ingredient->name;
+                    %   my $curry_menus = $ingredient->curry_menus;
+                        % while (my $menu = $curry_menus->next){
+                             % my $curry_type = $menu->curry_type;
+                             % my $curry_type_link = $curry_type->link;
+                             % my $curry_name = $curry_type->name;
+                    <tr>
+                              <td>
+                                  <%= ucfirst $ingredient_name %> <%= ucfirst $curry_name %>
+                              </td>
+                             %   foreach my $id (sort {$a <=> $b} keys %{$spiceynesses}){
+                             <td>
+                            % my $heat = $spiceynesses->{$id};
+                                        <span class="btn disabled btn-mini btn-inverted"><%=
+                                            $heat
+                                            %></span>
+                             </td>
+                             % }
+                             <td>$<%= $menu->price %></td>
+                        </tr>
+                        % }
+
+                    % }
+                                </tbody>
+                            </table>
+                    </div>
+                </div>
+                % }
+                <div class="row-fluid tab-pane active" id="extras">
+                    <div class="span12 well" >
+                        <h4>Extras</h4>
+                        <table class="table table-striped">
+                            <tbody>
+                                % while (my $side_dish = $side_dishes->next) {
+                                <tr>
+                                    <td><a href="<%=
+                                    url_for(ordersidedish => dish =>
+                                    $side_dish->link)->to_abs->scheme('https')
+                                    %>"><%= $side_dish->name %></a></td>
+                                    <td>$<%= $side_dish->price %></td>
+                                </tr>
+                                % }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+</div>
+
+        </div>
+
+        % end
+        %}
 % my $end_time = time;
 % my $elapsed = $end_time - $start_time;
 % app->log->info("End processing menu template; elapsed time: ".$elapsed);
