@@ -94,8 +94,13 @@ sub startup {
     $r->route('/logout')->to('logout#index');
 
     # Main user list
-    $r->route('/users')->over( is => 'admin' )->name('userlist')
+    my $user_list_admin = $r->bridge('/users')->over(is
+        =>'admin')->to('users#load_users');
+
+    $user_list_admin->route('/list')->over( is => 'admin' )->name('userlist')
       ->to('users#index');
+      $user_list_admin->route('/email',)->over(is =>
+          'admin')->name('emaillist')->to('users#email_list');
 
     # User admin route. Takes :id param from path
     my $user_admin =

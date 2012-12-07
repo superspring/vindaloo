@@ -17,14 +17,32 @@ sub authenticate {
       unless $self->is_user_authenticated;
 }
 
-sub index {
-    my $self = shift;
-    my $users =
-      $self->db->resultset('User')
-      ->search( undef, { order_by => { -asc => [qw/surname/] } } );
-    $self->stash(  users => $users, );
+sub load_users {
+    my $self  = shift;
+    my $users = $self->db->resultset('User');
+    $self->stash( users => $users, );
 }
 
+sub index {
+    my $self  = shift;
+    my $users = $self->stash->{users};
+    my $users =
+      $users->search( undef, { order_by => { -asc => [qw/surname/] } } );
+}
+
+sub email_list {
+    my $self           = shift;
+    my $receive_emails = $self->param('spam');
+    my @param;
+    if ( $receive_emails and $receive_emails eq 'spam' ) {
+        push @param, receive_email => 1;
+    }
+    my $users = $self->stash->{users};
+    $users = $users->search( {@param} );
+    my @user_emails;
+    push @user_emails, $_->email foreach $users->all;
+    $self->stash( user_emails => \@user_emails );
+}
 
 sub admin {
     my $self = shift;
@@ -49,9 +67,8 @@ sub profile {
         user        => $user,
         form_action => $self->url_for( editprofile => id => $user->id )
           ->to_abs->scheme('https'),
-        validate_redirect =>
-          $self->url_for('menu')->to_abs->scheme('https'),
-        inactive_fields => [qw/roles password confirm_password/]
+        validate_redirect => $self->url_for('menu')->to_abs->scheme('https'),
+        inactive_fields   => [qw/roles password confirm_password/]
     );
 
 }
@@ -71,8 +88,7 @@ sub password {
     else {
         $form_action =
           $self->url_for('changepassword')->to_abs->scheme('https');
-        $validate_redirect =
-          $self->url_for('menu')->to_abs->scheme('https');
+        $validate_redirect = $self->url_for('menu')->to_abs->scheme('https');
 
     }
     $self->stash(
@@ -104,7 +120,7 @@ sub post_edit {
     $self->edit;
     my $form    = $self->stash->{form};
     my $request = $self->req->params->to_hash;
-    $self->app->log->debug("submitted: ".Dumper($request));
+    $self->app->log->debug( "submitted: " . Dumper($request) );
     $form->process(
         params   => $request,
         item     => $self->stash->{user},
@@ -114,8 +130,9 @@ sub post_edit {
         $self->redirect_to( $self->stash->{validate_redirect} );
     }
     else {
-        $self->app->log->error(Dumper($form->errors));
-        $self->app->log->error("User submitted invalid data: ".Dumper($request));
+        $self->app->log->error( Dumper( $form->errors ) );
+        $self->app->log->error(
+            "User submitted invalid data: " . Dumper($request) );
     }
     $self->render('users/edit');
 }
@@ -150,15 +167,17 @@ sub signup_validated {
     try {
         $form->process(
             inactive => [qw/roles/],
-            params => $self->req->params->to_hash );
+            params   => $self->req->params->to_hash
+        );
         if ( $form->validated ) {
             $self->app->log->debug("Validated");
             $self->redirect_to( $self->url_for('/')->to_abs->scheme('https') );
         }
     }
     catch( DBIx::Class::Exception $e where { $_ ~~ qr/email_key/ } ) {
-        $form->field('email')->add_error("A user with this email already exists!");
-     }
+        $form->field('email')
+          ->add_error("A user with this email already exists!");
+      }
 
       $self->render('users/signup');
 }
@@ -166,24 +185,21 @@ sub signup_validated {
 sub direct_pay {
     my $self = shift;
     my $user = $self->stash->{user};
-    my $form_action = $self->url_for(directpay => id =>
-        $user->id)->to_abs->scheme('https');
+    my $form_action =
+      $self->url_for( directpay => id => $user->id )->to_abs->scheme('https');
     my $form = Vindaloo::Forms::DirectPayment->new();
     my @request_params;
     my $params = $self->req->params->to_hash;
     push @request_params, params => $params;
 
-    $form->process(
-        @request_params,
-        action => $form_action
-    );
-    if ($form->validated) {
+    $form->process( @request_params, action => $form_action );
+    if ( $form->validated ) {
         my $payment = $self->param('payment');
-        $self->redirect_to($self->url_for(payment => payment =>
-                $payment)->to_abs->scheme('https'));
+        $self->redirect_to( $self->url_for( payment => payment => $payment )
+              ->to_abs->scheme('https') );
         return;
     }
-    $self->stash(form => $form);
+    $self->stash( form => $form );
 
 }
 
@@ -198,7 +214,6 @@ sub mojo_bcrypt {
     my $bcrypted = $self->bcrypt($value);
     return $bcrypted;
 }
-
 
 1;
 
