@@ -26,8 +26,7 @@ sub load_users {
 sub index {
     my $self  = shift;
     my $users = $self->stash->{users};
-    my $users =
-      $users->search( undef, { order_by => { -asc => [qw/surname/] } } );
+    $users = $users->search( undef, { order_by => { -asc => [qw/surname/] } } );
 }
 
 sub email_list {
