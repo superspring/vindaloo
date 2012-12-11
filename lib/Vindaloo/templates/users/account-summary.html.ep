@@ -80,7 +80,7 @@
                     </tr>
                     %   }
                 <tr>
-                % my $current_balance = current_user->balance;
+                % my $current_balance = current_user->balance // 0;
                     <th colspan=2><%=
                     $current_balance < 0 ? 'Credit': 'Balance'
                     %>:</th>

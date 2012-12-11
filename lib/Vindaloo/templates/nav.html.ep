@@ -94,12 +94,18 @@
                         </li>
                     </ul>
                 %  }
-                % elsif (current_route ne 'login') {
+                % elsif ((current_route ne 'login') 
+                %    and (current_route ne  'signup')) {
                 % my $login_form = Vindaloo::Forms::InlineLogin->new;
                 % $login_form->process(action =>
                 % url_for('/login')->to_abs->scheme('https'));
                     <ul class="nav pull-right">
                         <li><%== $login_form->render %></li>
+                        <li>
+                            <a href="<%=
+                            url_for('signup')->to_abs->scheme('https')
+                            %>">Sign up</a>
+                        </li>
                     </ul>
 
                 % }
