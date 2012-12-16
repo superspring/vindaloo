@@ -2,6 +2,7 @@ package Vindaloo::Orders;
 
 use Mojo::Base 'Mojolicious::Controller';
 
+use TryCatch;
 use List::MoreUtils 'any';
 use Data::Dumper;
 
@@ -226,22 +227,33 @@ sub create_side_dish_order {
     my $event        = $self->stash->{event};
     my $current_user = $self->current_user;
     my $side_dish_id = $side_dish->id;
+    my $limited_per_user = $side_dish->limited_per_user;
     $self->app->log->debug("Got event  $event");
     my $event_id = $event->id;
 
     $self->app->log->debug("Got side_dish id from $side_dish: $side_dish_id");
-    $current_user->add_to_side_orders(
-        {
-            side_dish   => $side_dish->id,
-            order_event => $event->id,
-        }
-    );
-    my $balance = $current_user->balance // 0;
-    $balance += $side_dish->price;
-    $current_user->balance($balance);
-    $current_user->update;
+    try {
+        
+        $current_user->add_to_side_orders(
+            {
+                side_dish        => $side_dish->id,
+                order_event      => $event->id,
+                limited_per_user => $limited_per_user,
+            }
+        );
+        my $balance = $current_user->balance // 0;
+        $balance += $side_dish->price;
+        $current_user->balance($balance);
+        $current_user->update;
+    }
+    catch (DBIx::Class::Exception $e) {
+        $self->app->log->error("User "
+            .$current_user->first_name
+            ." "
+            .$current_user->surname
+            ." tried to add a second freebee.");
+    }
     return;
-
 }
 
 sub user_side_dish_admin {
