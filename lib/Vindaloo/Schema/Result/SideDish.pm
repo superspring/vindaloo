@@ -5,7 +5,7 @@ use namespace::autoclean;
 BEGIN { extends 'DBIx::Class::Core' }
 
 __PACKAGE__->table('side_dishes');
-__PACKAGE__->add_columns(qw/id name link active price/);
+__PACKAGE__->add_columns(qw/id name link active price limited_per_user/);
 __PACKAGE__->set_primary_key('id');
 __PACKAGE__->inflate_column(
     price => {
