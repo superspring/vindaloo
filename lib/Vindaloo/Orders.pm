@@ -233,6 +233,7 @@ sub create_side_dish_order {
 
     $self->app->log->debug("Got side_dish id from $side_dish: $side_dish_id");
     try {
+        $limited_per_user = undef unless $limited_per_user;
         
         $current_user->add_to_side_orders(
             {
