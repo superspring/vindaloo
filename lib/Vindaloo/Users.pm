@@ -33,9 +33,9 @@ sub email_list {
     my $self           = shift;
     my $receive_emails = $self->param('spam');
     my @param;
-    if ( $receive_emails and $receive_emails eq 'spam' ) {
+    #if ( $receive_emails and $receive_emails eq 'spam' ) {
         push @param, receive_email => 1;
-    }
+    #}
     my $users = $self->stash->{users};
     $users = $users->search( {@param} );
     my @user_emails;
