@@ -55,6 +55,3 @@
             </table>
         </div>
     </div>
-    <script type="text/javascript" charset="utf-8">
-        $('.curry-who-ordered a').popover();
-    </script>

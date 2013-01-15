@@ -4,7 +4,7 @@ use warnings;
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-    VERSION   => '1.03',
+    VERSION   => '1.04',
     PREREQ_PM => {
         'Mojolicious'                         => 0,
         'Mojolicious::Plugin::Authentication' => 0,
