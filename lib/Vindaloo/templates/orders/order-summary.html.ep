@@ -33,12 +33,12 @@
                         <%= $curry_name %>
                         <%= $spiceyness_name %>
                     </td>
-                    <td>
+                    <td class="curry-who-ordered">
                     % my $users = $spiceyness_users->{$spiceyness_name};
                     % foreach my $user (@{$users}) {
                         % my $url = cached_avatar $user->email;
                         % my $first_name = $user->first_name;
-                        <a href="#" 
+                        <a href="" 
                             rel="popover" 
                             data-placement="right" 
                             data-content="<h4><%= $first_name %></h4>" 
@@ -55,3 +55,6 @@
             </table>
         </div>
     </div>
+    <script type="text/javascript" charset="utf-8">
+        $('.curry-who-ordered a').popover();
+    </script>
