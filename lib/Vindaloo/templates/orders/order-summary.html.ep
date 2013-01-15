@@ -4,7 +4,7 @@
     <div class="row-fluid hidden-phone">
         <div class="span12 well">
             <h4>Current Order</h4>
-            <table class="table table-striped">
+            <table class="table table-striped " id="order-summary">
         % my $dish_time = time;
         % app->log->info("Begin processing users-per-dish.");
         % my $dishes_for_order = $self->db->resultset('CurryMenu')
@@ -38,11 +38,12 @@
                     % foreach my $user (@{$users}) {
                         % my $url = cached_avatar $user->email;
                         % my $first_name = $user->first_name;
-                        <span class="curry-who-ordered"
+                        % my $popup_image = "<img src='$url' height=40 width=40>";
+                        <span class="who-ordered-popover"
                             rel="popover" 
                             data-placement="right" 
-                            data-content="<h4><%= $first_name %></h4>" 
-                            data-original-title ="<%= $first_name %>">
+                            data-content="<%= $popup_image%>" 
+                            data-original-title ="<h4><%= $first_name %></h4>">
                             <img src="<%= $url %>" height=20 width=20 >
                         </span>
                     % }

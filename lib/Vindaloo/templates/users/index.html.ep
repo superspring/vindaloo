@@ -64,6 +64,8 @@
                                         </td>
                                         % foreach my $value (12,11,10) {
                                             % my $btn_type = 'btn-primary';
+                                            % my $balance = $user->balance //
+                                            % 0;
                                             % $btn_type = 'btn-warning' if $user->balance ==
                                               % $value;
                                             <td>
