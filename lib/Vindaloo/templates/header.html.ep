@@ -5,6 +5,7 @@
         %= javascript url_for('/js/bootstrap-collapse.js');
         %= javascript url_for('/js/bootstrap-dropdown.js');
         %= javascript url_for('/js/bootstrap-tab.js');
+        %= javascript url_for('/js/bootstrap-tooltip.js');
         %= stylesheet url_for('/css/bootswatch/cerulean/bootstrap.min.css');
         %= stylesheet url_for('/css/vindaloo.css');
         %= stylesheet url_for('/css/bootswatch/default/bootstrap-responsive.min.css');
